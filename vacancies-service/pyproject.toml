@@ -1,0 +1,94 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vacancies-service"
+version = "0.1.0"
+description = "Сервис агрегации вакансий, резюме и рекомендаций для платформы «Игровая версия реальной жизни»"
+readme = "README.md"
+# TODO: Python 3.12 вместо «3.11+» из раздела 1 ТЗ — на 3.14 не гарантированы asyncpg/Telethon/Playwright
+requires-python = ">=3.12"
+
+dependencies = [
+    "fastapi>=0.118,<0.200",
+    "uvicorn[standard]>=0.38",
+    "pydantic>=2.11,<3",
+    "pydantic-settings>=2.7",
+    "sqlalchemy[asyncio]>=2.0.36,<2.1",
+    "asyncpg>=0.30",
+    # Конфигурация Alembic (alembic.ini + migrations/) относится к этапу 2;
+    # зависимость добавлена заранее, чтобы образ этапа 1 уже её содержал.
+    "alembic>=1.14",
+    "redis>=5.2",
+    # TODO: rq запиннен <2 ради совместимости с rq-scheduler; пересмотреть на этапе 11 (раздел 5.1 ТЗ).
+    # Актуальный rq-scheduler 0.14.0 требует rq>=2, поэтому при пине rq<2
+    # приходится брать rq-scheduler 0.13.x — это последняя версия, работающая с rq 1.x.
+    # На этапе 11 решить: либо переход на пару rq 2.x + rq-scheduler 0.14,
+    # либо отказ от rq-scheduler в пользу собственного планировщика.
+    "rq>=1.16,<2",
+    "rq-scheduler>=0.13.1,<0.14",
+    "httpx>=0.28",
+    "structlog>=24.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
+    "ruff>=0.9",
+    "mypy>=1.14",
+    # types-redis сознательно не добавлен: пакет объявлен obsolete, его стабы
+    # соответствуют redis 4.6 и перекрывают собственные аннотации redis>=5
+    # (например, в них нет Redis.aclose). Используем inline-типы из redis.
+]
+# Ставится на этапе 11 (парсеры) и в образ этапа 1 не входит:
+# Playwright тянет ~400 МБ браузеров.
+parsers = [
+    "telethon>=1.37",
+    "playwright>=1.49",
+    "selectolax>=0.3.27",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["app", "tests"]
+
+[tool.ruff.lint]
+# DTZ обязателен: запрещает naive datetime.utcnow(), важно для published_at/parsed_at (раздел 3 ТЗ).
+select = ["E","F","W","I","N","UP","B","C4","SIM","RUF","ANN","ASYNC","DTZ","T20","PTH","ARG","TID","S"]
+ignore = [
+    "ANN401",
+    # RUF001/002/003 (ambiguous unicode) неприменимы: комментарии и docstring'и
+    # в проекте на русском, и каждая кириллическая буква даёт ложное срабатывание.
+    "RUF001",
+    "RUF002",
+    "RUF003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101","ANN201","ARG001"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+warn_unreachable = true
+disallow_untyped_decorators = false
+
+[[tool.mypy.overrides]]
+module = ["rq.*", "rq_scheduler.*", "telethon.*", "selectolax.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-q --strict-markers"

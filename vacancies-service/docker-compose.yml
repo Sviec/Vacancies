@@ -1,0 +1,134 @@
+# Критерий приёмки 1 (раздел 11 ТЗ): одна команда `docker compose up` поднимает
+# postgres, redis, api, worker и frontend.
+#
+# Ключ `version:` намеренно отсутствует — в Compose v2+ он устарел и вызывает
+# предупреждение.
+#
+# Порты хоста вынесены в переменные с дефолтами: 5432 и 6379 на Windows часто
+# заняты локально установленными Postgres/Redis, и переопределить их можно в
+# .env, не трогая этот файл.
+name: vacancies-service
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-vacancies}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vacancies}
+      POSTGRES_DB: ${POSTGRES_DB:-vacancies}
+    ports:
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # api и worker ждут именно этой проверки: без неё они стартуют раньше,
+      # чем Postgres закончит инициализацию кластера.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vacancies} -d ${POSTGRES_DB:-vacancies}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    # --save "" отключает RDB-снимки: Redis здесь только очередь задач и кэш,
+    # переживать перезапуск этим данным не нужно, именованный volume не заводим.
+    command: redis-server --save ""
+    ports:
+      - "${REDIS_HOST_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  api:
+    build: .
+    image: vacancies-service:local
+    env_file: .env
+    environment:
+      # Эти две переменные ОБЯЗАНЫ быть здесь, а не только в .env: внутри сети
+      # Compose база и Redis доступны по DNS-именам postgres/redis, а в .env
+      # лежат варианты с localhost — для запуска приложения вне Docker.
+      # Секция `environment:` имеет приоритет над `env_file:`, поэтому оба
+      # сценария работают одновременно. Это не противоречие — не «чинить».
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-vacancies}:${POSTGRES_PASSWORD:-vacancies}@postgres:5432/${POSTGRES_DB:-vacancies}
+      REDIS_URL: redis://redis:6379/0
+      # Bind-mount через Docker Desktop на Windows не доставляет inotify-события,
+      # и uvicorn --reload молча перестаёт реагировать на правки файлов.
+      WATCHFILES_FORCE_POLLING: "true"
+    command: >-
+      uvicorn app.main:app --host 0.0.0.0 --port 8000
+      --reload --reload-dir /srv/app
+    ports:
+      - "${API_HOST_PORT:-8000}:8000"
+    volumes:
+      # Монтируются только ./app и ./tests. ./scripts и ./migrations ещё не
+      # существуют — Docker создал бы вместо них пустые root-овые каталоги на
+      # хосте. Их монтирование добавят этапы 2 (Alembic) и 7 (seed.py).
+      - ./app:/srv/app
+      - ./tests:/srv/tests
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      # На чистом Python: curl и wget в slim-образ не ставятся.
+      # /health отдаёт 503 при деградации, и urlopen в этом случае бросит
+      # HTTPError — контейнер честно станет unhealthy.
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen("http://127.0.0.1:8000/health", timeout=5)
+      interval: 10s
+      timeout: 6s
+      retries: 6
+      start_period: 15s
+    # `alembic upgrade head` здесь сознательно НЕ вызывается: миграций пока нет,
+    # они появятся на этапе 2. /health зелёный и на пустой базе.
+
+  worker:
+    # Тот же build и тот же image, что у api: Compose соберёт образ один раз,
+    # второй сервис переиспользует готовый.
+    build: .
+    image: vacancies-service:local
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-vacancies}:${POSTGRES_PASSWORD:-vacancies}@postgres:5432/${POSTGRES_DB:-vacancies}
+      REDIS_URL: redis://redis:6379/0
+    command: python -m app.tasks.worker
+    volumes:
+      - ./app:/srv/app
+      - ./tests:/srv/tests
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    env_file: .env
+    environment:
+      # Vite-прокси уводит /api и /health на api-контейнер по внутреннему DNS.
+      # Фронтенд ходит только по относительным путям, поэтому CORS в браузере
+      # не возникает вообще.
+      VITE_API_PROXY_TARGET: http://api:8000
+      # HMR на Windows без polling не срабатывает — причина та же, что у api.
+      VITE_USE_POLLING: "true"
+    ports:
+      - "${FRONTEND_HOST_PORT:-5173}:5173"
+    volumes:
+      - ./frontend:/srv
+      # Анонимный volume обязателен: без него bind-mount ./frontend затёр бы
+      # node_modules, установленные при сборке образа, и Vite не запустился бы.
+      - /srv/node_modules
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pgdata:

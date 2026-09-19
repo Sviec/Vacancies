@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru" class="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Вакансии — карьерное пространство</title>
+    <!--
+      Внешних <link> на Google Fonts или любой другой CDN здесь быть не должно:
+      по п. 11.2 ТЗ демо обязано работать без интернета. Inter подключён только
+      как первый элемент системного стека шрифтов в src/index.css.
+    -->
+    <script>
+      // Блокирующий инлайн-скрипт: тема применяется до первой отрисовки,
+      // иначе при выбранной тёмной теме экран успевает мигнуть светлым.
+      // localStorage недоступен в части приватных режимов — отсюда try/catch.
+      (function () {
+        try {
+          var stored = localStorage.getItem("vacancies-theme");
+          var dark =
+            stored === "dark" ||
+            ((stored === "system" || stored === null) &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.classList.toggle("dark", dark);
+        } catch (error) {
+          /* тема останется светлой — приемлемая деградация */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

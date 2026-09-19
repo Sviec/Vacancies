@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Node
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Telethon
+*.session
+*.session-journal
+
+# OS / IDE
+Thumbs.db
+desktop.ini
+.DS_Store
+.idea/
+.vscode/
+
+# Визуальный референс
+# read-only визуальный референс с собственной вложенной .git
+/replit_template/

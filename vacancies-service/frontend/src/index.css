@@ -1,0 +1,261 @@
+@import "tailwindcss";
+
+/* Вариант `dark:` через класс на <html>, а не через media-query: тема
+   переключается вручную (src/lib/theme.tsx), режим "system" лишь вычисляет,
+   какой класс поставить. */
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Палитра. Светлые значения — из раздела 8 ТЗ, тёмные производны от #0C0A09.
+   Сами цвета живут здесь, в обычных CSS-переменных, а @theme ниже только
+   ссылается на них. Благодаря этому утилиты Tailwind (bg-canvas, text-ink)
+   переключаются вместе с классом .dark, без дублирования каждого класса
+   через dark:.
+--------------------------------------------------------------------------- */
+:root {
+  --canvas: #fafaf9;
+  --surface: #ffffff;
+  --surface-muted: #f5f5f4;
+  --line: #e7e5e4;
+  --ink: #1c1917;
+  --ink-muted: #78716c;
+  --ink-subtle: #a8a29e;
+  --accent: #475569;
+  --accent-soft: #f1f5f9;
+  /* Текст и иконки поверх --accent. Отдельный токен, а не подмена --surface:
+     в тёмной теме акцент светлеет, и контент на нём обязан темнеть, иначе
+     перенос макетного text-white на этапе 8 сломает тёмную тему. */
+  --on-accent: #ffffff;
+  --positive: #059669;
+  --positive-soft: #ecfdf5;
+  --warn: #b45309;
+  --warn-soft: #fffbeb;
+  --danger: #b91c1c;
+  --danger-soft: #fef2f2;
+
+  --focus-ring: #475569;
+  --scrollbar-thumb: #d6d3d1;
+  --selection-bg: #cbd5e1;
+  --selection-ink: #1c1917;
+  --skeleton-base: #f1f0ee;
+  --skeleton-shine: #fafaf9;
+  --lift-shadow: 0 10px 28px rgb(28 25 23 / 0.06);
+}
+
+.dark {
+  --canvas: #0c0a09;
+  --surface: #1c1917;
+  --surface-muted: #292524;
+  /* Светлее, чем --surface-muted: при совпадении значений граница карточки на
+     muted-подложке исчезала. Видна на всех трёх фонах тёмной темы. */
+  --line: #44403c;
+  --ink: #fafaf9;
+  --ink-muted: #a8a29e;
+  /* Не #78716C из зеркальной таблицы: на #0C0A09 он даёт 4.12:1 и не проходит
+     WCAG AA. Осветлён до 5.23:1 на фоне и 4.63:1 на поверхности. */
+  --ink-subtle: #8a827b;
+  --accent: #94a3b8;
+  --accent-soft: #1e293b;
+  /* Акцент в тёмной теме светлый, поэтому контент на нём тёмный: 8.1:1 против
+     2.3:1, если оставить белый. */
+  --on-accent: #0c0a09;
+  --positive: #34d399;
+  --positive-soft: #064e3b;
+  --warn: #fbbf24;
+  --warn-soft: #451a03;
+  --danger: #f87171;
+  --danger-soft: #450a0a;
+
+  --focus-ring: #94a3b8;
+  --scrollbar-thumb: #44403c;
+  --selection-bg: #334155;
+  --selection-ink: #fafaf9;
+  --skeleton-base: #221f1d;
+  --skeleton-shine: #2e2a27;
+  --lift-shadow: 0 10px 28px rgb(0 0 0 / 0.45);
+}
+
+/* `inline` обязателен. Без него Tailwind объявит --color-canvas: var(--canvas)
+   в :root, значение подставится один раз на уровне :root и унаследуется вниз
+   уже «светлым» — переключение темы работать не будет. С `inline` утилита
+   получает var(--canvas) напрямую и разрешает его на конкретном элементе. */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---------------------------------------------------------------------------
+   Анимации. Тайминги перенесены из макетов career-service без изменений.
+   Разовые анимации появления и переходы укладываются в раздел 8 ТЗ: 150–250 мс,
+   ease-out, не более двух анимируемых свойств одновременно.
+
+   TODO: допущение — зацикленный shimmer у .skeleton идёт 1.25 с с ease-in-out и
+   формально выходит за лимит «не дольше 300 мс» из раздела 8. Лимит относится к
+   разовым переходам: цикл в 300 мс превратил бы плейсхолдер в стробоскоп, что и
+   выглядит плохо, и вредно при фоточувствительности. Значение взято из макетов
+   (career-shimmer), анимируется одно свойство, и вся анимация отключается при
+   prefers-reduced-motion.
+--------------------------------------------------------------------------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drawer {
+  from {
+    opacity: 0;
+    transform: translateX(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -120% 0;
+  }
+}
+
+@layer components {
+  .rise {
+    animation: rise 220ms ease-out both;
+  }
+
+  .drawer {
+    animation: drawer 220ms ease-out both;
+  }
+
+  /* Загрузка показывается skeleton-плейсхолдерами, а не спиннером по центру
+     экрана — это прямо запрещено разделом 8 ТЗ. */
+  .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      var(--skeleton-base) 25%,
+      var(--skeleton-shine) 50%,
+      var(--skeleton-base) 75%
+    );
+    background-size: 240% 100%;
+    animation: shimmer 1.25s ease-in-out infinite;
+  }
+
+  /* Раздел 8 ТЗ: «лёгкий подъём тени, без масштабирования». translateY(-2px) —
+     это подъём, а не масштаб, и он есть в утверждённых макетах (career-lift);
+     свойств ровно два, что лимитом допускается. scale не используется. */
+  .lift {
+    transition:
+      transform 150ms ease-out,
+      box-shadow 150ms ease-out;
+  }
+
+  .lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--lift-shadow);
+  }
+}
+
+/* --------------------------------------------------------------------------- */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button,
+  a,
+  select {
+    transition:
+      background-color 150ms ease-out,
+      color 150ms ease-out;
+  }
+
+  button:active {
+    transform: translateY(1px);
+  }
+
+  /* Видимый focus-ring на токене темы вместо системного контура браузера.
+     :focus-visible, а не :focus — кольцо не появляется при клике мышью. */
+  button:focus-visible,
+  a:focus-visible,
+  select:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--ink-subtle);
+  }
+
+  ::selection {
+    background: var(--selection-bg);
+    color: var(--selection-ink);
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 20px;
+  }
+}
+
+/* Раздел 8 ТЗ: «при включённой настройке анимации отключаются». В макетах
+   длительность сводилась к 1 мс — здесь анимации и переходы выключены
+   полностью, как того требует формулировка. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
