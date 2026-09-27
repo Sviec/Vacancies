@@ -9,8 +9,8 @@
 | # | Этап | Статус | Файлы | Допущения / TODO |
 |---|---|---|---|---|
 | 1 | Каркас проекта, конфиг, docker-compose, подключение БД | done | см. раздел «Этап 1» ниже | 15 допущений, см. ниже |
-| 2 | Модели SQLAlchemy + миграции Alembic | not started | | |
-| 3 | Pydantic-схемы, включая `NormalizedVacancy` | not started | | |
+| 2 | Модели SQLAlchemy + миграции Alembic | done | см. раздел «Этап 2» ниже | 20 допущений, см. ниже |
+| 3 | Pydantic-схемы, включая `NormalizedVacancy` | done | см. раздел «Этап 3» ниже | 8 допущений, см. ниже |
 | 4 | `services/normalizer.py` + тесты | not started | | |
 | 5 | CRUD API резюме и вакансий | not started | | |
 | 6 | `services/resume_scorer.py` + `services/matching.py` + тесты | not started | | |
@@ -113,7 +113,7 @@
 | 17 | `WATCHFILES_FORCE_POLLING` и `VITE_USE_POLLING` включены: bind-mount Docker Desktop на Windows не доставляет inotify-события | `docker-compose.yml` |
 | 18 | Порты хоста параметризованы (`API_HOST_PORT`, `POSTGRES_HOST_PORT`, ...); на машине разработки Postgres вынесен на 5433, потому что 5432 занят локальной службой | `.env`, `docker-compose.yml` |
 
-### Незакрытые замечания (не блокируют этап)
+### Незакрытые замечания этапа 1 (не блокируют)
 
 - Логи api не на 100% JSON: строки uvicorn-reloader (`Started reloader process`, `WatchFiles detected changes`) идут мимо structlog. Access-логи `http_request` — валидный JSON с `request_id`.
 - OpenAPI для `/health` описывает только 200, хотя при деградации ответ 503.
@@ -122,15 +122,145 @@
 
 ---
 
+## Этап 2 — модели SQLAlchemy + миграции Alembic
+
+**Статус:** `done`. Схема накатана, `migrate` в compose завершается с кодом 0,
+`/health` остаётся 200, офлайн-тесты и дрейф-тест зелёные.
+Проверки закрытия: `verifier` — блокеров нет; `mock-mode-auditor` — каркас изолирован
+(полный сценарий раздела 7 ещё не применим: нет seed/UI/ИИ).
+
+### Созданные и изменённые файлы
+
+| Файл | Назначение |
+|---|---|
+| `app/enums.py` | 10 `StrEnum` домена; переиспользуются схемами этапа 3 |
+| `app/db/base.py` | `Base`, `NAMING_CONVENTION`, `type_annotation_map`, миксины, `enum_column` |
+| `app/db/models.py` | 12 моделей: канонические `vacancies` + публикации `vacancy_postings` и остальное из раздела 4 |
+| `alembic.ini` | DSN пустой, читается из `Settings`; комментарии ASCII из‑за cp1251 на Windows |
+| `migrations/env.py` | async Alembic, DSN из `get_settings()`, `compare_type`/`compare_server_default` |
+| `migrations/script.py.mako` | шаблон ревизий с условным импортом `postgresql` |
+| `migrations/versions/20260919_2303_ba833660ecb2_initial_schema.py` | первая ревизия, 12 таблиц |
+| `tests/test_models_metadata.py` | офлайн-инварианты схемы |
+| `tests/test_migrations_offline.py` | одна голова, рабочий `downgrade` |
+| `tests/integration/conftest.py` | пересоздание `vacancies_test` |
+| `tests/integration/test_migration_drift.py` | `upgrade head` + пустой `compare_metadata` |
+| `Dockerfile` | `COPY alembic.ini` и `migrations/` |
+| `docker-compose.yml` | сервис `migrate`, api/worker ждут `service_completed_successfully` |
+| `pyproject.toml` | маркер `integration`, `known-first-party`, `extend-exclude` для `migrations/versions` |
+| `README.md` | заглушка: миграции накатывает `migrate` |
+
+### Подтверждено исполнением
+
+- `ruff check`, `ruff format --check`, `mypy app` — чисто.
+- `pytest` — 51 passed, 2 deselected (integration), без Postgres/Redis.
+- `pytest -m integration` — 2 passed (предупреждение Alembic про computed `search_vector` ожидаемо).
+- `\dt` — 12 таблиц + `alembic_version`.
+- `vacancies`: UNIQUE `dedup_key`, GIN на `skills` и `search_vector`, btree на `source`/`published_at`, generated `search_vector`; нет `content_hash`/`external_id`/`raw_payload`.
+- `vacancy_postings`: UNIQUE `(source, external_id)` и `(source, content_hash)`, btree `(vacancy_id, source)`, FK CASCADE.
+- `resumes`: частичный UNIQUE `uq_resumes_primary_per_user WHERE is_primary`.
+- Две строки с `dedup_key IS NULL` вставляются; одинаковый непустой ключ даёт `uq_vacancies_dedup_key`.
+- `docker compose up -d --build`: `migrate` Exited 0, api/postgres/redis healthy, `/health` = 200.
+- Ревизия видна в образе: `/srv/migrations/versions/20260919_2303_ba833660ecb2_initial_schema.py`.
+
+### Принятые допущения этапа 2
+
+| # | Допущение | Где |
+|---|---|---|
+| 1 | PK везде `UUID` (`uuid4` на стороне Python), не `bigint` | `app/db/base.py` |
+| 2 | `uuid4`, не `uuid7`: в stdlib 3.12 его нет | `app/db/base.py` |
+| 3 | Enum — `VARCHAR` + `CHECK` (`native_enum=False`), не PG ENUM | `app/db/base.py` |
+| 4 | Деньги — `Integer`; риск int4 на экзотических валютах | `app/db/models.py` |
+| 5 | **Отклонение от раздела 3:** дедупликация по `company+title+city`, не по `content_hash` описания | `app/db/models.py` |
+| 6 | Две таблицы: `vacancies` (канонический оффер) и `vacancy_postings` (появление в источнике) | `app/db/models.py` |
+| 7 | Каноническая запись денормализована: поля победителя копируются, без `primary_posting_id` | `app/db/models.py` |
+| 8 | Победитель: `parse_quality=full`, затем макс. длина описания; поля проигравших не подмешиваются | `app/db/models.py` |
+| 9 | `dedup_key` — sha256 тройки, заполняется сервисным слоем (этап 4), не GENERATED | `app/db/models.py` |
+| 10 | `UNIQUE(dedup_key)` обычный: NULL различны, вакансии без компании не конфликтуют | `app/db/models.py` |
+| 11 | Без компании `dedup_key=NULL`, склейки нет | `app/db/models.py` |
+| 12 | Пустой город — пустая третья компонента ключа, иначе склейка транзитивна | `app/db/models.py` |
+| 13 | **Отклонение от раздела 4:** `content_hash` на публикациях, UNIQUE `(source, content_hash)` | `app/db/models.py` |
+| 14 | `published_at` канонической записи — MIN по публикациям; `last_seen_at` — MAX | `app/db/models.py` |
+| 15 | Склейка глобальна во времени, без окна 60 дней | решение пользователя |
+| 16 | Нормализация заголовка консервативная (этап 4): грейд и скобки сохраняем | решение пользователя |
+| 17 | Операции «разделить вакансию» нет | решение пользователя |
+| 18 | `resumes.contacts` JSONB и `origin` сверх раздела 4 | `app/db/models.py` |
+| 19 | `vacancies.source` без FK на `sources.slug` | `app/db/models.py` |
+| 20 | `alembic.ini` в образе через COPY; bind-mount `./migrations` только у `migrate` | `Dockerfile`, `docker-compose.yml` |
+
+### Незакрытые замечания этапа 2 (не блокируют)
+
+- Alembic `compare_server_default` предупреждает, что generated `vacancies.search_vector` нельзя изменить через autogenerate — дрейф-тест зелёный, править руками при смене FTS.
+- `ruff` не форматтит `migrations/versions/` (`extend-exclude`): autogenerate пишет длинные `op.create_table`.
+- Допущение 10 этапа 1 закрыто: `alembic.ini` и `migrations/` на месте, `migrate` накатывает схему при `compose up`.
+
+---
+
+## Этап 3 — Pydantic-схемы, включая `NormalizedVacancy`
+
+**Статус:** `done`. Эндпоинты не вешались. `verifier` — блокеров нет.
+
+### Созданные файлы
+
+| Файл | Назначение |
+|---|---|
+| `app/schemas/__init__.py` | реэкспорт публичных классов |
+| `app/schemas/common.py` | валюта, content_hash, пагинация, `VacancySort`, конверт ошибки |
+| `app/schemas/normalized.py` | `NormalizedVacancy` — контракт публикации |
+| `app/schemas/vacancies.py` | карточка, деталь, фильтры п. 5.5, action, meta |
+| `app/schemas/resumes.py` | CRUD резюме и вложенные секции |
+| `app/schemas/scoring.py` | форма оценки п. 5.4 и `MatchDetails` п. 5.6 |
+| `app/schemas/recommendations.py` | query `resume_id` и плоская карточка + score |
+| `app/schemas/ai.py` | запросы generate/tailor и черновик LLM |
+| `app/schemas/sources.py` | список источников и `ParseRunRead` |
+| `tests/test_schemas.py` | 22 офлайн-теста валидации |
+
+### Подтверждено исполнением
+
+- `ruff check`, `ruff format --check`, `mypy app` — чисто (33 файла).
+- `pytest` — 73 passed, 2 deselected (integration).
+- OpenAPI по-прежнему только `/health`: роутеры вакансий и резюме пустые, `GET /api/v1/vacancies` → 404 с конвертом ошибок.
+
+### Принятые допущения этапа 3
+
+| # | Допущение | Где |
+|---|---|---|
+| 1 | `NormalizedVacancy` описывает публикацию, не канон: `content_hash` — идентичность текста, `dedup_key` в схему не входит | `app/schemas/normalized.py` |
+| 2 | Публичный Read канона без `content_hash` / `external_id` / `raw_payload` / `description_raw`; краткий список публикаций тоже без `raw_payload` | `app/schemas/vacancies.py` |
+| 3 | `exclude_hidden` по умолчанию `True` | `VacancyListQuery` |
+| 4 | Рекомендации без пагинации: ответ `{items: [...]}` | `app/schemas/recommendations.py` |
+| 5 | `SourceListItem` без `config` — селекторы и каналы не отдаются в списке | `app/schemas/sources.py` |
+| 6 | `ResumeRead.score_details` — свободный `dict` (зеркало JSONB); строгая форма только у `ResumeScoreResponse` | `app/schemas/resumes.py`, `scoring.py` |
+| 7 | `ResumeContacts` — фиксированные ключи (`email`, `phone`, `telegram`, `linkedin`, `github`, `website`), лишние режет `extra=forbid` и на Read | `app/schemas/resumes.py` |
+| 8 | Пустой `title=""` допустим: обязательное поле раздела 3 означает «ключ есть», а не «строка непустая» — иначе `parse_quality=partial` без заголовка не пройти схему | `NormalizedVacancy` |
+
+### Незакрытые замечания этапа 3 (не блокируют)
+
+- Навыки вакансии в `NormalizedVacancy` не приводятся к lowercase — это нормализатор, этап 4. На навыках резюме lowercase уже проверяется.
+- Потолки `max_points` матчинга (45/20/15/12/8) в схеме не зафиксированы жёстко: числа считает этап 6.
+- «Не в будущем» сравнивается с `datetime.now(tz=UTC).date()`, не с `date.today()` (ruff DTZ011).
+
+---
+
 ## Долги, запланированные на конкретные этапы
 
-Найдены проверками на этапе 1, исправлять нужно там, где появится соответствующий код.
+Найдены проверками на этапах 1–2, исправлять нужно там, где появится соответствующий код.
 
-### Этап 2 (модели и Alembic)
+### Этап 2 (модели и Alembic) — закрыт
 
-- `Base` / `DeclarativeBase` нет — появится в `app/db/models.py`; `session.py` модели не импортирует, циклов нет.
-- `target_metadata` для Alembic брать негде: нужен `alembic init`, `alembic.ini`, `migrations/env.py`.
-- `migrations/` не монтируется в контейнеры и не копируется в образ — добавить и в `Dockerfile`, и в volumes, иначе bind-mount на Windows не донесёт файлы.
+- `Base` / `DeclarativeBase`, `alembic.ini`, `migrations/env.py`, COPY и volume — сделано.
+
+### Этап 4 (нормализатор)
+
+- `compute_dedup_key(company, title, city)`: sha256 utf-8 `"company|title|city"`; `None`, если компания пустая.
+- Консервативная нормализация заголовка: грейд (Junior/Middle/Senior/Lead) и содержимое скобок не выкидывать.
+- Выбор победителя при склейке: `parse_quality=full`, затем max(len(description)); поля проигравших не мержить.
+- `published_at` канона = MIN публикаций; `last_seen_at` = MAX.
+- Lowercase и словарь синонимов для `NormalizedVacancy.skills` — схема их не нормализует.
+
+### Этап 7 (seed)
+
+- Сид должен создавать и `vacancies`, и `vacancy_postings` (минимум два источника на один канонический оффер — для UI «источники»).
+- `contacts` в сиде — только ключи `ResumeContacts`; лишний ключ уронит `ResumeRead`.
 
 ### Этап 8 (фронтенд)
 
@@ -143,6 +273,7 @@
 - **Расхождение макетов с ТЗ, решить явно:** stagger в `Resumes.tsx` шаблона идёт по 45 мс без потолка, ТЗ требует 30 мс на первых восьми элементах.
 - **Дыра и в ТЗ, и в шаблоне:** фильтры ниже 768px должны сворачиваться в модальное окно, в макетах этого паттерна нет — придётся проектировать.
 - Экран «Источники» в макетах отсутствует — собирать из токенов, а не копировать.
+- Карточка вакансии: список источников из `vacancy_postings`, не одно поле `source`.
 - Заголовок страницы 30/34px против «20–24px» раздела 8: это утверждённый язык макетов, зафиксировать как исключение для display-заголовка, заголовки секций держать в 15–24px.
 - Состояния загрузки, пустоты и ошибки обязательны на всех четырёх экранах; в макетах есть только пустое состояние ленты.
 
