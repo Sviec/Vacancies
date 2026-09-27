@@ -6,9 +6,11 @@
 head` с `Base.metadata`, поэтому любые остатки от предыдущих прогонов сделали бы
 результат недоказательным.
 
-Транзакционной фикстуры с rollback на каждый тест здесь нет: на этапе 2 нечего
-проверять запросами. Её добавит этап 5 поверх этого же файла вместе с первыми
-CRUD-эндпоинтами.
+Тесты, пишущие в базу (ingest этапа 4), получают `db_session`: сессию поверх
+внешней транзакции соединения, которая откатывается после теста. Сессия
+работает в режиме `create_savepoint`, поэтому собственные `commit` и
+`begin_nested` кода под тестом не выходят за пределы этой транзакции, а
+следующий тест видит пустые таблицы. Дрейф-тест фикстуру не использует.
 """
 
 import asyncio
@@ -20,7 +22,7 @@ import pytest
 from alembic import command
 from alembic.config import Config
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import NullPool
 
 from app.config import get_settings
@@ -108,3 +110,25 @@ async def migrated_test_database(
     # уже работающем событийном цикле — уносим в отдельный поток с его циклом.
     await asyncio.to_thread(command.upgrade, alembic_config, "head")
     return _recreated_test_database
+
+
+@pytest.fixture
+async def db_session(migrated_test_database: str) -> AsyncIterator[AsyncSession]:
+    """Сессия внутри транзакции, откатываемой после теста."""
+    engine = create_async_engine(migrated_test_database, poolclass=NullPool)
+    try:
+        async with engine.connect() as connection:
+            transaction = await connection.begin()
+            session = AsyncSession(
+                bind=connection,
+                join_transaction_mode="create_savepoint",
+                expire_on_commit=False,
+                autoflush=False,
+            )
+            try:
+                yield session
+            finally:
+                await session.close()
+                await transaction.rollback()
+    finally:
+        await engine.dispose()

@@ -11,7 +11,7 @@
 | 1 | Каркас проекта, конфиг, docker-compose, подключение БД | done | см. раздел «Этап 1» ниже | 15 допущений, см. ниже |
 | 2 | Модели SQLAlchemy + миграции Alembic | done | см. раздел «Этап 2» ниже | 20 допущений, см. ниже |
 | 3 | Pydantic-схемы, включая `NormalizedVacancy` | done | см. раздел «Этап 3» ниже | 8 допущений, см. ниже |
-| 4 | `services/normalizer.py` + тесты | not started | | |
+| 4 | `services/normalizer.py` + тесты | done | см. раздел «Этап 4» ниже | 26 допущений, см. ниже |
 | 5 | CRUD API резюме и вакансий | not started | | |
 | 6 | `services/resume_scorer.py` + `services/matching.py` + тесты | not started | | |
 | 7 | `scripts/seed.py` | not started | | |
@@ -241,6 +241,82 @@
 
 ---
 
+## Этап 4 — `services/normalizer.py` + запись в БД (`services/ingest.py`) + тесты
+
+**Статус:** `done`. По решению пользователя в этап включена запись в БД: чистые функции
+нормализатора плюс `ingest.py` с upsert канона и публикаций. Seed (этап 7) и парсеры (этап 11)
+переиспользуют эту связку. Проверки закрытия: `determinism-checker` — блокеров нет;
+`verifier` — блокеров нет. Это после двух раундов исправлений ложных навыков: сначала
+`cv`/`rest`/`go`/`swift` и т.п. из обычных слов, затем пропавший `Rails`.
+
+### Созданные и изменённые файлы
+
+| Файл | Назначение |
+|---|---|
+| `app/data/skills.json` | 133 канона навыков с синонимами, `text_extraction_exclude`, `text_extraction_case_sensitive` |
+| `app/data/vocab.json` | города и страны, формат работы, тип занятости, релокация, грейды |
+| `app/utils/text.py` | `fold`, `unify_dashes`, `collapse_spaces`, `remove_emoji`, `fold_case_keep_length` |
+| `app/utils/skills_dict.py` | `SkillsDictionary` (frozen, `MappingProxyType`, `lru_cache`), сборка регулярок по словарю |
+| `app/utils/vocab.py` | загрузка `vocab.json` в неизменяемые структуры |
+| `app/services/__init__.py` | пакет сервисов |
+| `app/services/normalizer.py` | `RawVacancy` → `NormalizedVacancy`: зарплата, навыки, уровень, стаж, описание, формат, `dedup_key`, `content_hash`, выбор победителя |
+| `app/services/ingest.py` | `ingest_vacancy` / `ingest_batch`: `ON CONFLICT (dedup_key)`, `FOR UPDATE`, savepoint на запись, 6 статусов `IngestStatus` |
+| `tests/factories.py` | фабрики `RawVacancy` / `NormalizedVacancy` |
+| `tests/test_normalizer_{salary,text,skills,dedup,build}.py`, `tests/test_dictionaries.py` | офлайн-тесты нормализатора и словарей |
+| `tests/integration/test_ingest.py` | 13 сценариев записи: склейка, повтор, правка, понижение победителя, порядок |
+| `tests/integration/conftest.py` | фикстура `db_session`: внешняя транзакция + `create_savepoint`, откат после теста |
+| `pyproject.toml` | `[tool.coverage.run] concurrency = ["greenlet", "thread"]` — иначе async SQLAlchemy занижает покрытие |
+| `.cursor/skills/normalizer-rules/SKILL.md` | синхронизирован с фактическими правилами |
+
+### Подтверждено исполнением
+
+- `ruff check`, `ruff format --check`, `mypy app` — чисто (39 файлов в `app`).
+- `pytest` — 303 passed, 15 deselected; покрытие `normalizer.py` 100%, `skills_dict.py` 98%, `text.py` 100%, `ingest.py` 99%.
+- `pytest -m integration` — 15 passed (только `vacancies_test`, рабочая БД не тронута).
+- Детерминизм: при `PYTHONHASHSEED=0` и `2147483647` `model_dump` побайтно совпадает; перестановки ключей `skills.json` дают те же навыки; 6 перестановок порядка трёх публикаций дают один и тот же канон; `last_seen_at` не убывает.
+- Эталонный ключ: `яндекс|senior python developer|москва` → `1cf3ecb5…f1f69b`.
+- Образ api загружает JSON-словари (214 синонимов).
+
+### Принятые допущения этапа 4 (в коде помечены `# TODO:`)
+
+| # | Допущение |
+|---|---|
+| 1 | Сумма есть, период не указан → month |
+| 2 | Одно число без «от/до» → min = max |
+| 3 | Валюта без символа → None; RUB только при «т.р.»/«тр» |
+| 4 | Сумма больше int4 → вся зарплата None |
+| 5 | Стаж → уровень: ≤1 junior, ≤3 middle, ≤6 senior, >6 lead; intern из стажа не выводится |
+| 6 | Несколько грейдов в заголовке → младший |
+| 7 | Грейд ищется только в заголовке |
+| 8 | Задан `skills_hint` → берётся только он, без слияния с текстом |
+| 9 | Кириллические синонимы ловят окончания до 3 букв (финальная гласная синонима отбрасывается); `c`, `r`, `express` в тексте не ищутся |
+| 10 | В тексте не ищутся слова из `text_extraction_exclude` (`cv`, `rest`, `shell`, `torch`, `rabbit`, `elastic`): в обычном тексте это не навыки; `REST API`, `PyTorch`, `RabbitMQ` и т.п. ловятся полными синонимами |
+| 11 | `Go`, `GO`, `Swift`, `Rust`, `Spring`, `Gin`, `Helm`, `Excel`, `REST`, `Rails` ищутся только в точном регистре; английское предложение, начинающееся с «Go …», даст ложный `go` |
+| 12 | Хештеги сопоставляются с синонимом целиком (`#rails` → ruby on rails, `#python_developer` → ничего) и уважают exclude |
+| 13 | Многословные синонимы совпадают через `\s+`; кавычки в названии компании → пробел |
+| 14 | Эмодзи в заголовке для ключа удаляются по всей строке; пунктуация — только по краям, `+` и `#` сохраняются |
+| 15 | `|` внутри компонент `dedup_key` → пробел |
+| 16 | `content_hash` = sha256 JSON-массива `[title, company or "", description_clean]` |
+| 17 | `full` ⇔ непустые title и description_clean и задана company |
+| 18 | languages, education_required и город из текста не извлекаются |
+| 19 | Приоритет формата работы и занятости — порядок в `vocab.json`; релокация только True/None |
+| 20 | Заголовок/компания/город обрезаются до 500/255/100 символов |
+| 21 | Период зарплаты — самое раннее упоминание; тире в стаже унифицируются |
+| 22 | Правка со сменой `dedup_key` или коллизией `content_hash` → только `last_seen_at` (`POSTING_EDIT_IGNORED`), без переноса между канонами |
+| 23 | Понижение отредактированного победителя → канон перенормализуется из сохранённой публикации нового победителя; явные структурные поля источника теряются |
+| 24 | Гонка двух воркеров по одному `(source, external_id)` не закрыта: IntegrityError уходит в ошибки батча; по одному RQ-заданию на источник. Гонка по `dedup_key` закрыта `ON CONFLICT` + `FOR UPDATE` |
+| 25 | `ingest` не коммитит — коммит делает вызывающий (seed, RQ-задача) |
+| 26 | `ingest` не перенормализует переданный `NormalizedVacancy` |
+
+### Незакрытые замечания этапа 4 (не блокируют)
+
+- `description_clean` не вырезает HTML-теги — это зона HTML-парсера (этап 11).
+- В отображаемых title/company сохраняются эмодзи и правовые формы («ООО»); для ключа они чистятся.
+- Экзотические ложные навыки остаются: «500 ml» → machine learning, «git the file» → git, строчное «rails» в тексте не ловится.
+- PK — `uuid4`, порядок строк в БД не детерминирован; на канон это не влияет.
+
+---
+
 ## Долги, запланированные на конкретные этапы
 
 Найдены проверками на этапах 1–2, исправлять нужно там, где появится соответствующий код.
@@ -249,18 +325,16 @@
 
 - `Base` / `DeclarativeBase`, `alembic.ini`, `migrations/env.py`, COPY и volume — сделано.
 
-### Этап 4 (нормализатор)
+### Этап 4 (нормализатор) — закрыт
 
-- `compute_dedup_key(company, title, city)`: sha256 utf-8 `"company|title|city"`; `None`, если компания пустая.
-- Консервативная нормализация заголовка: грейд (Junior/Middle/Senior/Lead) и содержимое скобок не выкидывать.
-- Выбор победителя при склейке: `parse_quality=full`, затем max(len(description)); поля проигравших не мержить.
-- `published_at` канона = MIN публикаций; `last_seen_at` = MAX.
-- Lowercase и словарь синонимов для `NormalizedVacancy.skills` — схема их не нормализует.
+- `dedup_key`, консервативный заголовок, выбор победителя, MIN/MAX дат, lowercase и синонимы навыков — сделано.
 
 ### Этап 7 (seed)
 
 - Сид должен создавать и `vacancies`, и `vacancy_postings` (минимум два источника на один канонический оффер — для UI «источники»).
 - `contacts` в сиде — только ключи `ResumeContacts`; лишний ключ уронит `ResumeRead`.
+- Вакансии строить через `RawVacancy` → `normalize_vacancy` → `ingest_batch`, не вставлять строки в таблицы напрямую; коммит — в самом сиде (`ingest` не коммитит).
+- Для склейки в UI давать одинаковую тройку company/title/city в разных источниках с разными текстами.
 
 ### Этап 8 (фронтенд)
 
@@ -290,3 +364,6 @@
 - Playwright потребует либо `playwright install --with-deps chromium` в образе, либо базовый образ `mcr.microsoft.com/playwright/python`.
 - Держать `PARSERS_ENABLED=false` в демо-конфиге: при включении HTML-парсер пойдёт за `robots.txt` во внешнюю сеть.
 - Пересмотреть пин `rq<2` вместе с выбором планировщика.
+- `to_normalized` парсера возвращает `RawVacancy`, дальше общий `normalize_vacancy` + `ingest_batch`; RQ-задача коммитит сама.
+- HTML-парсер должен сам вырезать теги до `description_raw`: `clean_description` убирает только markdown.
+- По одному RQ-заданию на источник (гонка по `(source, external_id)` не закрыта, допущение 24 этапа 4).

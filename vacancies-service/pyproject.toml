@@ -111,3 +111,8 @@ testpaths = ["tests"]
 # `pytest -m integration` (позднее `-m` в командной строке перекрывает это).
 addopts = "-q --strict-markers -m 'not integration'"
 markers = ["integration: требует запущенного PostgreSQL; по умолчанию не собирается"]
+
+[tool.coverage.run]
+# Async SQLAlchemy исполняет код в гринлетах; без этого coverage теряет строки
+# после переключения контекста и занижает покрытие `ingest.py`.
+concurrency = ["greenlet", "thread"]

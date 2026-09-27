@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "company_legal_forms": ["ооо", "оао", "ао", "пао", "зао", "ип", "llc", "inc", "ltd", "gmbh"],
+  "cities": {
+    "Москва": {"country": "Россия", "aliases": ["мск", "msk", "moscow"]},
+    "Санкт-Петербург": {
+      "country": "Россия",
+      "aliases": [
+        "санкт петербург",
+        "спб",
+        "spb",
+        "питер",
+        "петербург",
+        "saint petersburg",
+        "st. petersburg",
+        "st petersburg"
+      ]
+    },
+    "Новосибирск": {"country": "Россия", "aliases": ["novosibirsk"]},
+    "Екатеринбург": {"country": "Россия", "aliases": ["екб", "ekaterinburg", "yekaterinburg"]},
+    "Казань": {"country": "Россия", "aliases": ["kazan"]},
+    "Нижний Новгород": {"country": "Россия", "aliases": ["н. новгород", "nizhny novgorod"]},
+    "Краснодар": {"country": "Россия", "aliases": ["krasnodar"]},
+    "Минск": {"country": "Беларусь", "aliases": ["minsk"]},
+    "Алматы": {"country": "Казахстан", "aliases": ["алма-ата", "almaty"]},
+    "Астана": {"country": "Казахстан", "aliases": ["astana"]},
+    "Ташкент": {"country": "Узбекистан", "aliases": ["tashkent"]},
+    "Тбилиси": {"country": "Грузия", "aliases": ["tbilisi"]},
+    "Ереван": {"country": "Армения", "aliases": ["yerevan"]},
+    "Белград": {"country": "Сербия", "aliases": ["belgrade", "beograd"]},
+    "Лимассол": {"country": "Кипр", "aliases": ["limassol"]},
+    "Дубай": {"country": "ОАЭ", "aliases": ["dubai"]},
+    "Берлин": {"country": "Германия", "aliases": ["berlin"]},
+    "Лондон": {"country": "Великобритания", "aliases": ["london"]}
+  },
+  "experience_level_patterns": {
+    "intern": ["стажер\\w*", "стажировк\\w*", "intern(?:ship)?", "trainee"],
+    "junior": ["junior", "jun", "джун\\w*", "джуниор\\w*", "младш\\w*"],
+    "middle": ["middle", "mid", "миддл\\w*", "мидл\\w*"],
+    "senior": ["senior", "sr", "сеньор\\w*", "синьор\\w*", "ведущ\\w*", "старш\\w*"],
+    "lead": ["lead", "teamlead", "тимлид\\w*", "техлид\\w*", "лид", "head", "руководител\\w*"]
+  },
+  "work_format_patterns": [
+    {"value": "hybrid", "patterns": ["гибрид\\w*", "hybrid"]},
+    {"value": "remote", "patterns": ["удален\\w*", "remote", "дистанц\\w*", "из любой точки"]},
+    {"value": "office", "patterns": ["офис\\w*", "office", "on-?site"]}
+  ],
+  "employment_type_patterns": [
+    {"value": "internship", "patterns": ["стажировк\\w*", "internship"]},
+    {
+      "value": "contract",
+      "patterns": [
+        "контракт\\w*",
+        "гпх",
+        "фриланс\\w*",
+        "freelance",
+        "contract\\w*",
+        "проектн\\w* работ\\w*"
+      ]
+    },
+    {
+      "value": "part_time",
+      "patterns": [
+        "частичн\\w* занятост\\w*",
+        "неполн\\w* (?:день|занятост\\w*)",
+        "part[- ]?time"
+      ]
+    },
+    {
+      "value": "full_time",
+      "patterns": ["полн\\w* занятост\\w*", "полный (?:рабочий )?день", "full[- ]?time"]
+    }
+  ],
+  "relocation_patterns": ["релокац\\w*", "relocation", "помощь с переездом", "visa support"]
+}
