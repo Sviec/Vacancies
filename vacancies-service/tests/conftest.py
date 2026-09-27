@@ -11,11 +11,12 @@
 from collections.abc import AsyncIterator, Iterator
 
 import pytest
+from fastapi import FastAPI
+from httpx import ASGITransport, AsyncClient
+
 from app.api.health import CheckResult, check_database, check_redis
 from app.config import Settings
 from app.main import create_app
-from fastapi import FastAPI
-from httpx import ASGITransport, AsyncClient
 
 
 def _ok_check() -> CheckResult:

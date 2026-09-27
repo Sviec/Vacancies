@@ -1,5 +1,6 @@
 # Критерий приёмки 1 (раздел 11 ТЗ): одна команда `docker compose up` поднимает
-# postgres, redis, api, worker и frontend.
+# postgres, redis, api, worker и frontend. Плюс одноразовый migrate, который
+# накатывает схему до старта api и worker и завершается с кодом 0.
 #
 # Ключ `version:` намеренно отсутствует — в Compose v2+ он устарел и вызывает
 # предупреждение.
@@ -43,6 +44,29 @@ services:
       retries: 10
       start_period: 5s
 
+  # Одноразовый сервис применения миграций. Автоприменение внутри lifespan api
+  # рассмотрено и отвергнуто: api и worker стартуют одновременно, то есть за
+  # DDL взялись бы два процесса параллельно (собственной блокировки Alembic не
+  # берёт), а провалившаяся миграция выглядела бы как невнятное «приложение не
+  # поднимается». Отдельный сервис даёт ровно один процесс DDL, честный
+  # ненулевой код выхода при провале и no-op за секунду при повторном `up`.
+  migrate:
+    build: .
+    image: vacancies-service:local
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-vacancies}:${POSTGRES_PASSWORD:-vacancies}@postgres:5432/${POSTGRES_DB:-vacancies}
+    command: alembic upgrade head
+    volumes:
+      # Монтируется только сюда. api и worker Alembic не исполняют, а в образе
+      # файлы уже есть из COPY — лишний bind-mount у них только маскировал бы
+      # расхождение между образом и рабочей копией.
+      - ./migrations:/srv/migrations
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
   api:
     build: .
     image: vacancies-service:local
@@ -64,9 +88,10 @@ services:
     ports:
       - "${API_HOST_PORT:-8000}:8000"
     volumes:
-      # Монтируются только ./app и ./tests. ./scripts и ./migrations ещё не
-      # существуют — Docker создал бы вместо них пустые root-овые каталоги на
-      # хосте. Их монтирование добавят этапы 2 (Alembic) и 7 (seed.py).
+      # Монтируются только ./app и ./tests. ./migrations сюда сознательно не
+      # монтируется (см. комментарий у сервиса migrate), ./scripts ещё не
+      # существует — Docker создал бы вместо него пустой root-овый каталог на
+      # хосте; его монтирование добавит этап 7 (seed.py).
       - ./app:/srv/app
       - ./tests:/srv/tests
     depends_on:
@@ -74,6 +99,10 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      # Схема обязана быть накатана до первого запроса: иначе api поднимается
+      # с зелёным /health на пустой базе и падает уже на рабочих эндпоинтах.
+      migrate:
+        condition: service_completed_successfully
     healthcheck:
       # На чистом Python: curl и wget в slim-образ не ставятся.
       # /health отдаёт 503 при деградации, и urlopen в этом случае бросит
@@ -87,8 +116,6 @@ services:
       timeout: 6s
       retries: 6
       start_period: 15s
-    # `alembic upgrade head` здесь сознательно НЕ вызывается: миграций пока нет,
-    # они появятся на этапе 2. /health зелёный и на пустой базе.
 
   worker:
     # Тот же build и тот же image, что у api: Compose соберёт образ один раз,
@@ -108,6 +135,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
   frontend:
     build: ./frontend

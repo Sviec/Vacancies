@@ -58,6 +58,9 @@ packages = ["app"]
 target-version = "py312"
 line-length = 100
 src = ["app", "tests"]
+# Тела ревизий пишет Alembic: lint и format на них только шумят, а следующий
+# `--autogenerate` вернёт исходный вид. E501 для них уже игнорируется ниже.
+extend-exclude = ["migrations/versions"]
 
 [tool.ruff.lint]
 # DTZ обязателен: запрещает naive datetime.utcnow(), важно для published_at/parsed_at (раздел 3 ТЗ).
@@ -71,8 +74,20 @@ ignore = [
     "RUF003",
 ]
 
+[tool.ruff.lint.isort]
+# Без этого `app` попадает в блок сторонних пакетов: ruff ищет первопартийные
+# модули относительно `src`, а каталога `app/app` не существует. Для
+# `migrations/env.py` это принципиально — импорты приложения обязаны быть
+# отделены от alembic/sqlalchemy, иначе автогенерируемые ревизии и ручные
+# правки дают разный порядок импортов при каждом прогоне `ruff format`.
+known-first-party = ["app"]
+
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101","ANN201","ARG001"]
+# Тела ревизий генерирует Alembic: длинные строки с выражениями CHECK и
+# server_default переносить вручную бессмысленно — следующий autogenerate
+# вернёт их обратно.
+"migrations/versions/*" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -91,4 +106,8 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
-addopts = "-q --strict-markers"
+# Интеграционные тесты исключены из прогона по умолчанию: они требуют живого
+# PostgreSQL, а основной набор обязан оставаться офлайновым. Запуск —
+# `pytest -m integration` (позднее `-m` в командной строке перекрывает это).
+addopts = "-q --strict-markers -m 'not integration'"
+markers = ["integration: требует запущенного PostgreSQL; по умолчанию не собирается"]

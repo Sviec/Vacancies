@@ -1,0 +1,1 @@
+Миграции схемы БД (Alembic, async-шаблон): DSN берётся из DATABASE_URL через app/config.py, применяются командой `alembic upgrade head`.

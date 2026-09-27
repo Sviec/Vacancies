@@ -1,8 +1,9 @@
 """Тесты /health и единого формата ошибок (раздел 6 ТЗ)."""
 
-from app import __version__
 from fastapi import FastAPI
 from httpx import AsyncClient
+
+from app import __version__
 
 
 async def test_health_ok(client: AsyncClient):
