@@ -33,6 +33,7 @@ desktop.ini
 .DS_Store
 .idea/
 .vscode/
+.cursor/
 
 # Визуальный референс
 # read-only визуальный референс с собственной вложенной .git
