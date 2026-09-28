@@ -11,21 +11,30 @@ head` с `Base.metadata`, поэтому любые остатки от пред
 работает в режиме `create_savepoint`, поэтому собственные `commit` и
 `begin_nested` кода под тестом не выходят за пределы этой транзакции, а
 следующий тест видит пустые таблицы. Дрейф-тест фикстуру не использует.
+
+API-тесты этапа 5 ходят в приложение через `api_client`: `get_session`
+подменён на тот же `db_session`.
 """
 
 import asyncio
 import os
+import uuid
 from collections.abc import AsyncIterator, Iterator
 from pathlib import Path
 
 import pytest
 from alembic import command
 from alembic.config import Config
+from fastapi import FastAPI
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import NullPool
 
+from app.api.deps import get_current_user_id
 from app.config import get_settings
+from app.db.session import get_session
+from app.main import create_app
 
 TEST_DB_NAME = "vacancies_test"
 ADMIN_DB_NAME = "postgres"
@@ -132,3 +141,42 @@ async def db_session(migrated_test_database: str) -> AsyncIterator[AsyncSession]
                 await transaction.rollback()
     finally:
         await engine.dispose()
+
+
+@pytest.fixture
+def app_for_db(db_session: AsyncSession) -> Iterator[FastAPI]:
+    """Приложение, чьи эндпоинты работают в транзакции `db_session`.
+
+    Lifespan не запускается, engine приложения не создаётся. Коммит эндпоинта
+    в режиме `create_savepoint` только освобождает savepoint; внешняя
+    транзакция откатывается после теста.
+    """
+    application = create_app()
+
+    async def _session_override() -> AsyncIterator[AsyncSession]:
+        try:
+            yield db_session
+        except Exception:
+            await db_session.rollback()
+            raise
+
+    application.dependency_overrides[get_session] = _session_override
+    yield application
+    application.dependency_overrides.clear()
+
+
+@pytest.fixture
+async def api_client(app_for_db: FastAPI) -> AsyncIterator[AsyncClient]:
+    """HTTP-клиент поверх приложения с тестовой БД."""
+    async with AsyncClient(
+        transport=ASGITransport(app=app_for_db), base_url="http://test"
+    ) as client:
+        yield client
+
+
+@pytest.fixture
+def other_user(app_for_db: FastAPI) -> uuid.UUID:
+    """Подменить текущего пользователя на другого (тесты изоляции)."""
+    user_id = uuid.uuid4()
+    app_for_db.dependency_overrides[get_current_user_id] = lambda: user_id
+    return user_id

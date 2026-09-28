@@ -436,30 +436,38 @@ class Resume(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     score: Mapped[float | None] = mapped_column(Float)
     score_details: Mapped[dict[str, Any]] = mapped_column(server_default=text("'{}'::jsonb"))
 
+    # TODO: порядок элементов секций задаёт `order_by` (хронология, алфавит):
+    # колонки позиции нет, поэтому пользовательский порядок не сохраняется.
+    # Последний ключ `id` — детерминированный разрыв ничьих.
     experience: Mapped[list["ResumeExperience"]] = relationship(
         back_populates="resume",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        order_by=lambda: (ResumeExperience.start_date.desc(), ResumeExperience.id),
     )
     education: Mapped[list["ResumeEducation"]] = relationship(
         back_populates="resume",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        order_by=lambda: (ResumeEducation.start_year.desc().nulls_last(), ResumeEducation.id),
     )
     skills: Mapped[list["ResumeSkill"]] = relationship(
         back_populates="resume",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        order_by=lambda: ResumeSkill.skill,
     )
     courses: Mapped[list["ResumeCourse"]] = relationship(
         back_populates="resume",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        order_by=lambda: (ResumeCourse.year.desc().nulls_last(), ResumeCourse.id),
     )
     languages: Mapped[list["ResumeLanguage"]] = relationship(
         back_populates="resume",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        order_by=lambda: ResumeLanguage.language,
     )
     # Без `delete-orphan`, в отличие от остальных коллекций: vacancy_matches —
     # это кэш (п. 5.6), который этап 6 наполняет bulk-upsert'ом

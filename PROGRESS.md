@@ -12,7 +12,7 @@
 | 2 | Модели SQLAlchemy + миграции Alembic | done | см. раздел «Этап 2» ниже | 20 допущений, см. ниже |
 | 3 | Pydantic-схемы, включая `NormalizedVacancy` | done | см. раздел «Этап 3» ниже | 8 допущений, см. ниже |
 | 4 | `services/normalizer.py` + тесты | done | см. раздел «Этап 4» ниже | 26 допущений, см. ниже |
-| 5 | CRUD API резюме и вакансий | not started | | |
+| 5 | CRUD API резюме и вакансий | done | см. раздел «Этап 5» ниже | 26 допущений, см. ниже |
 | 6 | `services/resume_scorer.py` + `services/matching.py` + тесты | not started | | |
 | 7 | `scripts/seed.py` | not started | | |
 | 8 | Демо-фронтенд (все 4 экрана) на сид-данных | not started | | |
@@ -317,6 +317,97 @@
 
 ---
 
+## Этап 5 — CRUD API резюме и вакансий
+
+**Статус:** `done`. Проверка закрытия: `verifier` — блокеров нет. Проверены живые запросы
+к API на `vacancies_test` и пересборка `docker compose up -d --build` с GET-запросами к рабочей БД.
+Остальные проверки не требовались: нормализатор, матчинг, адаптеры, парсеры и фронтенд
+не менялись.
+
+**Решения пользователя на этом этапе:**
+- Фильтра `skills[]` в поиске и `top_skills` в `filters/meta` нет — отклонение от п. 5.5 и п. 6 ТЗ. Навыки пользователя учитываются через резюме в подборе (этап 6).
+- Зарплата: `salary_min` без валюты фильтрует по всем валютам, включая NULL; валюта не додумывается.
+- `saved` и `hidden` взаимоисключающие.
+
+### Эндпоинты
+
+- **Резюме:** `GET/POST /api/v1/resumes`, `GET/PATCH/DELETE /api/v1/resumes/{id}`, `POST /api/v1/resumes/{id}/duplicate`.
+- **Вакансии:**
+  - `GET /api/v1/vacancies`;
+  - `GET /api/v1/vacancies/filters/meta`;
+  - `GET /api/v1/vacancies/{id}`;
+  - `POST /api/v1/vacancies/{id}/action`;
+  - `DELETE /api/v1/vacancies/{id}/action/{action}`.
+
+### Созданные и изменённые файлы
+
+| Файл | Назначение |
+|---|---|
+| `app/api/deps.py` | `get_current_user_id` → `DEMO_USER_ID`, `CurrentUserDep` |
+| `app/services/resumes.py` | CRUD, дублирование, семантика `is_primary`, замена секций, канонизация навыков, сброс `score` и `vacancy_matches` |
+| `app/services/vacancy_filters.py` | чистые построители условий, FTS и сортировок |
+| `app/services/vacancies.py` | лента (3 SQL-запроса на страницу), деталь, `filters/meta` |
+| `app/services/user_actions.py` | идемпотентные действия, `saved` и `hidden` снимают друг друга |
+| `app/api/v1/resumes.py`, `app/api/v1/vacancies.py` | тонкие эндпоинты; коммит — в эндпоинте |
+| `app/api/errors.py` | `IntegrityError` → 409 `CONFLICT` |
+| `app/db/models.py` | только `order_by` у коллекций `Resume` (без миграции) |
+| `app/db/session.py` | docstring: сервисы делают только flush, коммит в эндпоинте |
+| `app/schemas/resumes.py`, `vacancies.py`, `__init__.py` | длины колонок, запрет `null` в PATCH, уникальность языков, `ResumeListItem`, `saved_only`, `user_actions`, `is_active`, `VacancyUserState`, `currencies`; убраны `skills` и `top_skills` |
+| `tests/test_routes_order.py`, `test_vacancy_filters.py`, `test_resume_skills_prepare.py`, `test_error_handlers.py` | офлайн-тесты |
+| `tests/integration/test_api_{resumes,vacancies_list,vacancy_detail_actions,filters_meta}.py` | интеграционные тесты API |
+| `tests/integration/conftest.py`, `tests/factories.py`, `tests/test_schemas.py` | фикстуры `api_client`/`other_user`, `make_resume_payload`, `ingest_raws` |
+| `vacancies-service/README.md` | короткий README сервиса: его копирует `Dockerfile` и читает `pyproject.toml`; основной README перенесён в корень репозитория |
+
+### Подтверждено исполнением
+
+- `ruff check`, `ruff format --check`, `mypy app` — чисто (44 файла в `app`).
+- `pytest` — 350 passed; `pytest -m integration` — 115 passed.
+- Покрытие: `resumes.py` 99%, `vacancies.py`, `vacancy_filters.py`, `user_actions.py` — 100%.
+- Живой сценарий на `vacancies_test`:
+  - полный цикл резюме, ни одного сбоя; изменения видны из нового соединения;
+  - в любой момент ровно одно основное резюме;
+  - поиск с русской морфологией, работа фильтров в сочетании друг с другом.
+- Лента из 20 вакансий — 3 SQL-запроса, без N+1.
+- `docker compose up -d --build`: `migrate` Exited 0, api healthy. В OpenAPI 11 маршрутов этапа. Ошибки 404/409/422 приходят в едином формате, без SQL и traceback.
+
+### Принятые допущения этапа 5 (в коде помечены `# TODO:`)
+
+| # | Допущение |
+|---|---|
+| 1 | `user_id` — из `get_current_user_id()` → `DEMO_USER_ID`; auth заменит только эту функцию |
+| 2 | Коммит делает эндпоинт, сервисы только flush-ят |
+| 3 | Чужое резюме → 404, не 403 |
+| 4 | Первое резюме всегда основное; снять флаг с основного нельзя (409) — только назначить другое |
+| 5 | При удалении основного основным становится резюме с максимальным `updated_at` |
+| 6 | Снятие `is_primary` не меняет `updated_at` соседнего резюме |
+| 7 | PATCH секций заменяет список целиком |
+| 8 | Навыки резюме канонизируются `normalize_skills`; дубликаты канона схлопываются молча, уровень — первый ненулевой |
+| 9 | Любое изменение, кроме `title` и `is_primary`, удаляет `vacancy_matches` и обнуляет `score`; пересчёт — этап 6 |
+| 10 | Копия резюме: « (копия)», не основная, `score` копируется, матчи — нет |
+| 11 | Порядок секций задаёт `order_by`; колонки позиции нет, пользовательский порядок не сохраняется |
+| 12 | Списочные query-параметры — повтором ключа, без `param[]` |
+| 13 | Фильтра `skills[]` и `top_skills` нет (решение пользователя, отклонение от п. 5.5 и п. 6 ТЗ) |
+| 14 | `salary_min` и `salary_currency` независимы; детектор валюты по стране или компании — позже |
+| 15 | Фильтр по сумме: `COALESCE(salary_max, salary_min)`, только `period='month'` |
+| 16 | `sort=salary` без валюты сравнивает числа разных валют как есть |
+| 17 | `relocation_support=false` означает `IS NOT TRUE` |
+| 18 | `published_after` сравнивается с `published_at` канона; время без зоны — UTC |
+| 19 | `q` из одних стоп-слов даёт пустую выдачу |
+| 20 | `country` — по `lower()`, `city` — через `canonicalize_city` + `lower()` |
+| 21 | Новых индексов нет; пересмотреть по `EXPLAIN` на сид-данных этапа 7 |
+| 22 | `saved`/`hidden` взаимоисключающие; любое действие снимается через `DELETE .../action/{action}` |
+| 23 | Ответ на действие — 200 с полным множеством действий |
+| 24 | Деталь отдаёт неактивные и скрытые вакансии; `viewed` автоматически не пишется |
+| 25 | `sources` в `filters/meta` — из публикаций, не из таблицы `sources` |
+| 26 | `IntegrityError` → 409 `CONFLICT` без имени ограничения в ответе |
+
+### Незакрытые замечания этапа 5 (не блокируют)
+
+- `GET /vacancies/recommended` до этапа 6 отдаёт 422: строка `recommended` не UUID.
+- Проверка порядка маршрутов сделана через поведение и разбор `router.py`: в FastAPI 0.141 подключённые роутеры не видны в `app.routes` плоским списком.
+
+---
+
 ## Долги, запланированные на конкретные этапы
 
 Найдены проверками на этапах 1–2, исправлять нужно там, где появится соответствующий код.
@@ -328,6 +419,12 @@
 ### Этап 4 (нормализатор) — закрыт
 
 - `dedup_key`, консервативный заголовок, выбор победителя, MIN/MAX дат, lowercase и синонимы навыков — сделано.
+
+### Этап 6 (скоринг и матчинг)
+
+- Заменить тело `_invalidate_derived` в `services/resumes.py` на пересчёт `score` и `vacancy_matches`, а не только их очистку.
+- `/vacancies/recommended` должен заполнять `user_actions` у `RecommendedVacancyItem` и уважать `exclude_hidden`.
+- Навыки вакансии в ленте не фильтруются — совпадение навыков резюме учитывает только матчинг (45 баллов).
 
 ### Этап 7 (seed)
 
@@ -348,6 +445,8 @@
 - **Дыра и в ТЗ, и в шаблоне:** фильтры ниже 768px должны сворачиваться в модальное окно, в макетах этого паттерна нет — придётся проектировать.
 - Экран «Источники» в макетах отсутствует — собирать из токенов, а не копировать.
 - Карточка вакансии: список источников из `vacancy_postings`, не одно поле `source`.
+- В фильтрах нет выбора навыков (решение пользователя на этапе 5); валюта — необязательный выбор рядом с суммой, список из `filters/meta.currencies`.
+- Списочные параметры запроса отправлять повтором ключа (`work_format=remote&work_format=hybrid`), не `work_format[]`.
 - Заголовок страницы 30/34px против «20–24px» раздела 8: это утверждённый язык макетов, зафиксировать как исключение для display-заголовка, заголовки секций держать в 15–24px.
 - Состояния загрузки, пустоты и ошибки обязательны на всех четырёх экранах; в макетах есть только пустое состояние ленты.
 

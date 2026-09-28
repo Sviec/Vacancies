@@ -29,6 +29,8 @@ from app.schemas.resumes import (
     ResumeExperienceRead,
     ResumeLanguageCreate,
     ResumeLanguageRead,
+    ResumeListItem,
+    ResumeListResponse,
     ResumeRead,
     ResumeSkillCreate,
     ResumeSkillRead,
@@ -51,6 +53,7 @@ from app.schemas.vacancies import (
     VacancyListQuery,
     VacancyListResponse,
     VacancyPostingBriefRead,
+    VacancyUserState,
 )
 
 __all__ = [
@@ -81,6 +84,8 @@ __all__ = [
     "ResumeGenerateRequest",
     "ResumeLanguageCreate",
     "ResumeLanguageRead",
+    "ResumeListItem",
+    "ResumeListResponse",
     "ResumeRead",
     "ResumeScoreResponse",
     "ResumeSkillCreate",
@@ -98,5 +103,6 @@ __all__ = [
     "VacancyListResponse",
     "VacancyPostingBriefRead",
     "VacancySort",
+    "VacancyUserState",
     "validate_salary_range",
 ]

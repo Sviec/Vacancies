@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import IntegrityError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.middleware import REQUEST_ID_HEADER, get_request_id
@@ -11,6 +12,7 @@ from app.utils.errors import (
     HTTP_ERROR_FALLBACK_CODE,
     HTTP_STATUS_TO_CODE,
     AppError,
+    ConflictError,
     build_error_payload,
 )
 from app.utils.logging import get_logger
@@ -78,6 +80,23 @@ def register_exception_handlers(app: FastAPI) -> None:
         code = HTTP_STATUS_TO_CODE.get(exc.status_code, HTTP_ERROR_FALLBACK_CODE)
         logger.warning("http_exception", code=code, status_code=exc.status_code)
         return _error_response(request, exc.status_code, code, str(exc.detail), {})
+
+    @app.exception_handler(IntegrityError)
+    async def handle_integrity_error(request: Request, exc: IntegrityError) -> JSONResponse:
+        # TODO: нарушение ограничения БД — страховка от гонок (например, два
+        # одновременных «сделать основным»). Имя ограничения и SQL — только в лог.
+        logger.warning(
+            "integrity_error",
+            constraint=getattr(getattr(exc.orig, "__cause__", None), "constraint_name", None),
+            error=str(exc.orig),
+        )
+        return _error_response(
+            request,
+            409,
+            ConflictError.code,
+            ConflictError.default_message,
+            {},
+        )
 
     @app.exception_handler(Exception)
     async def handle_unexpected_error(request: Request, exc: Exception) -> JSONResponse:

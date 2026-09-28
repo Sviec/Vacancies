@@ -23,13 +23,16 @@ from app.schemas import (
     MatchSkillsBreakdown,
     NormalizedVacancy,
     ParseRunRead,
+    ResumeCreate,
     ResumeExperienceCreate,
     ResumeRead,
     ResumeScoreResponse,
     ResumeSkillCreate,
+    ResumeUpdate,
     SourceListItem,
     VacancyCardRead,
     VacancyDetailRead,
+    VacancyFiltersMeta,
     VacancyListQuery,
 )
 
@@ -312,11 +315,100 @@ def test_source_and_parse_run_from_attributes() -> None:
 # --- ResumeSkillCreate ---
 
 
-def test_skill_must_be_lowercase() -> None:
+def test_skill_accepts_any_case() -> None:
+    # К канону навык приводит сервис (normalize_skills), не схема.
+    assert ResumeSkillCreate(skill="Python").skill == "Python"
     with pytest.raises(ValidationError):
-        ResumeSkillCreate(skill="Python")
-    ok = ResumeSkillCreate(skill="python")
-    assert ok.skill == "python"
+        ResumeSkillCreate(skill="")
+    with pytest.raises(ValidationError):
+        ResumeSkillCreate(skill="x" * 101)
+
+
+# --- ResumeCreate / ResumeUpdate ---
+
+
+def test_resume_update_rejects_null_for_required_fields() -> None:
+    with pytest.raises(ValidationError):
+        ResumeUpdate(title=None)
+    with pytest.raises(ValidationError):
+        ResumeUpdate.model_validate({"skills": None})
+    assert ResumeUpdate(summary=None).model_dump(exclude_unset=True) == {"summary": None}
+
+
+def test_resume_title_length_and_blank() -> None:
+    with pytest.raises(ValidationError):
+        ResumeCreate(title="x" * 256)
+    with pytest.raises(ValidationError):
+        ResumeCreate(title="   ")
+    with pytest.raises(ValidationError):
+        ResumeUpdate(title="")
+    assert ResumeCreate(title="  Backend  ").title == "Backend"
+
+
+def test_resume_duplicate_language_fails() -> None:
+    languages = [
+        {"language": "English", "level": "B2"},
+        {"language": " english ", "level": "C1"},
+    ]
+    with pytest.raises(ValidationError):
+        ResumeCreate.model_validate({"title": "CV", "languages": languages})
+    with pytest.raises(ValidationError):
+        ResumeUpdate.model_validate({"languages": languages})
+
+
+def test_resume_create_forbids_user_id_and_origin() -> None:
+    with pytest.raises(ValidationError):
+        ResumeCreate.model_validate({"title": "CV", "user_id": str(uuid4())})
+    with pytest.raises(ValidationError):
+        ResumeCreate.model_validate({"title": "CV", "origin": "generated"})
+    with pytest.raises(ValidationError):
+        ResumeUpdate.model_validate({"origin": "generated"})
+
+
+def test_resume_salary_int4_bound() -> None:
+    with pytest.raises(ValidationError):
+        ResumeCreate(title="CV", desired_salary_min=2_147_483_648)
+    assert ResumeCreate(title="CV", desired_salary_min=2_147_483_647).desired_salary_min
+
+
+# --- VacancyListQuery (этап 5) ---
+
+
+def test_vacancy_list_query_blank_strings_to_none() -> None:
+    query = VacancyListQuery(q="  ", country=" ", city="")
+    assert query.q is None
+    assert query.country is None
+    assert query.city is None
+
+
+def test_vacancy_list_query_has_no_skills_filter() -> None:
+    with pytest.raises(ValidationError):
+        VacancyListQuery.model_validate({"skills": ["python"]})
+
+
+def test_vacancy_list_query_salary_without_currency_ok() -> None:
+    query = VacancyListQuery(salary_min=100)
+    assert query.salary_min == 100
+    assert query.salary_currency is None
+
+
+def test_vacancy_list_query_naive_published_after_is_utc() -> None:
+    query = VacancyListQuery.model_validate({"published_after": "2026-09-01T10:00:00"})
+    assert query.published_after == datetime(2026, 9, 1, 10, tzinfo=UTC)
+    date_only = VacancyListQuery.model_validate({"published_after": "2026-09-01"})
+    assert date_only.published_after == datetime(2026, 9, 1, tzinfo=UTC)
+
+
+def test_vacancy_list_query_sources_cleaned() -> None:
+    assert VacancyListQuery(source=[" a ", "", "b"]).source == ["a", "b"]
+    assert VacancyListQuery(source=["  "]).source is None
+    with pytest.raises(ValidationError):
+        VacancyListQuery(source=[f"s{i}" for i in range(21)])
+
+
+def test_vacancy_filters_meta_has_no_top_skills() -> None:
+    assert "top_skills" not in VacancyFiltersMeta.model_fields
+    assert "currencies" in VacancyFiltersMeta.model_fields
 
 
 def test_skill_level_bounds() -> None:
