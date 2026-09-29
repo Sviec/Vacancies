@@ -180,10 +180,3 @@ async def test_actions_are_per_user(
     detail = (await api_client.get(f"{URL}/{merged_id}")).json()
     assert detail["user_actions"] == []
     assert (await api_client.get(URL)).json()["total"] == 1
-
-
-async def test_recommended_is_not_yet_implemented(api_client: AsyncClient) -> None:
-    # До этапа 6 строка "recommended" разбирается как vacancy_id → 422.
-    # Этап 6 добавит GET /vacancies/recommended и этот тест изменится.
-    response = await api_client.get(f"{URL}/recommended")
-    assert response.status_code == 422

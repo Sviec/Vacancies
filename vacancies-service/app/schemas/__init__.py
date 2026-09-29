@@ -37,12 +37,15 @@ from app.schemas.resumes import (
     ResumeUpdate,
 )
 from app.schemas.scoring import (
+    MarketSkillsInfo,
     MatchCriterionBreakdown,
     MatchDetails,
     MatchSkillsBreakdown,
+    ResumeScoreDetails,
     ResumeScoreResponse,
     ScoreCriterionDetail,
     ScoreCriterionKey,
+    ScoreIssue,
 )
 from app.schemas.sources import ParseRunRead, SourceListItem
 from app.schemas.vacancies import (
@@ -61,6 +64,7 @@ __all__ = [
     "CurrencyCode",
     "ErrorDetail",
     "ErrorResponse",
+    "MarketSkillsInfo",
     "MatchCriterionBreakdown",
     "MatchDetails",
     "MatchSkillsBreakdown",
@@ -87,6 +91,7 @@ __all__ = [
     "ResumeListItem",
     "ResumeListResponse",
     "ResumeRead",
+    "ResumeScoreDetails",
     "ResumeScoreResponse",
     "ResumeSkillCreate",
     "ResumeSkillRead",
@@ -94,6 +99,7 @@ __all__ = [
     "ResumeUpdate",
     "ScoreCriterionDetail",
     "ScoreCriterionKey",
+    "ScoreIssue",
     "SourceListItem",
     "VacancyActionRequest",
     "VacancyCardRead",

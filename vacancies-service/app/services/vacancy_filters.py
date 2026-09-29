@@ -49,7 +49,7 @@ def rank_expression(tsquery: ColumnElement[Any]) -> ColumnElement[float]:
     return func.ts_rank(Vacancy.search_vector, tsquery, type_=Float)
 
 
-def _user_action_exists(user_id: UUID, action: UserAction) -> ColumnElement[bool]:
+def user_action_exists(user_id: UUID, action: UserAction) -> ColumnElement[bool]:
     return exists().where(
         UserVacancyAction.vacancy_id == Vacancy.id,
         UserVacancyAction.user_id == user_id,
@@ -125,9 +125,9 @@ def build_conditions(
         conditions.append(Vacancy.relocation_support.is_not(True))
 
     if query.exclude_hidden:
-        conditions.append(~_user_action_exists(user_id, UserAction.HIDDEN))
+        conditions.append(~user_action_exists(user_id, UserAction.HIDDEN))
     if query.saved_only:
-        conditions.append(_user_action_exists(user_id, UserAction.SAVED))
+        conditions.append(user_action_exists(user_id, UserAction.SAVED))
 
     return conditions
 

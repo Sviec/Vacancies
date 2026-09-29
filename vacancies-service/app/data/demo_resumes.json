@@ -1,0 +1,151 @@
+[
+  {
+    "key": "strong",
+    "expected": {"min": 8.5, "max": 10.0},
+    "payload": {
+      "title": "Senior Python Developer",
+      "is_primary": true,
+      "target_position": "Senior Python Developer",
+      "desired_salary_min": 400000,
+      "desired_salary_currency": "RUB",
+      "desired_country": "Россия",
+      "desired_city": "Москва",
+      "desired_work_format": "hybrid",
+      "summary": "Бэкенд-разработчик с восьмилетним опытом: высоконагруженные сервисы на Python, асинхронные API, PostgreSQL и Kafka. Люблю измеримые результаты, код-ревью и наставничество.",
+      "contacts": {
+        "email": "strong.dev@example.com",
+        "telegram": "@strong_dev",
+        "github": "https://github.com/strong-dev"
+      },
+      "experience": [
+        {
+          "company": "Яндекс",
+          "position": "Ведущий Python-разработчик",
+          "start_date": "2022-04-01",
+          "is_current": true,
+          "description": "Отвечаю за бэкенд сервиса рекомендаций: асинхронные API на FastAPI, хранение в PostgreSQL и Redis, обработка событий из Kafka. Проектирую схемы данных, провожу код-ревью, веду двух разработчиков, участвую в дежурствах и разборе инцидентов. Перевёл сервисы в Kubernetes и настроил мониторинг на Prometheus и Grafana.",
+          "achievements": "Сократил p95 задержки ответа с 450 до 120 мс; снизил стоимость инфраструктуры на 30%; вывел сервис на 15k RPS без деградации."
+        },
+        {
+          "company": "Ozon",
+          "position": "Python-разработчик",
+          "start_date": "2019-09-01",
+          "end_date": "2022-04-01",
+          "description": "Разрабатывал микросервисы каталога товаров на Python: REST API, фоновые задачи, интеграции с поставщиками. Писал миграции PostgreSQL на SQLAlchemy и Alembic, покрывал код тестами на pytest, упаковывал сервисы в Docker и поддерживал пайплайны CI. Участвовал в переходе с монолита на микросервисы.",
+          "achievements": "Ускорил импорт прайс-листов в 4 раза; довёл покрытие тестами до 85%; уменьшил число инцидентов в релизах на 40%."
+        },
+        {
+          "company": "Тинькофф",
+          "position": "Младший Python-разработчик",
+          "start_date": "2017-07-01",
+          "end_date": "2019-09-01",
+          "description": "Поддерживал внутренние сервисы отчётности: выгрузки из PostgreSQL, генерация отчётов, интеграции с внешними API банков-партнёров. Автоматизировал ручные операции аналитиков, писал скрипты на Python и Bash, разбирал обращения поддержки второй линии и готовил документацию для команды.",
+          "achievements": "Автоматизировал 12 ежедневных ручных отчётов; сократил время подготовки месячной отчётности с трёх дней до 6 часов."
+        }
+      ],
+      "education": [
+        {
+          "institution": "МГТУ им. Н. Э. Баумана",
+          "degree": "Бакалавр",
+          "field": "Программная инженерия",
+          "start_year": 2013,
+          "end_year": 2017
+        }
+      ],
+      "skills": [
+        {"skill": "Python", "level": 5},
+        {"skill": "FastAPI", "level": 5},
+        {"skill": "PostgreSQL", "level": 4},
+        {"skill": "Docker", "level": 4},
+        {"skill": "Kubernetes", "level": 3},
+        {"skill": "Redis", "level": 4},
+        {"skill": "Kafka", "level": 4},
+        {"skill": "SQLAlchemy", "level": 4},
+        {"skill": "Terraform", "level": 2},
+        {"skill": "Grafana", "level": 3},
+        {"skill": "Prometheus", "level": 3}
+      ],
+      "courses": [
+        {"title": "Kubernetes для разработчиков", "provider": "Slurm", "year": 2023}
+      ],
+      "languages": [
+        {"language": "Русский", "level": "native"},
+        {"language": "English", "level": "C1"}
+      ]
+    }
+  },
+  {
+    "key": "medium",
+    "expected": {"min": 5.5, "max": 6.5},
+    "payload": {
+      "title": "Python-разработчик",
+      "is_primary": false,
+      "target_position": "Python-разработчик",
+      "desired_city": "Санкт-Петербург",
+      "contacts": {"email": "medium.dev@example.com"},
+      "experience": [
+        {
+          "company": "Ромашка Софт",
+          "position": "Python-разработчик",
+          "start_date": "2024-03-01",
+          "is_current": true,
+          "description": "Поддержка внутреннего портала компании на Django: исправление ошибок, новые страницы отчётов, интеграция с учётной системой и настройка выгрузок.",
+          "achievements": "Ускорил формирование отчётов в 3 раза."
+        },
+        {
+          "company": "ИП Смирнов",
+          "position": "Младший разработчик",
+          "start_date": "2021-02-01",
+          "end_date": "2023-06-01",
+          "description": "Доработка сайта интернет-магазина, правки вёрстки и скриптов на Python."
+        }
+      ],
+      "education": [
+        {
+          "institution": "СПбГУ",
+          "degree": "Бакалавр",
+          "field": "Прикладная математика",
+          "start_year": 2016,
+          "end_year": 2020
+        }
+      ],
+      "skills": [
+        {"skill": "Python", "level": 4},
+        {"skill": "Django", "level": 3},
+        {"skill": "HTML", "level": 3},
+        {"skill": "CSS", "level": 3},
+        {"skill": "JavaScript", "level": 2},
+        {"skill": "Bash", "level": 2}
+      ],
+      "languages": [
+        {"language": "English", "level": "B1"}
+      ]
+    }
+  },
+  {
+    "key": "weak",
+    "expected": {"min": 2.5, "max": 3.5},
+    "payload": {
+      "title": "Резюме",
+      "is_primary": false,
+      "desired_work_format": "remote",
+      "contacts": {"phone": "+7 900 000-00-00"},
+      "experience": [
+        {
+          "company": "ООО Альфа",
+          "position": "Стажёр",
+          "start_date": "2024-06-01",
+          "end_date": "2025-12-01"
+        }
+      ],
+      "skills": [
+        {"skill": "Python"},
+        {"skill": "SQL"},
+        {"skill": "Excel"}
+      ],
+      "languages": [
+        {"language": "Русский", "level": "native"}
+      ]
+    }
+  }
+]

@@ -42,9 +42,25 @@ async def test_filters_meta_is_not_captured_by_vacancy_id(
     assert by_id.status_code == 422
 
 
+async def test_recommended_is_not_captured_by_vacancy_id(app: FastAPI, client: AsyncClient) -> None:
+    app.dependency_overrides[get_session] = _exploding_session
+    # 503 означает, что запрос дошёл до сервиса рекомендаций, а не упал на
+    # разборе "recommended" как UUID в `/{vacancy_id}` (422).
+    response = await client.get("/api/v1/vacancies/recommended")
+    assert response.status_code == 503
+    assert response.json()["error"]["code"] == "DEPENDENCY_UNAVAILABLE"
+
+
+async def test_recommended_validates_query_before_db(app: FastAPI, client: AsyncClient) -> None:
+    app.dependency_overrides[get_session] = _exploding_session
+    for query in ("limit=0", "limit=201", "resume_id=not-a-uuid", "page=1"):
+        response = await client.get(f"/api/v1/vacancies/recommended?{query}")
+        assert response.status_code == 422, query
+        assert response.json()["error"]["code"] == "VALIDATION_ERROR"
+
+
 def test_recommendations_router_included_before_vacancies() -> None:
-    # У recommendations.router до этапа 6 нет маршрутов, поэтому порядок
-    # проверяется по вызовам `api_router.include_router(<module>.router)`.
+    # Порядок проверяется по вызовам `api_router.include_router(<module>.router)`.
     tree = ast.parse(inspect.getsource(router_module))
     included = [
         node.args[0].value.id

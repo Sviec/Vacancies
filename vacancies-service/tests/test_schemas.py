@@ -18,17 +18,23 @@ from app.enums import (
 )
 from app.schemas import (
     ErrorResponse,
+    MarketSkillsInfo,
     MatchCriterionBreakdown,
     MatchDetails,
     MatchSkillsBreakdown,
     NormalizedVacancy,
     ParseRunRead,
+    RecommendationsQuery,
     ResumeCreate,
     ResumeExperienceCreate,
     ResumeRead,
+    ResumeScoreDetails,
     ResumeScoreResponse,
     ResumeSkillCreate,
     ResumeUpdate,
+    ScoreCriterionDetail,
+    ScoreCriterionKey,
+    ScoreIssue,
     SourceListItem,
     VacancyCardRead,
     VacancyDetailRead,
@@ -428,14 +434,67 @@ def test_resume_score_response_upper_bound() -> None:
 
 def test_match_details_zero_points() -> None:
     details = MatchDetails(
-        skills=MatchSkillsBreakdown(matched=[], missing=["python"], points=0),
-        level=MatchCriterionBreakdown(points=0, max_points=15),
-        salary=MatchCriterionBreakdown(points=0, max_points=15),
-        location=MatchCriterionBreakdown(points=0, max_points=15),
-        freshness=MatchCriterionBreakdown(points=0, max_points=10),
+        skills=MatchSkillsBreakdown(matched=[], missing=["python"], points=0, reason="ratio"),
+        level=MatchCriterionBreakdown(points=0, max_points=20, reason="gap"),
+        salary=MatchCriterionBreakdown(points=0, max_points=15, reason="below"),
+        location=MatchCriterionBreakdown(points=0, max_points=12, reason="mismatch"),
+        freshness=MatchCriterionBreakdown(points=0, max_points=8, reason="older"),
     )
     assert details.skills.points == 0
     assert details.level.points == 0
+    assert details.level.context == {}
+
+
+def test_match_breakdown_requires_reason() -> None:
+    with pytest.raises(ValidationError):
+        MatchCriterionBreakdown.model_validate({"points": 0, "max_points": 8})
+
+
+def _criteria(keys: list[ScoreCriterionKey]) -> list[ScoreCriterionDetail]:
+    return [ScoreCriterionDetail(key=key, name=key.value, weight=1, points=0) for key in keys]
+
+
+def _score_details(keys: list[ScoreCriterionKey]) -> dict[str, object]:
+    return {
+        "version": 1,
+        "score": 0,
+        "criteria": _criteria(keys),
+        "recommendations": [],
+        "market": {"basis": "none", "sample_size": 0, "top_skills": []},
+    }
+
+
+def test_resume_score_details_requires_all_eight_criteria() -> None:
+    keys = list(ScoreCriterionKey)
+    assert ResumeScoreDetails.model_validate(_score_details(keys)).version == 1
+    with pytest.raises(ValidationError):
+        ResumeScoreDetails.model_validate(_score_details(keys[:7]))
+    with pytest.raises(ValidationError):
+        ResumeScoreDetails.model_validate(_score_details(keys[::-1]))
+
+
+def test_score_criterion_detail_without_issues_is_valid() -> None:
+    detail = ScoreCriterionDetail(
+        key=ScoreCriterionKey.LANGUAGES, name="Языки", weight=0.5, points=0.5
+    )
+    assert detail.issues == []
+    assert detail.recommendation is None
+    issue = ScoreIssue(code="gap", context={"months": 10, "trailing": False, "from": "2021-03"})
+    assert issue.context["trailing"] is False
+    assert MarketSkillsInfo(basis="none", sample_size=0, top_skills=[]).top_skills == []
+
+
+def test_recommendations_query_bounds() -> None:
+    query = RecommendationsQuery()
+    assert query.resume_id is None
+    assert query.exclude_hidden is True
+    assert query.limit == 50
+    assert RecommendationsQuery(limit=200).limit == 200
+    for bad in (0, 201):
+        with pytest.raises(ValidationError):
+            RecommendationsQuery(limit=bad)
+    with pytest.raises(ValidationError):
+        RecommendationsQuery.model_validate({"page": 1})
 
 
 # --- ErrorResponse ---

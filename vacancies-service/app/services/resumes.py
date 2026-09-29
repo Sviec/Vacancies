@@ -8,6 +8,7 @@ MissingGreenlet.
 """
 
 from collections.abc import Sequence
+from datetime import UTC, date, datetime
 from typing import Any
 from uuid import UUID
 
@@ -34,6 +35,7 @@ from app.schemas.resumes import (
     ResumeSkillCreate,
     ResumeUpdate,
 )
+from app.services import resume_scoring
 from app.services.normalizer import normalize_skills
 from app.utils.errors import ConflictError, NotFoundError
 from app.utils.skills_dict import SkillsDictionary
@@ -208,12 +210,16 @@ async def _promote_next_primary(session: AsyncSession, user_id: UUID) -> None:
     )
 
 
-async def _invalidate_derived(session: AsyncSession, resume: Resume) -> None:
-    """Сбросить кэш матчинга и оценку после содержательного изменения резюме."""
-    # TODO: пересчёт оценки и матчинга — этап 6 заменит тело функции.
+async def _invalidate_derived(session: AsyncSession, resume: Resume, *, today: date) -> None:
+    """Пересчитать оценку и сбросить кэш матчинга после содержательного изменения."""
+    # TODO: оценка пересчитывается синхронно (решение пользователя), матчи
+    # удаляются и перестраиваются лениво при следующем GET /vacancies/recommended.
     await session.execute(delete(VacancyMatch).where(VacancyMatch.resume_id == resume.id))
-    resume.score = None
-    resume.score_details = {}
+    await resume_scoring.rescore(session, resume, today=today)
+
+
+def _today(today: date | None) -> date:
+    return today if today is not None else datetime.now(UTC).date()
 
 
 async def list_resumes(session: AsyncSession, user_id: UUID) -> list[Resume]:
@@ -240,17 +246,10 @@ async def get_resume(session: AsyncSession, user_id: UUID, resume_id: UUID) -> R
     return resume
 
 
-async def create_resume(
-    session: AsyncSession,
-    user_id: UUID,
-    data: ResumeCreate,
-    *,
-    origin: ResumeOrigin = ResumeOrigin.MANUAL,
+def build_resume(
+    user_id: UUID, data: ResumeCreate, origin: ResumeOrigin = ResumeOrigin.MANUAL
 ) -> Resume:
-    """Создать резюме с секциями.
-
-    Инвариант: если у пользователя есть резюме, ровно одно из них основное.
-    """
+    """Transient ORM-резюме с секциями, без сессии; `is_primary` решает вызывающий."""
     resume = Resume(
         user_id=user_id,
         origin=origin,
@@ -260,6 +259,22 @@ async def create_resume(
     )
     for name in _SECTIONS:
         getattr(resume, name).extend(_build_section(data, name))
+    return resume
+
+
+async def create_resume(
+    session: AsyncSession,
+    user_id: UUID,
+    data: ResumeCreate,
+    *,
+    origin: ResumeOrigin = ResumeOrigin.MANUAL,
+    today: date | None = None,
+) -> Resume:
+    """Создать резюме с секциями и сразу оценить его.
+
+    Инвариант: если у пользователя есть резюме, ровно одно из них основное.
+    """
+    resume = build_resume(user_id, data, origin)
 
     # TODO: первое резюме пользователя всегда основное, независимо от тела.
     had_primary = await _has_primary(session, user_id)
@@ -268,11 +283,18 @@ async def create_resume(
     await session.flush()
     if had_primary and data.is_primary:
         await _set_primary(session, user_id, resume)
-    return await _reload(session, user_id, resume.id)
+    loaded = await _reload(session, user_id, resume.id)
+    await resume_scoring.rescore(session, loaded, today=_today(today))
+    return loaded
 
 
 async def update_resume(
-    session: AsyncSession, user_id: UUID, resume_id: UUID, data: ResumeUpdate
+    session: AsyncSession,
+    user_id: UUID,
+    resume_id: UUID,
+    data: ResumeUpdate,
+    *,
+    today: date | None = None,
 ) -> Resume:
     """Частичное обновление; секции из тела заменяются целиком."""
     resume = await get_resume(session, user_id, resume_id)
@@ -308,9 +330,9 @@ async def update_resume(
             )
 
     # TODO: любое изменение, кроме `title` и `is_primary`, удаляет
-    # vacancy_matches и обнуляет score / score_details.
+    # vacancy_matches и пересчитывает score / score_details.
     if set(payload) - _NON_DERIVED_FIELDS:
-        await _invalidate_derived(session, resume)
+        await _invalidate_derived(session, resume, today=_today(today))
 
     return await _reload(session, user_id, resume_id)
 

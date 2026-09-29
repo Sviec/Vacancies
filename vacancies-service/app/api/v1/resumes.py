@@ -1,5 +1,6 @@
 """Роутер резюме (п. 5.2 ТЗ). Эндпоинты тонкие: сервис → commit → схема ответа."""
 
+from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Response, status
@@ -13,6 +14,8 @@ from app.schemas.resumes import (
     ResumeRead,
     ResumeUpdate,
 )
+from app.schemas.scoring import ResumeScoreResponse
+from app.services import resume_scoring
 from app.services import resumes as service
 
 # Генерация и адаптация резюме (п. 5.3) добавляются на этапе 10.
@@ -53,6 +56,21 @@ async def delete_resume(resume_id: UUID, session: SessionDep, user_id: CurrentUs
     await service.delete_resume(session, user_id, resume_id)
     await session.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/{resume_id}/score", response_model=ResumeScoreResponse)
+async def score_resume(
+    resume_id: UUID, session: SessionDep, user_id: CurrentUserDep
+) -> ResumeScoreResponse:
+    result = await resume_scoring.score_resume_by_id(
+        session, user_id, resume_id, today=datetime.now(UTC).date()
+    )
+    await session.commit()
+    return ResumeScoreResponse(
+        score=result.score,
+        recommendations=result.recommendations,
+        score_details=result.criteria,
+    )
 
 
 @router.post(

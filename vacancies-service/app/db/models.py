@@ -431,7 +431,7 @@ class Resume(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     # Float по букве раздела 4 ТЗ. Воспроизводимость оценки (критерий приёмки 5)
     # обеспечивает округление внутри `resume_scorer.py`, а не тип колонки:
-    # скорер отдаёт уже округлённое до 0.1 значение, поэтому двоичная
+    # скорер отдаёт уже округлённое до 0.01 значение, поэтому двоичная
     # неточность float не выходит за пределы округления.
     score: Mapped[float | None] = mapped_column(Float)
     score_details: Mapped[dict[str, Any]] = mapped_column(server_default=text("'{}'::jsonb"))

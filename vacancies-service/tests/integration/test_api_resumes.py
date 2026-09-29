@@ -57,7 +57,9 @@ async def test_first_resume_is_primary_and_manual(api_client: AsyncClient) -> No
     body = await _create(api_client, is_primary=False)
     assert body["is_primary"] is True
     assert body["origin"] == "manual"
-    assert body["score"] is None
+    # Оценка считается сразу при создании (этап 6).
+    assert isinstance(body["score"], float)
+    assert 0 <= body["score"] <= 10
     assert body["contacts"]["email"] == "dev@example.com"
 
 
@@ -228,8 +230,11 @@ async def test_patch_summary_invalidates_derived(
     await _prefill_derived(db_session, created["id"])
     response = await api_client.patch(f"{URL}/{created['id']}", json={"summary": "Новое"})
     assert response.status_code == 200
-    assert response.json()["score"] is None
-    assert response.json()["score_details"] == {}
+    body = response.json()
+    # Оценка пересчитана (не 6.5 из предзаполнения), матчи удалены до следующего GET.
+    assert isinstance(body["score"], float)
+    assert body["score"] != 6.5
+    assert len(body["score_details"]["criteria"]) == 8
     assert await _match_count(db_session, created["id"]) == 0
 
 
