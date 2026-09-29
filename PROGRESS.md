@@ -551,6 +551,12 @@
 
 Вымышленные компании, ссылки `example.com`/`example.org`/`t.me/demo_…` и `demo: true` у источников зафиксированы в JSON-данных.
 
+### Наполнение рабочей БД `vacancies`
+
+- 2026-09-30, с подтверждения пользователя: `docker compose exec api python -m scripts.seed`, `now = 2026-09-29T21:32:04+00:00` (перед этим `--dry-run` показал те же числа и ничего не записал).
+- Итог: 4 источника, 11 запусков, 64 вакансии (8 склеек, 4 partial), 3 резюме (strong 10.0 — основное, medium 6.31, weak 2.91), 12 действий.
+- API: `GET /vacancies` total 62 (64 со скрытыми), `/resumes` 3, `/recommended` top-3 — Senior Python Developer 100/95/90, `filters/meta` 4 источника, 11 стран, валюты EUR/GBP/KZT/RUB/USD.
+
 ### Незакрытые замечания этапа 7 (не блокируют)
 
 - Отчёт CLI в консоли Windows (cp1251) показывает кириллицу и эмодзи как mojibake/`\U…` (`errors="backslashreplace"`); данные в БД и API корректны. В Docker проблемы нет.
