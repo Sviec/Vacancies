@@ -28,6 +28,7 @@ COPY app/__init__.py app/__init__.py
 RUN pip install --upgrade pip && pip install -e ".[dev]"
 
 COPY app ./app
+COPY scripts ./scripts
 COPY tests ./tests
 
 # Миграции копируются вместе с кодом, последним слоем: кэш тяжёлого слоя

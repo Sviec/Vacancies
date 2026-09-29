@@ -57,7 +57,7 @@ packages = ["app"]
 [tool.ruff]
 target-version = "py312"
 line-length = 100
-src = ["app", "tests"]
+src = ["app", "tests", "scripts"]
 # Тела ревизий пишет Alembic: lint и format на них только шумят, а следующий
 # `--autogenerate` вернёт исходный вид. E501 для них уже игнорируется ниже.
 extend-exclude = ["migrations/versions"]
@@ -80,10 +80,12 @@ ignore = [
 # `migrations/env.py` это принципиально — импорты приложения обязаны быть
 # отделены от alembic/sqlalchemy, иначе автогенерируемые ревизии и ручные
 # правки дают разный порядок импортов при каждом прогоне `ruff format`.
-known-first-party = ["app"]
+known-first-party = ["app", "scripts"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101","ANN201","ARG001"]
+# CLI сида печатает отчёт в stdout.
+"scripts/*" = ["T201"]
 # Тела ревизий генерирует Alembic: длинные строки с выражениями CHECK и
 # server_default переносить вручную бессмысленно — следующий autogenerate
 # вернёт их обратно.
@@ -106,6 +108,9 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+# Корень сервиса в sys.path: тесты CLI импортируют `scripts.seed` и при запуске
+# голым `pytest`, а не только через `python -m pytest`.
+pythonpath = ["."]
 # Интеграционные тесты исключены из прогона по умолчанию: они требуют живого
 # PostgreSQL, а основной набор обязан оставаться офлайновым. Запуск —
 # `pytest -m integration` (позднее `-m` в командной строке перекрывает это).

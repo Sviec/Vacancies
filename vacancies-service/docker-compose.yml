@@ -88,11 +88,11 @@ services:
     ports:
       - "${API_HOST_PORT:-8000}:8000"
     volumes:
-      # Монтируются только ./app и ./tests. ./migrations сюда сознательно не
-      # монтируется (см. комментарий у сервиса migrate), ./scripts ещё не
-      # существует — Docker создал бы вместо него пустой root-овый каталог на
-      # хосте; его монтирование добавит этап 7 (seed.py).
+      # Монтируются ./app, ./scripts и ./tests. ./migrations сюда сознательно не
+      # монтируется (см. комментарий у сервиса migrate). ./scripts нужен для
+      # ручного сида: `docker compose exec api python -m scripts.seed`.
       - ./app:/srv/app
+      - ./scripts:/srv/scripts
       - ./tests:/srv/tests
     depends_on:
       postgres:
@@ -129,6 +129,7 @@ services:
     command: python -m app.tasks.worker
     volumes:
       - ./app:/srv/app
+      - ./scripts:/srv/scripts
       - ./tests:/srv/tests
     depends_on:
       postgres:

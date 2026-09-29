@@ -14,13 +14,18 @@ head` с `Base.metadata`, поэтому любые остатки от пред
 
 API-тесты этапа 5 ходят в приложение через `api_client`: `get_session`
 подменён на тот же `db_session`.
+
+Тесты сида этапа 7 получают `seeded`: полный `run_seed` внутри той же
+транзакции `db_session`.
 """
 
 import asyncio
 import os
 import uuid
 from collections.abc import AsyncIterator, Iterator
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import NoReturn
 
 import pytest
 from alembic import command
@@ -33,8 +38,10 @@ from sqlalchemy.pool import NullPool
 
 from app.api.deps import get_current_user_id
 from app.config import get_settings
+from app.db import session as db_session_module
 from app.db.session import get_session
 from app.main import create_app
+from app.services.seed import SeedOptions, SeedReport, run_seed
 
 TEST_DB_NAME = "vacancies_test"
 ADMIN_DB_NAME = "postgres"
@@ -172,6 +179,25 @@ async def api_client(app_for_db: FastAPI) -> AsyncIterator[AsyncClient]:
         transport=ASGITransport(app=app_for_db), base_url="http://test"
     ) as client:
         yield client
+
+
+def _forbidden_engine(*_args: object, **_kwargs: object) -> NoReturn:
+    msg = "seed must use the passed session, not the application engine"
+    raise AssertionError(msg)
+
+
+@pytest.fixture
+def no_app_engine(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Сид с переданной сессией не должен открывать собственный engine."""
+    monkeypatch.setattr(db_session_module, "init_engine", _forbidden_engine)
+    monkeypatch.setattr(db_session_module, "get_sessionmaker", _forbidden_engine)
+
+
+@pytest.fixture
+async def seeded(db_session: AsyncSession, no_app_engine: None) -> SeedReport:
+    """Демо-данные сида в транзакции `db_session` на реальное «сейчас»."""
+    now = datetime.now(UTC).replace(microsecond=0)
+    return await run_seed(db_session, SeedOptions(now=now, user_id=get_settings().demo_user_id))
 
 
 @pytest.fixture

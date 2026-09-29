@@ -1,0 +1,2408 @@
+[
+  {
+    "key": "ti-01",
+    "offer": "shield-python-lead",
+    "profession": "backend",
+    "source": "tg_it_jobs",
+    "run": 0,
+    "external_id": "1012",
+    "age_hours": 216,
+    "title": "Python Team Lead",
+    "company": "Щит Секьюрити",
+    "city": "Москва",
+    "url": "https://t.me/demo_it_jobs/1012",
+    "text": "👨‍💻 Python Team Lead в «Щит Секьюрити»\n\nСтроим платформу анализа сетевых угроз: миллиарды событий в сутки, собственный SIEM и сервисы расследований. Ищем Senior Python Developer, который готов возглавить команду из шести бэкенд-инженеров.\n\nЗадачи:\n- архитектура сервисов на Python и FastAPI;\n- потоковая обработка событий из Kafka, хранение в PostgreSQL;\n- развитие инфраструктуры в Kubernetes, наблюдаемость на Prometheus и Grafana;\n- найм, код-ревью и развитие людей.\n\nТребования: опыт от 6 лет, из них не меньше двух в роли лида. Docker и Kubernetes — уверенно.\n\nЗарплата: 500–600к ₽ на руки\nФормат: гибрид, офис у Павелецкой, два дня в неделю в офисе.\nПолная занятость, ДМС, бюджет на конференции.\n\n#python #teamlead #вакансия\nПисать: @hr_shield_sec",
+    "expect": {
+      "level": "lead",
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "salary_min": 500000,
+      "salary_max": 600000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "fastapi",
+        "kafka",
+        "postgresql",
+        "kubernetes",
+        "prometheus",
+        "grafana",
+        "docker"
+      ]
+    }
+  },
+  {
+    "key": "ti-02",
+    "offer": "baltic-python",
+    "profession": "backend",
+    "source": "tg_it_jobs",
+    "run": 0,
+    "external_id": "1015",
+    "age_hours": 192,
+    "title": "🔥 Python-разработчик",
+    "company": "ООО «Балтик Диджитал»",
+    "city": "СПб",
+    "url": "https://t.me/demo_it_jobs/1015",
+    "text": "🔥 Python-разработчик — Балтик Диджитал, СПб\n\nБалтик Диджитал делает сервисы онлайн-записи для клиник и салонов по всему Северо-Западу. Ищем Python-разработчика в команду платформы записи.\n\nЧто делать:\n- развивать API на FastAPI и фоновые задачи;\n- проектировать схемы в PostgreSQL;\n- поддерживать сервисы в Docker на Linux-серверах.\n\nМы ждём:\n- опыт от 2 лет с Python;\n- понимание SQL-индексов и транзакций;\n- аккуратность в код-ревью.\n\nЗП от 200 000 руб.\nГибрид: два-три дня в офисе у метро Чкаловская.\nПолная занятость, ДМС после испытательного срока.\n\n#python #спб #вакансия\nКонтакт: @hr_baltic_digital",
+    "expect": {
+      "level": "middle",
+      "work_format": "hybrid",
+      "salary_min": 200000,
+      "salary_max": null,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "fastapi",
+        "postgresql",
+        "docker",
+        "linux",
+        "sql"
+      ],
+      "skills_exclude": [
+        "html",
+        "css",
+        "javascript",
+        "bash"
+      ]
+    }
+  },
+  {
+    "key": "ti-03",
+    "offer": "mplus-django-drf",
+    "profession": "backend",
+    "source": "tg_it_jobs",
+    "run": 0,
+    "external_id": "1008",
+    "age_hours": 480,
+    "title": "Python-разработчик (Django, DRF)",
+    "company": "Маркетплейс Плюс",
+    "city": "Москва",
+    "url": "https://t.me/demo_it_jobs/1008",
+    "text": "Python-разработчик (Django, DRF) — Маркетплейс Плюс\n\nМаркетплейс Плюс — площадка для локальных продавцов, у нас больше сорока тысяч магазинов. Команда кабинета продавца ищет Python-разработчика.\n\nСтек: Python, Django, Django REST Framework, PostgreSQL, Celery, Redis.\n\nЗадачи:\n- новые разделы кабинета продавца и API для мобильного приложения;\n- оптимизация тяжёлых запросов к PostgreSQL;\n- фоновые выгрузки отчётов на Celery.\n\nТребования: опыт от 3 лет, уверенный Django ORM, тесты.\n\nРаботаем удалённо из любого города России, полная занятость.\nЗарплата по договорённости, обсудим после технического интервью.\n\n#python #django #удалёнка\nРезюме: @hr_mplus",
+    "expect": {
+      "level": "middle",
+      "work_format": "remote",
+      "salary_min": null,
+      "salary_max": null,
+      "salary_currency": null,
+      "skills_include": [
+        "python",
+        "django",
+        "rest api",
+        "postgresql",
+        "celery",
+        "redis"
+      ],
+      "skills_exclude": [
+        "html",
+        "css",
+        "javascript",
+        "bash"
+      ]
+    }
+  },
+  {
+    "key": "ti-04",
+    "offer": "mplus-product-analyst",
+    "profession": "data",
+    "source": "tg_it_jobs",
+    "run": 0,
+    "external_id": "1004",
+    "age_hours": 840,
+    "title": "Продуктовый аналитик",
+    "company": "Маркетплейс Плюс",
+    "city": "Москва",
+    "url": "https://t.me/demo_it_jobs/1004",
+    "text": "📊 Продуктовый аналитик в Маркетплейс Плюс\n\nИщем аналитика в команду роста: помогать продакт-менеджерам принимать решения на данных.\n\nЧем заниматься:\n- проектировать и разбирать A/B тесты;\n- строить дашборды в Tableau и считать юнит-экономику;\n- писать SQL к ClickHouse и готовить данные в Python (pandas).\n\nМы ждём:\n- опыт от 3 лет в продуктовой аналитике;\n- уверенную статистику и понимание метрик воронки.\n\nЗарплата: 200–250 тыс. ₽ до вычета налогов\nУдалённо, полная занятость, гибкий график.\n\n#аналитика #product #вакансия\nПисать: @hr_mplus",
+    "expect": {
+      "level": "middle",
+      "work_format": "remote",
+      "salary_min": 200000,
+      "salary_max": 250000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "a/b testing",
+        "tableau",
+        "sql",
+        "clickhouse",
+        "python",
+        "pandas",
+        "statistics"
+      ]
+    }
+  },
+  {
+    "key": "ti-05",
+    "offer": "uraltech-junior-devops",
+    "profession": "devops",
+    "source": "tg_it_jobs",
+    "run": 0,
+    "external_id": "1019",
+    "age_hours": 160,
+    "title": "Junior DevOps",
+    "company": "УралТех",
+    "city": "Екатеринбург",
+    "url": "https://t.me/demo_it_jobs/1019",
+    "text": "🛠 Junior DevOps в УралТех\n\nУралТех разрабатывает системы учёта для промышленных предприятий Урала. Ищем начинающего DevOps-инженера, которого будем растить вместе с платформенной командой.\n\nЧто предстоит:\n- поддерживать Linux-серверы и CI/CD в GitLab CI;\n- собирать образы Docker и писать скрипты на Bash;\n- автоматизировать настройку через Ansible.\n\nЖдём базовые знания Linux и сетей, опыт от 1 года или сильный пет-проект, Git.\n\nЗарплата: 80–110к ₽ на руки\nРабота удалённая, офис в Екатеринбурге по желанию. Полная занятость.\n\n#devops #junior #вакансия\nПисать: @hr_uraltech",
+    "expect": {
+      "level": "junior",
+      "work_format": "remote",
+      "salary_min": 80000,
+      "salary_max": 110000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "linux",
+        "ci/cd",
+        "gitlab ci",
+        "docker",
+        "bash",
+        "ansible",
+        "git"
+      ]
+    }
+  },
+  {
+    "key": "ti-06",
+    "offer": "mplus-android",
+    "profession": "mobile",
+    "source": "tg_it_jobs",
+    "run": 0,
+    "external_id": "1006",
+    "age_hours": 768,
+    "title": "Android-разработчик (Kotlin)",
+    "company": "Маркетплейс Плюс",
+    "city": "СПб",
+    "url": "https://t.me/demo_it_jobs/1006",
+    "text": "📱 Android-разработчик (Kotlin) — Маркетплейс Плюс\n\nРазвиваем приложение для покупателей: три миллиона активных пользователей в месяц. Нужен Android-разработчик в команду каталога и корзины.\n\nСтек: Kotlin, Jetpack Compose, корутины, Retrofit, Room.\n\nЗадачи:\n- новые экраны каталога на Jetpack Compose;\n- ускорение холодного старта приложения;\n- покрытие тестами и участие в релизах.\n\nТребования: опыт от 3 лет в Android, Git, понимание многопоточности.\n\nЗарплата: 250–300к ₽ gross\nУдалённо, команда распределена между СПб и Москвой. Полная занятость.\n\n#android #kotlin #вакансия\nРезюме: @hr_mplus",
+    "expect": {
+      "level": "middle",
+      "work_format": "remote",
+      "salary_min": 250000,
+      "salary_max": 300000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "android",
+        "kotlin",
+        "jetpack compose",
+        "git"
+      ]
+    }
+  },
+  {
+    "key": "ti-07",
+    "offer": "altair-scrum",
+    "profession": "product",
+    "source": "tg_it_jobs",
+    "run": 0,
+    "external_id": "1002",
+    "age_hours": 1008,
+    "title": "Scrum Master",
+    "company": "Альтаир Банк",
+    "city": "Москва",
+    "url": "https://t.me/demo_it_jobs/1002",
+    "text": "Scrum Master в Альтаир Банк\n\nИщем Scrum Master на две продуктовые команды цифрового банка: кредитные продукты и онбординг клиентов.\n\nЧто предстоит:\n- фасилитировать события Scrum и ретроспективы;\n- помогать командам выстраивать поток работ в Jira;\n- работать с метриками предсказуемости и зависимостями между командами.\n\nМы ждём опыт от 2 лет в роли Scrum Master или Agile-коуча, понимание Kanban и LeSS.\n\nУсловия: работа удалённая, полная занятость, ДМС с первого дня, обучение за счёт банка. Уровень дохода обсуждаем индивидуально.\n\n#scrum #agile #вакансия\nПисать: @hr_altair_bank",
+    "expect": {
+      "level": "middle",
+      "work_format": "remote",
+      "salary_currency": null,
+      "skills_include": [
+        "scrum",
+        "jira",
+        "agile"
+      ]
+    }
+  },
+  {
+    "key": "ti-08",
+    "offer": "kvarts-senior-python",
+    "profession": "backend",
+    "source": "tg_it_jobs",
+    "run": 1,
+    "external_id": "1031",
+    "age_hours": 30,
+    "title": "Senior Python Developer",
+    "company": "Кварц Лабс",
+    "city": "Москва",
+    "url": "https://t.me/demo_it_jobs/1031",
+    "text": "🚀 Senior Python Developer — Кварц Лабс\n\nКварц Лабс делает платформу биллинга для телеком-операторов. Ищем Senior Python Developer в команду расчётного ядра.\n\nСтек: Python 3.12, FastAPI, aiohttp, PostgreSQL, Redis, Kafka, Docker, Kubernetes, Terraform.\n\nЗадачи:\n- проектировать и писать сервисы тарификации под нагрузку 20k RPS;\n- переводить старые компоненты на асинхронный стек;\n- участвовать в архитектурных ревью и дежурствах.\n\nТребования: опыт от 5 лет, уверенный asyncio, продовые Kafka и PostgreSQL.\n\nЗарплата: 400–500к ₽ на руки\nПолностью удалённо, можно из любой точки России. Полная занятость, оборудование и ДМС.\n\n#python #senior #remote\nПисать: @hr_kvarts",
+    "actions": [
+      "viewed",
+      "applied"
+    ],
+    "expect": {
+      "level": "senior",
+      "work_format": "remote",
+      "salary_min": 400000,
+      "salary_max": 500000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "fastapi",
+        "aiohttp",
+        "postgresql",
+        "redis",
+        "kafka",
+        "docker",
+        "kubernetes",
+        "terraform"
+      ]
+    }
+  },
+  {
+    "key": "ti-09",
+    "offer": "nevsky-django",
+    "profession": "backend",
+    "source": "tg_it_jobs",
+    "run": 1,
+    "external_id": "1029",
+    "age_hours": 29,
+    "title": "Python-разработчик (Django)",
+    "company": "Невские цифровые решения",
+    "city": "Санкт-Петербург",
+    "url": "https://t.me/demo_it_jobs/1029",
+    "text": "Python-разработчик (Django) в «Невские цифровые решения»\n\nРазрабатываем системы электронного документооборота для городских учреждений Петербурга. Ищем Python-разработчика в команду ядра документооборота.\n\nСтек: Python, Django, PostgreSQL, Celery, Redis, Git.\n\nЗадачи:\n- новые модули согласования документов;\n- интеграции с внешними реестрами через очереди Celery;\n- поддержка и рефакторинг существующего кода.\n\nТребования: опыт от 2 лет на Django, понимание ORM и миграций.\n\nЗарплата: 180–230к ₽ на руки\nРабота в офисе на Васильевском острове, пятидневка. Полная занятость, официальное оформление.\n\n#python #django #спб\nПисать: @hr_nevsky",
+    "expect": {
+      "level": "middle",
+      "work_format": "office",
+      "salary_min": 180000,
+      "salary_max": 230000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "django",
+        "postgresql",
+        "celery",
+        "redis",
+        "git"
+      ],
+      "skills_exclude": [
+        "html",
+        "css",
+        "javascript",
+        "bash"
+      ]
+    }
+  },
+  {
+    "key": "ti-10",
+    "offer": "codeforge-junior-python",
+    "profession": "backend",
+    "source": "tg_it_jobs",
+    "run": 1,
+    "external_id": "1027",
+    "age_hours": 35,
+    "title": "Junior Python Developer 🚀",
+    "company": "Codeforge",
+    "city": null,
+    "url": "https://t.me/demo_it_jobs/1027",
+    "text": "Junior Python Developer 🚀 в Codeforge\n\nCodeforge — небольшая продуктовая студия, делаем сервисы для малого бизнеса в Европе. Берём начинающего разработчика и даём ментора.\n\nСтек: Python, Django, PostgreSQL, Docker, Git.\n\nЗадачи: небольшие фичи в бэкенде, тесты и багфиксы под присмотром наставника.\n\nЖдём: уверенные основы Python и SQL, опыт от 1 года или пет-проекты на GitHub.\n\nОплата: $1200–1800 в месяц\nПолностью удалённо, гибкий график. Полная занятость.\n\n#python #junior #удалёнка\nПисать: @hr_codeforge",
+    "expect": {
+      "level": "junior",
+      "work_format": "remote",
+      "salary_min": 1200,
+      "salary_max": 1800,
+      "salary_currency": "USD",
+      "skills_include": [
+        "python",
+        "sql",
+        "django",
+        "postgresql",
+        "docker",
+        "git"
+      ]
+    }
+  },
+  {
+    "key": "ti-11",
+    "offer": "retail-da",
+    "profession": "data",
+    "source": "tg_it_jobs",
+    "run": 1,
+    "external_id": "1033",
+    "age_hours": 27,
+    "title": "Аналитик данных (SQL, Python)",
+    "company": "Ритейл Аналитика",
+    "city": "Москва",
+    "url": "https://t.me/demo_it_jobs/1033",
+    "text": "Аналитик данных (SQL, Python) — Ритейл Аналитика\n\nРитейл Аналитика считает спрос и промо для сетей продуктовых магазинов. Ищем аналитика данных в команду прогнозирования.\n\nЧто делать:\n- готовить витрины на SQL в ClickHouse;\n- считать эффект промо-акций и проверять гипотезы в Python (pandas);\n- строить отчёты в Power BI для категорийных менеджеров.\n\nТребования: опыт от 2 лет в аналитике, статистика на уровне доверительных интервалов.\n\nЗарплата: 180–230к ₽ на руки\nГибридный формат: офис у Белорусской, два дня из дома. Полная занятость.\n\n#аналитика #sql #вакансия\nПисать: @hr_retail_analytics",
+    "actions": [
+      "applied"
+    ],
+    "expect": {
+      "level": "middle",
+      "work_format": "hybrid",
+      "salary_min": 180000,
+      "salary_max": 230000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "sql",
+        "clickhouse",
+        "python",
+        "pandas",
+        "power bi",
+        "statistics"
+      ]
+    }
+  },
+  {
+    "key": "ti-12",
+    "offer": "startup-analyst",
+    "profession": "data",
+    "source": "tg_it_jobs",
+    "run": 1,
+    "external_id": "1030",
+    "age_hours": 28,
+    "title": "Ищем аналитика в стартап",
+    "company": null,
+    "city": null,
+    "url": "https://t.me/demo_it_jobs/1030",
+    "text": "Ищем аналитика в стартап\n\nМы небольшой EdTech-стартап, запускаем платформу подготовки к экзаменам. Нужен аналитик на полную ставку, который поможет навести порядок в данных.\n\nЗадачи:\n- собирать метрики продукта в SQL;\n- вести отчётность в Excel и Google Sheets;\n- помогать команде с исследованиями пользователей.\n\nТребования: опыт от 1 года в аналитике, уверенный SQL, аккуратность.\n\nРаботаем удалённо, график гибкий, оформление обсудим.\n\n#аналитика #стартап #удалёнка\nПисать: @hr_edtech_start",
+    "expect": {
+      "level": "junior",
+      "work_format": "remote",
+      "parse_quality": "partial",
+      "salary_currency": null,
+      "skills_include": [
+        "sql",
+        "excel"
+      ]
+    }
+  },
+  {
+    "key": "ti-13",
+    "offer": "sevmarket-qa-python",
+    "profession": "qa",
+    "source": "tg_it_jobs",
+    "run": 1,
+    "external_id": "1025",
+    "age_hours": 40,
+    "title": "QA Automation Engineer (Python)",
+    "company": "Северный Маркет",
+    "city": "Москва",
+    "url": "https://t.me/demo_it_jobs/1025",
+    "text": "🧪 QA Automation Engineer (Python) — Северный Маркет\n\nСеверный Маркет — сеть онлайн-гипермаркетов. Команда качества ищет инженера по автоматизации тестирования.\n\nСтек: Python, pytest, Selenium, Playwright, Docker, Allure.\n\nЗадачи:\n- автотесты для веб-витрины и API;\n- интеграция прогонов в GitLab CI;\n- разбор нестабильных тестов вместе с командой.\n\nТребования: опыт от 2 лет в автоматизации, уверенный Python, SQL на уровне JOIN.\n\nЗарплата: 220–280к ₽ до вычета НДФЛ\nГибрид, офис у Автозаводской. Полная занятость.\n\n#qa #python #вакансия\nПисать: @hr_sevmarket",
+    "expect": {
+      "level": "middle",
+      "work_format": "hybrid",
+      "salary_min": 220000,
+      "salary_max": 280000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "pytest",
+        "selenium",
+        "playwright",
+        "docker",
+        "gitlab ci",
+        "sql"
+      ]
+    }
+  },
+  {
+    "key": "ti-14",
+    "offer": "meridian-senior-python",
+    "profession": "backend",
+    "source": "tg_it_jobs",
+    "run": 2,
+    "external_id": "1047",
+    "age_hours": 6,
+    "title": "🔥 Senior Python Developer",
+    "company": "ООО «Меридиан»",
+    "city": "Мск",
+    "url": "https://t.me/demo_it_jobs/1047",
+    "text": "🔥 Senior Python Developer в Меридиан\n\nМеридиан — финтех-платформа для малого бизнеса: платежи, эквайринг и кредитные продукты. Ищем Senior Python Developer в команду платёжного шлюза.\n\nСтек: Python, FastAPI, SQLAlchemy, PostgreSQL, Redis, Kafka, Docker, Kubernetes.\n\nЗадачи:\n- проектировать и развивать сервисы платёжного шлюза;\n- снижать задержки и повышать отказоустойчивость;\n- менторить разработчиков и проводить код-ревью.\n\nТребования: опыт от 5 лет в бэкенде, продовый опыт с Kafka и PostgreSQL, понимание распределённых транзакций.\n\nЗарплата: 350–450к ₽ на руки\nГибрид: офис у Павелецкой, два дня в неделю. Полная занятость, ДМС со стоматологией.\n\n#python #senior #fintech\nПисать: @hr_meridian",
+    "actions": [
+      "viewed",
+      "saved"
+    ],
+    "expect": {
+      "level": "senior",
+      "work_format": "hybrid",
+      "salary_min": 350000,
+      "salary_max": 450000,
+      "salary_currency": "RUB",
+      "parse_quality": "full",
+      "skills_include": [
+        "python",
+        "fastapi",
+        "sqlalchemy",
+        "postgresql",
+        "redis",
+        "kafka",
+        "docker",
+        "kubernetes"
+      ]
+    }
+  },
+  {
+    "key": "ti-15",
+    "offer": "datalytics-intern",
+    "profession": "data",
+    "source": "tg_it_jobs",
+    "run": 2,
+    "external_id": "1044",
+    "age_hours": 10,
+    "title": "Стажёр-аналитик",
+    "company": "Datalytics",
+    "city": null,
+    "url": "https://t.me/demo_it_jobs/1044",
+    "text": "🎓 Стажёр-аналитик в Datalytics\n\nDatalytics — консалтинг в области данных для ритейла и логистики. Открываем оплачиваемую стажировку для студентов последних курсов и выпускников.\n\nЧто будешь делать:\n- чистить и сводить данные в Excel;\n- писать первые запросы на SQL;\n- автоматизировать рутину на Python под присмотром наставника.\n\nМы ждём: базовый SQL, уверенный Excel, желание разбираться в данных. Опыт не обязателен.\n\nСтипендия: 50 000 ₽ на руки\nСтажировка удалённая, три месяца с возможностью перехода в штат.\n\n#стажировка #аналитика #удалёнка\nПисать: @hr_datalytics",
+    "expect": {
+      "level": "intern",
+      "work_format": "remote",
+      "employment_type": "internship",
+      "salary_min": 50000,
+      "salary_max": 50000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "excel",
+        "sql",
+        "python"
+      ]
+    }
+  },
+  {
+    "key": "ti-16",
+    "offer": "eduline-junior-qa",
+    "profession": "qa",
+    "source": "tg_it_jobs",
+    "run": 2,
+    "external_id": "1049",
+    "age_hours": 4,
+    "title": "Junior QA Engineer",
+    "company": "EduLine",
+    "city": null,
+    "url": "https://t.me/demo_it_jobs/1049",
+    "text": "Junior QA Engineer в EduLine\n\nEduLine — онлайн-школа программирования для подростков. Ищем младшего тестировщика в команду учебной платформы.\n\nЗадачи:\n- ручное тестирование веб-платформы и мобильного приложения;\n- написание тест-кейсов и чек-листов;\n- проверка данных в базе через SQL;\n- заведение багов в Jira, проверка API в Postman.\n\nЖдём: понимание техник тест-дизайна, базовый SQL, внимательность. Опыт от 1 года будет плюсом.\n\nЗарплата: 70–90к ₽ на руки\nУдалённо, полная занятость, обучение за счёт компании.\n\n#qa #junior #удалёнка\nПисать: @hr_eduline",
+    "expect": {
+      "level": "junior",
+      "work_format": "remote",
+      "salary_min": 70000,
+      "salary_max": 90000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "sql",
+        "jira",
+        "postman"
+      ]
+    }
+  },
+  {
+    "key": "ti-17",
+    "offer": "designer-project",
+    "profession": "design",
+    "source": "tg_it_jobs",
+    "run": 2,
+    "external_id": "1041",
+    "age_hours": 20,
+    "title": "Нужен дизайнер на проект",
+    "company": null,
+    "city": null,
+    "url": "https://t.me/demo_it_jobs/1041",
+    "text": "Нужен дизайнер на проект\n\nИщем дизайнера интерфейсов для редизайна личного кабинета небольшого онлайн-сервиса доставки. Проектная работа примерно на месяц.\n\nЧто нужно сделать:\n- аудит текущих экранов;\n- новый UI-кит и около двадцати макетов в Figma;\n- прототип ключевого сценария заказа.\n\nПришлите портфолио с похожими кейсами, лучше всего — личные кабинеты и сервисы доставки.\n\nБюджет: 50 000 руб. за весь проект\nРабота удалённая, общение в мессенджере.\n\n#дизайн #фриланс #figma\nПисать: @hr_delivery_demo",
+    "expect": {
+      "level": "unknown",
+      "work_format": "remote",
+      "employment_type": "contract",
+      "salary_min": 50000,
+      "salary_max": 50000,
+      "salary_currency": "RUB",
+      "parse_quality": "partial",
+      "skills_include": [
+        "figma"
+      ]
+    }
+  },
+  {
+    "key": "tr-01",
+    "offer": "nordwave-senior-python",
+    "profession": "backend",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5102",
+    "age_hours": 288,
+    "title": "Senior Python Developer",
+    "company": "Nordwave Fintech",
+    "city": "Limassol",
+    "url": "https://t.me/demo_relocate_jobs/5102",
+    "text": "🌊 Senior Python Developer — Nordwave Fintech, Limassol\n\nNordwave Fintech строит платформу мгновенных переводов для стран ЕС. Ищем Senior Python Developer в команду процессинга.\n\nСтек: Python, FastAPI, PostgreSQL, Redis, Kafka, Docker, Kubernetes, AWS.\n\nЗадачи:\n- сервисы процессинга платежей с жёсткими требованиями к надёжности;\n- интеграции с банками-партнёрами;\n- участие в архитектуре и найме.\n\nТребования: опыт от 5 лет, английский от B2.\n\nЗарплата: €6000–7500 gross в месяц\nРабота в офисе в Лимассоле. Релокация на Кипр для сотрудника и семьи: визы, билеты, первый месяц жилья.\nПолная занятость, медицинская страховка.\n\n#python #relocation #cyprus\nПисать: @hr_nordwave",
+    "actions": [
+      "viewed"
+    ],
+    "expect": {
+      "level": "senior",
+      "work_format": "office",
+      "salary_min": 6000,
+      "salary_max": 7500,
+      "salary_currency": "EUR",
+      "relocation": true,
+      "parse_quality": "full",
+      "skills_include": [
+        "python",
+        "fastapi",
+        "postgresql",
+        "redis",
+        "kafka",
+        "docker",
+        "kubernetes",
+        "aws"
+      ]
+    }
+  },
+  {
+    "key": "tr-02",
+    "offer": "baltic-python",
+    "profession": "backend",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5104",
+    "age_hours": 192,
+    "title": "Python-разработчик",
+    "company": "Балтик Диджитал",
+    "city": "Санкт-Петербург",
+    "url": "https://t.me/demo_relocate_jobs/5104",
+    "text": "Python-разработчик в Балтик Диджитал (Санкт-Петербург)\n\nСервис онлайн-записи для клиник ищет Python-разработчика. Стек: Python, FastAPI, PostgreSQL, Docker, Linux.\n\nНужен опыт от 2 лет, умение писать понятный код и тесты, базовое знание SQL. Будет плюсом опыт с очередями задач.\n\nЗарплата: от 200 000 ₽\nГибридный формат, офис в Петербурге. Полная занятость.\n\n#python #вакансия\nПисать: @hr_baltic_digital",
+    "expect": {
+      "level": "middle",
+      "work_format": "hybrid",
+      "salary_min": 200000,
+      "salary_max": null,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "fastapi",
+        "postgresql",
+        "docker",
+        "linux",
+        "sql"
+      ],
+      "skills_exclude": [
+        "html",
+        "css",
+        "javascript",
+        "bash"
+      ]
+    }
+  },
+  {
+    "key": "tr-03",
+    "offer": "sibsys-python",
+    "profession": "backend",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5099",
+    "age_hours": 360,
+    "title": "Middle Python-разработчик",
+    "company": "Сибирские системы",
+    "city": "Новосибирск",
+    "url": "https://t.me/demo_relocate_jobs/5099",
+    "text": "Middle Python-разработчик — Сибирские системы, Новосибирск\n\nСибирские системы автоматизируют логистику складов и терминалов. Ищем Python-разработчика в команду складской платформы.\n\nСтек: Python, Django, PostgreSQL, RabbitMQ, Docker.\n\nЗадачи:\n- сервисы учёта остатков и перемещений;\n- интеграции с оборудованием складов через очереди RabbitMQ;\n- оптимизация отчётов и запросов.\n\nТребования: опыт от 2 лет, Django, понимание транзакций.\n\nЗарплата: 170–220к ₽ на руки\nГибрид в Новосибирске, офис в Академгородке. Полная занятость.\n\n#python #django #новосибирск\nПисать: @hr_sibsys",
+    "expect": {
+      "level": "middle",
+      "work_format": "hybrid",
+      "salary_min": 170000,
+      "salary_max": 220000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "django",
+        "postgresql",
+        "rabbitmq",
+        "docker"
+      ],
+      "skills_exclude": [
+        "html",
+        "css",
+        "javascript",
+        "bash"
+      ]
+    }
+  },
+  {
+    "key": "tr-04",
+    "offer": "pixelwave-node",
+    "profession": "backend",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5097",
+    "age_hours": 432,
+    "title": "Node.js Backend Developer",
+    "company": "Pixelwave",
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5097",
+    "text": "Node.js Backend Developer — Pixelwave\n\nPixelwave — продуктовая студия мобильных игр. Ищем бэкенд-разработчика на Node.js для игровых сервисов: матчмейкинг, лидерборды, внутриигровые покупки.\n\nСтек: Node.js, TypeScript, NestJS, PostgreSQL, Redis, Docker.\n\nТребования:\n- опыт от 3 лет на Node.js;\n- понимание нагрузок и кэширования;\n- английский на уровне чтения документации.\n\nОплата: $3000–4000 в месяц, полная занятость.\nПолностью удалённая работа из любой страны, гибкий график.\n\n#nodejs #remote #вакансия\nПисать: @hr_pixelwave",
+    "expect": {
+      "level": "middle",
+      "work_format": "remote",
+      "salary_min": 3000,
+      "salary_max": 4000,
+      "salary_currency": "USD",
+      "skills_include": [
+        "node.js",
+        "typescript",
+        "nestjs",
+        "postgresql",
+        "redis",
+        "docker"
+      ]
+    }
+  },
+  {
+    "key": "tr-05",
+    "offer": "eduline-vue",
+    "profession": "frontend",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5108",
+    "age_hours": 100,
+    "title": "Frontend-разработчик (Vue.js)",
+    "company": "EduLine",
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5108",
+    "text": "Frontend-разработчик (Vue.js) в EduLine\n\nEduLine — онлайн-школа программирования для подростков. Ищем frontend-разработчика в команду учебной платформы: редактор кода, задания, прогресс ученика.\n\nСтек: Vue.js, Nuxt, TypeScript, Vite, SCSS.\n\nЗадачи:\n- новые интерактивные задания и редактор кода в браузере;\n- ускорение загрузки страниц;\n- переиспользуемые компоненты дизайн-системы.\n\nТребования: опыт от 2 лет с Vue, уверенный JavaScript и TypeScript, вёрстка HTML и CSS.\n\nЗарплата: 180–240к ₽ на руки\nУдалённо из любого города, полная занятость.\n\n#frontend #vue #удалёнка\nПисать: @hr_eduline",
+    "expect": {
+      "level": "middle",
+      "work_format": "remote",
+      "salary_min": 180000,
+      "salary_max": 240000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "vue",
+        "nuxt",
+        "typescript",
+        "vite",
+        "sass",
+        "javascript",
+        "html",
+        "css"
+      ]
+    }
+  },
+  {
+    "key": "tr-06",
+    "offer": "eduline-front-intern",
+    "profession": "frontend",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5098",
+    "age_hours": 384,
+    "title": "Стажёр frontend-разработчик",
+    "company": "EduLine",
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5098",
+    "text": "🎓 Стажёр frontend-разработчик в EduLine\n\nОткрываем оплачиваемую стажировку во frontend-команде онлайн-школы. Три месяца работы над настоящими задачами с наставником, лучших стажёров берём в штат.\n\nЧто нужно знать:\n- HTML и CSS, адаптивная вёрстка;\n- основы JavaScript;\n- Git на базовом уровне.\n\nЧто будешь делать: верстать страницы курсов, чинить мелкие баги, писать компоненты на Vue под ревью наставника.\n\nОплата стажировки: 40 000 ₽ в месяц\nУдалённо, тридцать часов в неделю.\n\n#стажировка #frontend #удалёнка\nПисать: @hr_eduline",
+    "expect": {
+      "level": "intern",
+      "work_format": "remote",
+      "employment_type": "internship",
+      "salary_min": 40000,
+      "salary_max": 40000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "html",
+        "css",
+        "javascript",
+        "git",
+        "vue"
+      ]
+    }
+  },
+  {
+    "key": "tr-07",
+    "offer": "desert-ml-lead",
+    "profession": "data",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5096",
+    "age_hours": 624,
+    "title": "ML Team Lead",
+    "company": "Desert AI",
+    "city": "Дубай",
+    "url": "https://t.me/demo_relocate_jobs/5096",
+    "text": "🏜 ML Team Lead — Desert AI, Дубай\n\nDesert AI разрабатывает системы видеоаналитики для логистики и ритейла на Ближнем Востоке. Ищем руководителя ML-команды из пяти инженеров.\n\nСтек: Python, PyTorch, MLOps, Kubernetes, Airflow.\n\nЗадачи:\n- стратегия и приоритеты ML-направления;\n- обучение и вывод в прод моделей детекции и трекинга;\n- выстраивание MLOps-процессов и найм.\n\nТребования: опыт от 6 лет в машинном обучении, из них не меньше двух лидом, английский C1.\n\nЗарплата: $9000–11000 в месяц, без подоходного налога\nОфис в Дубае. Полная релокация: виза, перелёт, помощь с поиском жилья.\nПолная занятость.\n\n#ml #relocation #dubai\nПисать: @hr_desert_ai",
+    "expect": {
+      "level": "lead",
+      "work_format": "office",
+      "salary_min": 9000,
+      "salary_max": 11000,
+      "salary_currency": "USD",
+      "relocation": true,
+      "skills_include": [
+        "machine learning",
+        "python",
+        "pytorch",
+        "mlops",
+        "kubernetes",
+        "airflow"
+      ]
+    }
+  },
+  {
+    "key": "tr-08",
+    "offer": "nordwave-sre",
+    "profession": "devops",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5100",
+    "age_hours": 456,
+    "title": "SRE Engineer",
+    "company": "Nordwave Fintech",
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5100",
+    "text": "SRE Engineer — Nordwave Fintech\n\nИщем SRE-инженера в команду надёжности платёжной платформы. Работа по B2B-контракту с оплатой в евро.\n\nСтек: Kubernetes, Terraform, AWS, Prometheus, Grafana, Linux.\n\nЗадачи:\n- SLO и алертинг для критичных сервисов;\n- инфраструктура как код на Terraform;\n- разбор инцидентов и постмортемы.\n\nЖдём уверенный Linux, продовый Kubernetes и умение автоматизировать рутину.\n\nСтавка: €5000–6000 в месяц\nПолностью удалённо, часовой пояс от UTC до UTC+3.\n\n#sre #devops #remote\nПисать: @hr_nordwave",
+    "expect": {
+      "level": "unknown",
+      "work_format": "remote",
+      "employment_type": "contract",
+      "salary_min": 5000,
+      "salary_max": 6000,
+      "salary_currency": "EUR",
+      "skills_include": [
+        "kubernetes",
+        "terraform",
+        "aws",
+        "prometheus",
+        "grafana",
+        "linux"
+      ]
+    }
+  },
+  {
+    "key": "tr-09",
+    "offer": "pixelwave-qa-part",
+    "profession": "qa",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5101",
+    "age_hours": 504,
+    "title": "Тестировщик (частичная занятость)",
+    "company": "Pixelwave",
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5101",
+    "text": "Тестировщик (частичная занятость) в Pixelwave\n\nPixelwave ищет тестировщика мобильных игр на частичную занятость: двадцать часов в неделю в удобное время.\n\nЗадачи:\n- проходить новые уровни и искать баги;\n- проверять покупки и награды на Android и iOS;\n- заводить баги в Jira с понятными шагами.\n\nПодойдёт кандидат без опыта: всему научим. Нужны внимательность, любовь к играм и английский на уровне чтения.\n\nОплата: $800 в месяц\nУдалённо, из любой страны.\n\n#qa #parttime #удалёнка\nПисать: @hr_pixelwave",
+    "expect": {
+      "level": "junior",
+      "work_format": "remote",
+      "employment_type": "part_time",
+      "salary_min": 800,
+      "salary_max": 800,
+      "salary_currency": "USD",
+      "skills_include": [
+        "android",
+        "ios",
+        "jira"
+      ]
+    }
+  },
+  {
+    "key": "tr-10",
+    "offer": "pixelwave-uiux",
+    "profession": "design",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5103",
+    "age_hours": 576,
+    "title": "UI/UX-дизайнер",
+    "company": "Pixelwave",
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5103",
+    "text": "UI/UX-дизайнер в Pixelwave\n\nИщем дизайнера интерфейсов для мобильных игр: меню, магазин, экраны прогресса. Работа по контракту на полгода с продлением.\n\nЧто делать:\n- проектировать игровые интерфейсы и прототипы в Figma;\n- собирать и развивать UI-кит;\n- проверять гипотезы вместе с продюсерами.\n\nТребования: опыт от 2 лет в UI/UX, портфолио с мобильными проектами.\n\nОплата: $2000–2800 в месяц\nУдалённо, гибкий график.\n\n#design #uiux #remote\nПисать: @hr_pixelwave",
+    "expect": {
+      "level": "middle",
+      "work_format": "remote",
+      "employment_type": "contract",
+      "salary_min": 2000,
+      "salary_max": 2800,
+      "salary_currency": "USD",
+      "skills_include": [
+        "figma"
+      ]
+    }
+  },
+  {
+    "key": "tr-11",
+    "offer": "balkan-pm",
+    "profession": "product",
+    "source": "tg_relocate_remote",
+    "run": 0,
+    "external_id": "5095",
+    "age_hours": 648,
+    "title": "Product Manager",
+    "company": "Balkan Soft",
+    "city": "Белград",
+    "url": "https://t.me/demo_relocate_jobs/5095",
+    "text": "Product Manager — Balkan Soft, Белград\n\nBalkan Soft делает B2B-платформу для управления складами. Ищем продакт-менеджера в направление мобильного приложения кладовщика.\n\nЗадачи:\n- исследования пользователей и формирование бэклога;\n- приоритизация и работа с метриками;\n- взаимодействие с командой разработки по Scrum.\n\nТребования: опыт от 3 лет в продукте, английский B2, уверенный SQL будет плюсом.\n\nЗарплата: €3500–4500 в месяц до вычета налогов\nОфис в Белграде. Помогаем с релокацией: виза, ВНЖ, первые две недели жилья.\nПолная занятость.\n\n#product #relocation #serbia\nПисать: @hr_balkan_soft",
+    "expect": {
+      "level": "middle",
+      "work_format": "office",
+      "salary_min": 3500,
+      "salary_max": 4500,
+      "salary_currency": "EUR",
+      "relocation": true,
+      "skills_include": [
+        "scrum",
+        "sql"
+      ]
+    }
+  },
+  {
+    "key": "tr-12",
+    "offer": "cloudberry-senior-python",
+    "profession": "backend",
+    "source": "tg_relocate_remote",
+    "run": 1,
+    "external_id": "5121",
+    "age_hours": 40,
+    "title": "Senior Python Developer",
+    "company": "Cloudberry Labs",
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5121",
+    "text": "☁️ Senior Python Developer — Cloudberry Labs\n\nCloudberry Labs — облачная платформа для аналитики IoT-устройств. Ищем Senior Python Developer в команду приёма данных.\n\nСтек: Python, FastAPI, SQLAlchemy, PostgreSQL, Docker, Kubernetes, Terraform, AWS.\n\nЗадачи:\n- сервисы приёма телеметрии от миллионов устройств;\n- проектирование схем хранения;\n- инфраструктура как код на Terraform.\n\nТребования: опыт от 5 лет в бэкенде, английский не ниже B2.\n\nОплата: $5000–6000 в месяц\nПолностью удалённо, работаем по UTC+2. Полная занятость.\n\n#python #remote #senior\nПисать: @hr_cloudberry",
+    "actions": [
+      "viewed"
+    ],
+    "expect": {
+      "level": "senior",
+      "work_format": "remote",
+      "salary_min": 5000,
+      "salary_max": 6000,
+      "salary_currency": "USD",
+      "skills_include": [
+        "python",
+        "fastapi",
+        "sqlalchemy",
+        "postgresql",
+        "docker",
+        "kubernetes",
+        "terraform",
+        "aws"
+      ]
+    }
+  },
+  {
+    "key": "tr-13",
+    "offer": "codeforge-junior-python",
+    "profession": "backend",
+    "source": "tg_relocate_remote",
+    "run": 1,
+    "external_id": "5117",
+    "age_hours": 35,
+    "title": "Junior Python Developer",
+    "company": "Codeforge",
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5117",
+    "text": "Junior Python Developer — Codeforge\n\nCodeforge ищет начинающего бэкенд-разработчика в команду сервисов для малого бизнеса. Дадим ментора и понятный план роста на полгода.\n\nСтек: Python, Django, PostgreSQL, Docker, Git.\nЖдём основы Python и SQL, опыт от 1 года или пет-проекты.\n\nОплата: $1200–1800 в месяц\nУдалённо, полная занятость.\n\n#python #junior #remote\nПисать: @hr_codeforge",
+    "expect": {
+      "level": "junior",
+      "work_format": "remote",
+      "salary_min": 1200,
+      "salary_max": 1800,
+      "salary_currency": "USD",
+      "skills_include": [
+        "python",
+        "sql",
+        "django",
+        "postgresql",
+        "docker",
+        "git"
+      ]
+    }
+  },
+  {
+    "key": "tr-14",
+    "offer": "pixelwave-junior-front",
+    "profession": "frontend",
+    "source": "tg_relocate_remote",
+    "run": 1,
+    "external_id": "5119",
+    "age_hours": 45,
+    "title": "Junior Frontend Developer",
+    "company": "Pixelwave",
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5119",
+    "text": "Junior Frontend Developer в Pixelwave\n\nИщем начинающего frontend-разработчика в команду веб-портала наших игр: лендинги, личный кабинет игрока, магазин.\n\nСтек: React, TypeScript, HTML, CSS, Vite.\n\nЗадачи: вёрстка страниц по макетам из Figma, небольшие компоненты на React, исправление багов.\n\nЖдём: уверенные HTML и CSS, основы JavaScript и React, опыт от 1 года или сильное портфолио.\n\nОплата: $1000–1500 в месяц\nУдалённо, полная занятость, гибкий график.\n\n#frontend #junior #remote\nПисать: @hr_pixelwave",
+    "expect": {
+      "level": "junior",
+      "work_format": "remote",
+      "salary_min": 1000,
+      "salary_max": 1500,
+      "salary_currency": "USD",
+      "skills_include": [
+        "react",
+        "typescript",
+        "html",
+        "css",
+        "vite",
+        "figma",
+        "javascript"
+      ]
+    }
+  },
+  {
+    "key": "tr-15",
+    "offer": "layout-freelance",
+    "profession": "frontend",
+    "source": "tg_relocate_remote",
+    "run": 1,
+    "external_id": "5115",
+    "age_hours": 50,
+    "title": "Верстальщик на проект",
+    "company": null,
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5115",
+    "text": "Верстальщик на проект\n\nИщем верстальщика на фриланс: сверстать лендинг и пять внутренних страниц сайта строительной компании по готовым макетам.\n\nЧто нужно:\n- адаптивная вёрстка HTML и CSS (препроцессор SCSS) по макетам из Figma;\n- немного JavaScript для слайдеров и форм, сборка на Webpack;\n- работа с Git;\n- аккуратность и соблюдение сроков.\n\nСтавка: от 1500 ₽ в час, объём около 40 часов\nРабота удалённая, оплата поэтапно по мере сдачи страниц.\n\n#вёрстка #фриланс #удалёнка\nПисать: @hr_build_demo",
+    "expect": {
+      "level": "unknown",
+      "work_format": "remote",
+      "employment_type": "contract",
+      "salary_min": 1500,
+      "salary_max": null,
+      "salary_currency": "RUB",
+      "salary_period": "hour",
+      "parse_quality": "partial",
+      "skills_include": [
+        "html",
+        "css",
+        "javascript",
+        "figma",
+        "sass",
+        "webpack",
+        "git"
+      ]
+    }
+  },
+  {
+    "key": "tr-16",
+    "offer": "datalytics-junior-da",
+    "profession": "data",
+    "source": "tg_relocate_remote",
+    "run": 1,
+    "external_id": "5118",
+    "age_hours": 31,
+    "title": "Junior Data Analyst",
+    "company": "Datalytics",
+    "city": null,
+    "url": "https://t.me/demo_relocate_jobs/5118",
+    "text": "📈 Junior Data Analyst в Datalytics\n\nDatalytics помогает ритейлу и логистике принимать решения на данных. Ищем младшего аналитика в команду клиентской отчётности.\n\nЗадачи:\n- выгрузки и витрины на SQL;\n- отчёты и сводные таблицы в Excel;\n- простые скрипты на Python для автоматизации.\n\nТребования: уверенный SQL и Excel, базовый Python, опыт от 1 года в аналитике или сильные учебные проекты.\n\nЗарплата: 90–120к ₽ на руки\nУдалённо, полная занятость, наставник на первые три месяца.\n\n#аналитика #junior #удалёнка\nПисать: @hr_datalytics",
+    "expect": {
+      "level": "junior",
+      "work_format": "remote",
+      "salary_min": 90000,
+      "salary_max": 120000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "sql",
+        "excel",
+        "python"
+      ]
+    }
+  },
+  {
+    "key": "tr-17",
+    "offer": "vektor-senior-devops",
+    "profession": "devops",
+    "source": "tg_relocate_remote",
+    "run": 1,
+    "external_id": "5120",
+    "age_hours": 29,
+    "title": "Senior DevOps Engineer",
+    "company": "Вектор Логистик",
+    "city": "Москва",
+    "url": "https://t.me/demo_relocate_jobs/5120",
+    "text": "Senior DevOps Engineer — Вектор Логистик\n\nВектор Логистик управляет сетью распределительных центров по всей России. Ищем Senior DevOps Engineer в платформенную команду.\n\nСтек: Kubernetes, Helm, Terraform, Ansible, GitLab CI, Prometheus, Grafana, Linux.\n\nЗадачи:\n- развитие платформы на Kubernetes для двух сотен сервисов;\n- инфраструктура как код и стандарты сборки;\n- наблюдаемость и дежурства.\n\nТребования: опыт от 5 лет в эксплуатации, продовый Kubernetes и Terraform.\n\nЗарплата: 380–480к ₽ на руки\nГибрид, офис в Москве у Савёловской. Полная занятость, ДМС.\n\n#devops #senior #kubernetes\nПисать: @hr_vektor",
+    "expect": {
+      "level": "senior",
+      "work_format": "hybrid",
+      "salary_min": 380000,
+      "salary_max": 480000,
+      "salary_currency": "RUB",
+      "parse_quality": "full",
+      "skills_include": [
+        "kubernetes",
+        "helm",
+        "terraform",
+        "ansible",
+        "gitlab ci",
+        "prometheus",
+        "grafana",
+        "linux"
+      ],
+      "skills_exclude": [
+        "python"
+      ]
+    }
+  },
+  {
+    "key": "tr-18",
+    "offer": "minsk-qa",
+    "profession": "qa",
+    "source": "tg_relocate_remote",
+    "run": 1,
+    "external_id": "5114",
+    "age_hours": 60,
+    "title": "В команду нужен тестировщик",
+    "company": null,
+    "city": "Минск",
+    "url": "https://t.me/demo_relocate_jobs/5114",
+    "text": "В команду нужен тестировщик\n\nНебольшая команда из Минска ищет тестировщика в проект по автоматизации записи в автосервисы. Нужно проверять веб-приложение и мобильное приложение перед релизами, писать чек-листы и помогать разработчикам воспроизводить ошибки.\n\nЧто важно:\n- внимательность к деталям;\n- умение понятно описывать баги;\n- базовое понимание клиент-серверной архитектуры.\n\nУсловия обсудим на созвоне, расскажем о проекте и команде подробнее.\n\n#qa #минск #вакансия\nПисать: @hr_minsk_team",
+    "expect": {
+      "level": "unknown",
+      "work_format": "unknown",
+      "employment_type": "unknown",
+      "salary_currency": null,
+      "parse_quality": "partial"
+    }
+  },
+  {
+    "key": "hc-01",
+    "offer": "sevmarket-senior-python",
+    "profession": "backend",
+    "source": "html_careerhub",
+    "run": 0,
+    "external_id": "vac-20411",
+    "age_hours": 110,
+    "title": "Senior Python Developer (FastAPI)",
+    "company": "Северный Маркет",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20411",
+    "text": "Северный Маркет — сеть онлайн-гипермаркетов с собственной логистикой. Команда заказов ищет Senior Python Developer.\n\nЧем предстоит заниматься:\n- развивать сервисы оформления и сборки заказов на FastAPI;\n- проектировать схемы данных в PostgreSQL, работать с SQLAlchemy;\n- кэширование в Redis, контейнеризация в Docker и Kubernetes;\n- метрики и алерты в Prometheus и Grafana.\n\nЧто мы ждём:\n- опыт коммерческой разработки на Python от 5 лет;\n- понимание асинхронности и паттернов проектирования;\n- опыт наставничества.\n\nУсловия: гибридный формат, офис у метро Автозаводская, полная занятость, ДМС, ежегодный бонус.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "salary_min": 380000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "PostgreSQL",
+        "SQLAlchemy",
+        "Redis",
+        "Docker",
+        "Kubernetes",
+        "Prometheus",
+        "Grafana"
+      ]
+    },
+    "actions": [
+      "viewed",
+      "saved"
+    ],
+    "expect": {
+      "level": "senior",
+      "work_format": "hybrid",
+      "salary_min": 380000,
+      "salary_max": null,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "fastapi",
+        "postgresql",
+        "sqlalchemy",
+        "redis",
+        "docker",
+        "kubernetes",
+        "prometheus",
+        "grafana"
+      ]
+    }
+  },
+  {
+    "key": "hc-02",
+    "offer": "kamasoft-junior-python",
+    "profession": "backend",
+    "source": "html_careerhub",
+    "run": 0,
+    "external_id": "vac-20388",
+    "age_hours": 144,
+    "title": "Junior Python-разработчик",
+    "company": "КамаСофт",
+    "city": "Казань",
+    "url": "https://careers.example.com/vacancies/vac-20388",
+    "text": "КамаСофт разрабатывает ERP-системы для производственных компаний Татарстана. Ищем Junior Python-разработчика в команду модуля планирования производства.\n\nЗадачи:\n- доработка модулей на Django;\n- написание запросов к PostgreSQL;\n- покрытие кода тестами, работа с Git.\n\nТребования:\n- уверенные основы Python и ООП;\n- понимание реляционных баз данных;\n- опыт от 1 года или учебные проекты.\n\nУсловия: офис в центре Казани, полная занятость, наставник, компенсация обучения.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "salary_min": 90000,
+      "salary_max": 120000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Python",
+        "Django",
+        "PostgreSQL",
+        "Git"
+      ]
+    },
+    "expect": {
+      "level": "junior",
+      "work_format": "office",
+      "salary_min": 90000,
+      "salary_max": 120000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "django",
+        "postgresql",
+        "git"
+      ],
+      "skills_exclude": [
+        "html",
+        "css",
+        "javascript",
+        "bash"
+      ]
+    }
+  },
+  {
+    "key": "hc-03",
+    "offer": "balticbank-java",
+    "profession": "backend",
+    "source": "html_careerhub",
+    "run": 0,
+    "external_id": "vac-20379",
+    "age_hours": 168,
+    "title": "Java-разработчик (Spring Boot)",
+    "company": "Балтийский банк",
+    "city": "СПб",
+    "url": "https://careers.example.com/vacancies/vac-20379",
+    "text": "Балтийский банк развивает платформу розничного кредитования. Ищем Java-разработчика в команду скоринга заявок.\n\nЗадачи:\n- микросервисы на Java и Spring Boot;\n- интеграции через Kafka;\n- работа с Oracle и PostgreSQL;\n- участие в код-ревью и проектировании.\n\nТребования: опыт от 3 лет на Java, Spring, Hibernate, понимание транзакций.\n\nУсловия: гибрид (три дня в офисе на Петроградской), полная занятость, ДМС, годовой бонус.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "salary_min": 230000,
+      "salary_max": 300000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Java",
+        "Spring Boot",
+        "Kafka",
+        "Oracle",
+        "PostgreSQL",
+        "Hibernate",
+        "Microservices"
+      ]
+    }
+  },
+  {
+    "key": "hc-04",
+    "offer": "helix-kotlin-berlin",
+    "profession": "backend",
+    "source": "html_careerhub",
+    "run": 0,
+    "external_id": "vac-20312",
+    "age_hours": 336,
+    "title": "Senior Backend Engineer (Kotlin)",
+    "company": "Helix Mobility GmbH",
+    "city": "Берлин",
+    "url": "https://careers.example.com/vacancies/vac-20312",
+    "text": "Helix Mobility runs a car-sharing platform used in twelve European cities. We are looking for a Senior Backend Engineer to join the pricing team.\n\nWhat you will do:\n- build services in Kotlin and Spring Boot;\n- design event flows with Kafka;\n- own PostgreSQL schemas and query performance;\n- run services on Kubernetes in AWS.\n\nWhat we expect: 6+ years of backend experience, strong Kotlin or Java, English B2 or higher.\n\nWe offer: hybrid work in Berlin, full relocation package with visa support, 30 days of vacation.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "relocation_support": true,
+      "salary_min": 75000,
+      "salary_max": 90000,
+      "salary_currency": "EUR",
+      "salary_period": "year",
+      "salary_is_gross": true,
+      "skills": [
+        "Kotlin",
+        "Spring Boot",
+        "Kafka",
+        "PostgreSQL",
+        "Kubernetes",
+        "AWS"
+      ],
+      "languages": [
+        "English"
+      ]
+    }
+  },
+  {
+    "key": "hc-05",
+    "offer": "sevmarket-front-lead",
+    "profession": "frontend",
+    "source": "html_careerhub",
+    "run": 0,
+    "external_id": "vac-20250",
+    "age_hours": 600,
+    "title": "Frontend Team Lead (Next.js)",
+    "company": "Северный Маркет",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20250",
+    "text": "Северный Маркет ищет лида frontend-команды витрины: восемь разработчиков, десятки релизов в месяц.\n\nЗадачи:\n- технические решения и архитектура витрины на Next.js и React;\n- развитие дизайн-системы и производительности;\n- найм, развитие команды, код-ревью.\n\nТребования: опыт от 6 лет во frontend, из них не меньше двух в роли руководителя; TypeScript, React, Next.js, опыт с SSR.\n\nУсловия: офис у Автозаводской, полная занятость, зарплата по итогам собеседования, ДМС.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "skills": [
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Redux"
+      ]
+    }
+  },
+  {
+    "key": "hc-06",
+    "offer": "steppe-angular",
+    "profession": "frontend",
+    "source": "html_careerhub",
+    "run": 0,
+    "external_id": "vac-20341",
+    "age_hours": 216,
+    "title": "Angular-разработчик",
+    "company": "Steppe Digital",
+    "city": "Алматы",
+    "url": "https://careers.example.com/vacancies/vac-20341",
+    "text": "Steppe Digital делает онлайн-банкинг для малого бизнеса Казахстана. Ищем Angular-разработчика в команду личного кабинета предпринимателя.\n\nЗадачи:\n- новые разделы кабинета на Angular и TypeScript;\n- работа с RxJS и NgRx;\n- покрытие компонентов тестами.\n\nТребования: опыт от 2 лет с Angular, уверенный TypeScript, HTML и CSS.\n\nУсловия: офис в Алматы, полная занятость, медицинская страховка, обучение английскому.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "salary_min": 800000,
+      "salary_max": 1100000,
+      "salary_currency": "KZT",
+      "salary_period": "month",
+      "skills": [
+        "Angular",
+        "TypeScript",
+        "HTML",
+        "CSS"
+      ]
+    },
+    "expect": {
+      "level": "middle",
+      "work_format": "office",
+      "salary_min": 800000,
+      "salary_max": 1100000,
+      "salary_currency": "KZT",
+      "salary_period": "month",
+      "skills_include": [
+        "angular",
+        "typescript"
+      ]
+    }
+  },
+  {
+    "key": "hc-07",
+    "offer": "orbita-senior-ds",
+    "profession": "data",
+    "source": "html_careerhub",
+    "run": 0,
+    "external_id": "vac-20297",
+    "age_hours": 288,
+    "title": "Senior Data Scientist",
+    "company": "Орбита Софт",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20297",
+    "text": "Орбита Софт строит рекомендательные системы для крупных онлайн-ритейлеров. Ищем Senior Data Scientist в команду персонализации.\n\nЗадачи:\n- модели ранжирования и рекомендаций;\n- A/B тесты и оценка эффекта;\n- вывод моделей в прод вместе с ML-инженерами.\n\nТребования: опыт от 4 лет в машинном обучении, Python, pandas, scikit-learn, PyTorch, SQL, уверенная статистика.\n\nУсловия: гибрид, офис у Белорусской, полная занятость, бюджет на конференции.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "skills": [
+        "Python",
+        "pandas",
+        "scikit-learn",
+        "PyTorch",
+        "SQL",
+        "Machine Learning",
+        "A/B testing"
+      ]
+    }
+  },
+  {
+    "key": "hc-08",
+    "offer": "altair-head-platform",
+    "profession": "devops",
+    "source": "html_careerhub",
+    "run": 0,
+    "external_id": "vac-20199",
+    "age_hours": null,
+    "title": "Head of Platform",
+    "company": "Альтаир Банк",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20199",
+    "text": "Альтаир Банк ищет руководителя платформенного направления: внутреннее облако, CI/CD, наблюдаемость и безопасность цепочки поставки кода. В подчинении четыре команды, около тридцати инженеров.\n\nЗадачи:\n- стратегия и бюджет платформы;\n- развитие внутреннего облака на Kubernetes и OpenShift;\n- стандарты надёжности, SLO и дежурств;\n- найм и развитие руководителей команд.\n\nТребования: опыт от 8 лет в инфраструктуре, из них не меньше трёх в роли руководителя.\n\nУсловия: гибрид, офис в Москве, полная занятость, годовой бонус.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "skills": [
+        "Kubernetes",
+        "OpenShift",
+        "CI/CD",
+        "Terraform"
+      ]
+    },
+    "actions": [
+      "hidden"
+    ]
+  },
+  {
+    "key": "hc-09",
+    "offer": "shield-qa-lead",
+    "profession": "qa",
+    "source": "html_careerhub",
+    "run": 0,
+    "external_id": "vac-20231",
+    "age_hours": 672,
+    "title": "QA Lead",
+    "company": "Щит Секьюрити",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20231",
+    "text": "Щит Секьюрити ищет руководителя группы тестирования для продуктов анализа сетевых угроз. В команде шесть инженеров: ручное и автоматизированное тестирование.\n\nЗадачи:\n- стратегия тестирования и метрики качества;\n- развитие автотестов на pytest и Selenium;\n- нагрузочное тестирование в JMeter;\n- найм и развитие команды.\n\nТребования: опыт от 5 лет в QA, из них не меньше двух лидом.\n\nУсловия: офис у Павелецкой, полная занятость, ДМС.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "skills": [
+        "pytest",
+        "Selenium",
+        "JMeter",
+        "Jira"
+      ]
+    }
+  },
+  {
+    "key": "hc-10",
+    "offer": "meridian-product-designer",
+    "profession": "design",
+    "source": "html_careerhub",
+    "run": 0,
+    "external_id": "vac-20402",
+    "age_hours": 110,
+    "title": "Product Designer",
+    "company": "Меридиан",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20402",
+    "text": "Меридиан ищет продуктового дизайнера в команду кредитных продуктов для малого бизнеса.\n\nЗадачи:\n- проектировать сценарии подачи заявки и личного кабинета;\n- проводить интервью и юзабилити-тесты;\n- развивать дизайн-систему в Figma вместе с frontend-командой.\n\nТребования: опыт от 5 лет в продуктовом дизайне, портфолио с кейсами финтеха или B2B-сервисов.\n\nУсловия: гибрид, офис у Павелецкой, полная занятость, ДМС.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "experience_min_years": 5,
+      "skills": [
+        "Figma"
+      ]
+    }
+  },
+  {
+    "key": "hc-11",
+    "offer": "meridian-senior-python",
+    "profession": "backend",
+    "source": "html_careerhub",
+    "run": 1,
+    "external_id": "vac-20590",
+    "age_hours": 8,
+    "title": "Senior Python Developer",
+    "company": "Меридиан",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20590",
+    "text": "",
+    "structured": {
+      "work_format": "hybrid",
+      "salary_min": 350000,
+      "salary_max": 450000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "PostgreSQL",
+        "Kafka"
+      ]
+    },
+    "expect": {
+      "level": "senior",
+      "work_format": "hybrid",
+      "salary_currency": "RUB",
+      "parse_quality": "partial"
+    }
+  },
+  {
+    "key": "hc-12",
+    "offer": "meridian-python-intern",
+    "profession": "backend",
+    "source": "html_careerhub",
+    "run": 1,
+    "external_id": "vac-20541",
+    "age_hours": 50,
+    "title": "Стажёр Python-разработчик",
+    "company": "Меридиан",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20541",
+    "text": "Меридиан открывает оплачиваемую стажировку для начинающих Python-разработчиков. Три месяца работы в команде платёжного шлюза с персональным наставником, лучших стажёров приглашаем в штат.\n\nЧто нужно:\n- основы Python и SQL;\n- понимание Git и работы в Linux;\n- готовность работать не меньше тридцати часов в неделю.\n\nЧто будешь делать: небольшие задачи в бэкенде, тесты, исправление ошибок под ревью наставника.\n\nУсловия: гибрид, офис у Павелецкой, стажировка с официальным оформлением.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "internship",
+      "salary_min": 60000,
+      "salary_max": 60000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Python",
+        "SQL",
+        "Git",
+        "Linux"
+      ]
+    },
+    "expect": {
+      "level": "intern",
+      "work_format": "hybrid",
+      "employment_type": "internship",
+      "salary_min": 60000,
+      "salary_max": 60000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "sql",
+        "git",
+        "linux"
+      ],
+      "skills_exclude": [
+        "html",
+        "css",
+        "javascript",
+        "bash"
+      ]
+    }
+  },
+  {
+    "key": "hc-13",
+    "offer": "meridian-senior-react",
+    "profession": "frontend",
+    "source": "html_careerhub",
+    "run": 1,
+    "external_id": "vac-20560",
+    "age_hours": 30,
+    "title": "Senior Frontend Developer (React)",
+    "company": "Меридиан",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20560",
+    "text": "Меридиан ищет Senior Frontend Developer в команду интернет-банка для малого бизнеса.\n\nЗадачи:\n- архитектура клиентской части на React и TypeScript;\n- управление состоянием на Redux Toolkit;\n- производительность и доступность интерфейсов;\n- менторство и код-ревью.\n\nТребования: опыт от 5 лет во frontend, глубокое знание React, TypeScript, опыт с Next.js и Webpack.\n\nУсловия: гибрид, офис у Павелецкой, полная занятость, ДМС.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "salary_min": 320000,
+      "salary_max": 400000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "React",
+        "TypeScript",
+        "Redux",
+        "Next.js",
+        "Webpack"
+      ]
+    },
+    "expect": {
+      "level": "senior",
+      "work_format": "hybrid",
+      "salary_min": 320000,
+      "salary_max": 400000,
+      "salary_currency": "RUB",
+      "parse_quality": "full",
+      "skills_include": [
+        "react",
+        "typescript",
+        "redux",
+        "next.js",
+        "webpack"
+      ]
+    }
+  },
+  {
+    "key": "hc-14",
+    "offer": "promservice-bi",
+    "profession": "data",
+    "source": "html_careerhub",
+    "run": 1,
+    "external_id": "vac-20533",
+    "age_hours": 70,
+    "title": "BI-аналитик (Power BI)",
+    "company": "Промсервис",
+    "city": "Екатеринбург",
+    "url": "https://careers.example.com/vacancies/vac-20533",
+    "text": "Промсервис — производитель промышленного оборудования. Ищем BI-аналитика для построения управленческой отчётности.\n\nЗадачи:\n- дашборды в Power BI для производства и продаж;\n- модели данных и расчётные меры;\n- запросы к MS SQL и выгрузки из 1С.\n\nТребования: опыт от 2 лет с Power BI, уверенный SQL и Excel.\n\nУсловия: офис в Екатеринбурге, полная занятость, официальное оформление.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "salary_min": 140000,
+      "salary_max": 170000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Power BI",
+        "MS SQL Server",
+        "SQL",
+        "Excel",
+        "1C"
+      ]
+    }
+  },
+  {
+    "key": "hc-15",
+    "offer": "vektor-senior-devops",
+    "profession": "devops",
+    "source": "html_careerhub",
+    "run": 1,
+    "external_id": "vac-20566",
+    "age_hours": 30,
+    "title": "Senior DevOps Engineer",
+    "company": "Вектор Логистик",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20566",
+    "text": "",
+    "structured": {
+      "work_format": "hybrid",
+      "salary_min": 380000,
+      "salary_max": 480000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Kubernetes",
+        "Terraform",
+        "Ansible"
+      ]
+    },
+    "expect": {
+      "level": "senior",
+      "work_format": "hybrid",
+      "parse_quality": "partial"
+    }
+  },
+  {
+    "key": "hc-16",
+    "offer": "ararat-k8s",
+    "profession": "devops",
+    "source": "html_careerhub",
+    "run": 1,
+    "external_id": "vac-20588",
+    "age_hours": 8,
+    "title": "DevOps Engineer (Kubernetes)",
+    "company": "Ararat Cloud LLC",
+    "city": "Yerevan",
+    "url": "https://careers.example.com/vacancies/vac-20588",
+    "text": "Ararat Cloud — облачный провайдер для компаний Армении и Грузии. Ищем DevOps-инженера в команду управляемого Kubernetes.\n\nЗадачи:\n- эксплуатация кластеров Kubernetes и Helm-чартов;\n- автоматизация на Terraform и Ansible;\n- мониторинг на Prometheus и Grafana.\n\nТребования: опыт от 3 лет в эксплуатации Linux и Kubernetes.\n\nУсловия: офис в Ереване, релокация с оплатой переезда, полная занятость.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "relocation_support": true,
+      "experience_min_years": 3,
+      "salary_min": 3000,
+      "salary_max": 3800,
+      "salary_currency": "USD",
+      "salary_period": "month",
+      "skills": [
+        "Kubernetes",
+        "Helm",
+        "Terraform",
+        "Ansible",
+        "Prometheus",
+        "Grafana",
+        "Linux"
+      ]
+    },
+    "expect": {
+      "level": "middle",
+      "work_format": "office",
+      "salary_min": 3000,
+      "salary_max": 3800,
+      "salary_currency": "USD",
+      "relocation": true,
+      "parse_quality": "full",
+      "skills_include": [
+        "kubernetes",
+        "helm",
+        "terraform"
+      ]
+    }
+  },
+  {
+    "key": "hc-17",
+    "offer": "vektor-ios",
+    "profession": "mobile",
+    "source": "html_careerhub",
+    "run": 1,
+    "external_id": "vac-20575",
+    "age_hours": 20,
+    "title": "Senior iOS Developer",
+    "company": "Вектор Логистик",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20575",
+    "text": "Вектор Логистик ищет Senior iOS Developer в команду приложения для водителей и курьеров.\n\nЗадачи:\n- новые экраны маршрутов и заказов на Swift и SwiftUI;\n- работа с геолокацией и офлайн-режимом;\n- стабильность и скорость приложения.\n\nТребования: опыт от 5 лет в iOS, уверенные Swift, SwiftUI, Combine, Git.\n\nУсловия: гибрид, офис у Савёловской, полная занятость, ДМС.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "salary_min": 350000,
+      "salary_max": 450000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Swift",
+        "SwiftUI",
+        "iOS",
+        "Git"
+      ]
+    }
+  },
+  {
+    "key": "hc-18",
+    "offer": "sevmarket-senior-pm",
+    "profession": "product",
+    "source": "html_careerhub",
+    "run": 1,
+    "external_id": "vac-20549",
+    "age_hours": 52,
+    "title": "Senior Product Manager",
+    "company": "Северный Маркет",
+    "city": "Москва",
+    "url": "https://careers.example.com/vacancies/vac-20549",
+    "text": "Северный Маркет ищет Senior Product Manager в направление программы лояльности: баллы, персональные предложения, подписка.\n\nЗадачи:\n- стратегия и дорожная карта продукта;\n- исследования, A/B тесты и работа с метриками;\n- управление бэклогом вместе с командой разработки по Scrum.\n\nТребования: опыт от 5 лет в продуктовом менеджменте, уверенный SQL, опыт в e-commerce.\n\nУсловия: гибрид, офис у Автозаводской, полная занятость, годовой бонус.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "salary_min": 400000,
+      "salary_max": 500000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "SQL",
+        "A/B testing",
+        "Jira",
+        "Scrum"
+      ]
+    }
+  },
+  {
+    "key": "hj-01",
+    "offer": "altair-senior-backend",
+    "profession": "backend",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54017",
+    "age_hours": 60,
+    "title": "Senior Backend Developer (Python)",
+    "company": "Альтаир Банк",
+    "city": "Москва",
+    "url": "https://jobs.example.org/it/54017",
+    "text": "Альтаир Банк ищет Senior Backend Developer со стеком Python в команду антифрода.\n\nЗадачи:\n- сервисы проверки операций в реальном времени;\n- потоковая обработка событий из Kafka;\n- хранение в PostgreSQL и Redis;\n- метрики в Prometheus и Grafana.\n\nТребования: опыт от 5 лет, уверенный Python и Django, продовый опыт с Kafka, Docker.\n\nУсловия: офис на Пресненской набережной, полная занятость, ДМС, годовой бонус до 20%.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "salary_min": 300000,
+      "salary_max": 420000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "salary_is_gross": true,
+      "skills": [
+        "Python",
+        "Django",
+        "PostgreSQL",
+        "Kafka",
+        "Redis",
+        "Docker",
+        "Prometheus",
+        "Grafana"
+      ]
+    },
+    "actions": [
+      "hidden"
+    ],
+    "expect": {
+      "level": "senior",
+      "work_format": "office",
+      "salary_min": 300000,
+      "salary_max": 420000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "django",
+        "postgresql",
+        "kafka",
+        "redis",
+        "docker",
+        "prometheus",
+        "grafana"
+      ]
+    }
+  },
+  {
+    "key": "hj-02",
+    "offer": "nordwave-senior-python",
+    "profession": "backend",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54002",
+    "age_hours": 288,
+    "title": "Senior Python Developer",
+    "company": "Nordwave Fintech Ltd",
+    "city": "Лимассол",
+    "url": "https://jobs.example.org/it/54002",
+    "text": "Nordwave Fintech ищет Senior Python Developer в офис в Лимассоле. Команда процессинга отвечает за мгновенные переводы между банками ЕС.\n\nСтек: Python, FastAPI, PostgreSQL, Redis, Kafka, Docker, Kubernetes, AWS.\n\nТребования: опыт от 5 лет, английский B2.\n\nУсловия: офис в Лимассоле, релокация на Кипр для сотрудника и семьи, полная занятость.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "relocation_support": true,
+      "salary_min": 6000,
+      "salary_max": 7500,
+      "salary_currency": "EUR",
+      "salary_period": "month",
+      "salary_is_gross": true,
+      "skills": [
+        "Python",
+        "FastAPI",
+        "PostgreSQL",
+        "Redis",
+        "Kafka",
+        "Docker",
+        "Kubernetes",
+        "AWS"
+      ]
+    },
+    "expect": {
+      "level": "senior",
+      "work_format": "office",
+      "salary_min": 6000,
+      "salary_max": 7500,
+      "salary_currency": "EUR",
+      "relocation": true,
+      "parse_quality": "full",
+      "skills_include": [
+        "python",
+        "fastapi",
+        "postgresql",
+        "redis",
+        "kafka",
+        "docker",
+        "kubernetes",
+        "aws"
+      ]
+    }
+  },
+  {
+    "key": "hj-03",
+    "offer": "uraltech-flask",
+    "profession": "backend",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54011",
+    "age_hours": 240,
+    "title": "Python-разработчик (Flask)",
+    "company": "УралТех",
+    "city": "Екатеринбург",
+    "url": "https://jobs.example.org/it/54011",
+    "text": "УралТех ищет Python-разработчика в команду сервисов учёта для промышленных предприятий.\n\nЗадачи:\n- API на Flask для внутренних систем заводов;\n- модели данных на SQLAlchemy и PostgreSQL;\n- упаковка сервисов в Docker.\n\nТребования: опыт от 2 лет с Python, Flask или аналогичным фреймворком.\n\nУсловия: удалённая работа, полная занятость, официальное оформление.",
+    "structured": {
+      "work_format": "remote",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "salary_min": 160000,
+      "salary_max": 200000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "salary_is_gross": false,
+      "skills": [
+        "Python",
+        "Flask",
+        "SQLAlchemy",
+        "PostgreSQL",
+        "Docker"
+      ]
+    },
+    "expect": {
+      "level": "middle",
+      "work_format": "remote",
+      "salary_min": 160000,
+      "salary_max": 200000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "flask",
+        "sqlalchemy",
+        "postgresql",
+        "docker"
+      ],
+      "skills_exclude": [
+        "html",
+        "css",
+        "javascript",
+        "bash"
+      ]
+    }
+  },
+  {
+    "key": "hj-04",
+    "offer": "vektor-senior-go",
+    "profession": "backend",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54015",
+    "age_hours": 90,
+    "title": "Senior Go Developer",
+    "company": "Вектор Логистик",
+    "city": "Москва",
+    "url": "https://jobs.example.org/it/54015",
+    "text": "Вектор Логистик ищет Senior Go Developer в команду маршрутизации: расчёт маршрутов для тысяч курьеров в реальном времени.\n\nЗадачи:\n- высоконагруженные сервисы на Go (Gin, gRPC);\n- аналитическое хранилище на ClickHouse;\n- обмен событиями через Kafka;\n- эксплуатация в Kubernetes.\n\nТребования: опыт от 5 лет в бэкенде, из них не меньше трёх на Go.\n\nУсловия: офис у Савёловской, полная занятость, ДМС.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "salary_min": 350000,
+      "salary_max": 450000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Go",
+        "Gin",
+        "gRPC",
+        "ClickHouse",
+        "Kafka",
+        "Kubernetes"
+      ]
+    },
+    "expect": {
+      "level": "senior",
+      "skills_include": [
+        "go",
+        "gin",
+        "grpc"
+      ],
+      "skills_exclude": [
+        "python"
+      ]
+    }
+  },
+  {
+    "key": "hj-05",
+    "offer": "promservice-1c",
+    "profession": "other",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54001",
+    "age_hours": 960,
+    "title": "Программист 1С",
+    "company": "Промсервис",
+    "city": "Нижний Новгород",
+    "url": "https://jobs.example.org/it/54001",
+    "text": "Промсервис ищет программиста 1С для развития учётных систем завода.\n\nЗадачи:\n- доработка конфигураций 1С:Предприятие (УТ, ERP);\n- обмены с внешними системами;\n- отчёты для производства и бухгалтерии.\n\nТребования: опыт от 3 лет в разработке на 1С, знание типовых конфигураций.\n\nУсловия: офис в Нижнем Новгороде, полная занятость, официальное оформление.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "experience_min_years": 3,
+      "salary_min": 150000,
+      "salary_max": 150000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "1С"
+      ]
+    }
+  },
+  {
+    "key": "hj-06",
+    "offer": "nevsky-fullstack",
+    "profession": "frontend",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54010",
+    "age_hours": 264,
+    "title": "Fullstack-разработчик (Django + React)",
+    "company": "Невские цифровые решения",
+    "city": "Санкт-Петербург",
+    "url": "https://jobs.example.org/it/54010",
+    "text": "Невские цифровые решения ищут fullstack-разработчика в команду портала городских услуг.\n\nЗадачи:\n- бэкенд на Python и Django, REST API;\n- интерфейсы на React и TypeScript;\n- вёрстка форм на HTML и CSS.\n\nТребования: опыт от 2 лет в веб-разработке, уверенные Django и React, базовый JavaScript.\n\nУсловия: гибрид, офис на Васильевском острове, полная занятость.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "salary_min": 200000,
+      "salary_max": 260000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Python",
+        "Django",
+        "React",
+        "TypeScript",
+        "JavaScript",
+        "HTML",
+        "CSS",
+        "PostgreSQL"
+      ]
+    },
+    "actions": [
+      "saved"
+    ],
+    "expect": {
+      "level": "middle",
+      "work_format": "hybrid",
+      "salary_min": 200000,
+      "salary_max": 260000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "django",
+        "react",
+        "html",
+        "css",
+        "javascript"
+      ]
+    }
+  },
+  {
+    "key": "hj-07",
+    "offer": "altair-de",
+    "profession": "data",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54008",
+    "age_hours": 528,
+    "title": "Data Engineer (Airflow, Spark)",
+    "company": "Альтаир Банк",
+    "city": "Москва",
+    "url": "https://jobs.example.org/it/54008",
+    "text": "Альтаир Банк ищет инженера данных в команду корпоративного хранилища.\n\nЗадачи:\n- пайплайны загрузки на Airflow;\n- обработка больших объёмов в Spark;\n- витрины в Greenplum и ClickHouse;\n- контроль качества данных.\n\nТребования: опыт от 3 лет в инженерии данных, Python, SQL.\n\nУсловия: удалённая работа, полная занятость, ДМС, зарплата обсуждается по итогам интервью.",
+    "structured": {
+      "work_format": "remote",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "skills": [
+        "Airflow",
+        "Spark",
+        "Greenplum",
+        "ClickHouse",
+        "Python",
+        "SQL"
+      ]
+    }
+  },
+  {
+    "key": "hj-08",
+    "offer": "nevsky-devops",
+    "profession": "devops",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54009",
+    "age_hours": 312,
+    "title": "DevOps-инженер",
+    "company": "Невские цифровые решения",
+    "city": "Санкт-Петербург",
+    "url": "https://jobs.example.org/it/54009",
+    "text": "Невские цифровые решения ищут DevOps-инженера для поддержки инфраструктуры городских сервисов.\n\nЗадачи:\n- CI/CD на GitLab CI;\n- контейнеризация в Docker и оркестрация в Kubernetes;\n- мониторинг на Prometheus и Grafana, логи в ELK;\n- поддержка Linux-серверов и Nginx.\n\nТребования: опыт от 2 лет в эксплуатации, уверенный Linux.\n\nУсловия: офис на Васильевском острове, полная занятость.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "salary_min": 220000,
+      "salary_max": 280000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "GitLab CI",
+        "CI/CD",
+        "Docker",
+        "Kubernetes",
+        "Prometheus",
+        "Grafana",
+        "ELK",
+        "Linux",
+        "Nginx"
+      ]
+    }
+  },
+  {
+    "key": "hj-09",
+    "offer": "balticbank-qa-java",
+    "profession": "qa",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54006",
+    "age_hours": 408,
+    "title": "Senior QA Automation (Java)",
+    "company": "Балтийский банк",
+    "city": "Санкт-Петербург",
+    "url": "https://jobs.example.org/it/54006",
+    "text": "Балтийский банк ищет старшего инженера по автоматизации тестирования в команду кредитных продуктов.\n\nЗадачи:\n- автотесты API и UI на Java;\n- фреймворк на JUnit и Selenium;\n- интеграция прогонов в Jenkins;\n- наставничество для младших инженеров.\n\nТребования: опыт от 4 лет в автоматизации на Java.\n\nУсловия: офис на Петроградской, полная занятость, ДМС.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "salary_min": 250000,
+      "salary_max": 320000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Java",
+        "JUnit",
+        "Selenium",
+        "Jenkins",
+        "Postman"
+      ]
+    }
+  },
+  {
+    "key": "hj-10",
+    "offer": "eduline-junior-designer",
+    "profession": "design",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54003",
+    "age_hours": 1320,
+    "title": "Junior-дизайнер интерфейсов",
+    "company": "EduLine",
+    "city": "Казань",
+    "url": "https://jobs.example.org/it/54003",
+    "text": "EduLine ищет начинающего дизайнера интерфейсов в казанский офис на неполный день: четыре часа в день, удобный график для студентов.\n\nЗадачи:\n- макеты страниц курсов в Figma;\n- иллюстрации и баннеры для рассылок;\n- помощь старшему дизайнеру с UI-китом.\n\nТребования: портфолио с учебными работами, базовый Figma.\n\nУсловия: офис в Казани, частичная занятость, наставник.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "part_time",
+      "salary_min": 60000,
+      "salary_max": 80000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Figma"
+      ]
+    }
+  },
+  {
+    "key": "hj-11",
+    "offer": "promservice-pm",
+    "profession": "product",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54007",
+    "age_hours": 384,
+    "title": "Project Manager (IT)",
+    "company": "Промсервис",
+    "city": "Нижний Новгород",
+    "url": "https://jobs.example.org/it/54007",
+    "text": "Промсервис ищет руководителя IT-проектов для внедрения систем учёта на заводах группы.\n\nЗадачи:\n- планирование и контроль сроков внедрения;\n- координация подрядчиков и внутренних команд;\n- отчётность для руководства в Jira и Confluence.\n\nТребования: опыт от 3 лет в управлении IT-проектами, Agile и Scrum на практике.\n\nУсловия: офис в Нижнем Новгороде, полная занятость.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "salary_min": 180000,
+      "salary_max": 220000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Jira",
+        "Agile",
+        "Scrum"
+      ]
+    }
+  },
+  {
+    "key": "hj-12",
+    "offer": "thames-po",
+    "profession": "product",
+    "source": "html_jobboard",
+    "run": 0,
+    "external_id": "54004",
+    "age_hours": 792,
+    "title": "Product Owner",
+    "company": "Thames Fintech Ltd",
+    "city": "Лондон",
+    "url": "https://jobs.example.org/it/54004",
+    "text": "Thames Fintech is building a savings app for young professionals in the UK. We are looking for a Product Owner for the onboarding and payments squad.\n\nWhat you will do:\n- own the backlog and roadmap of the squad;\n- run discovery with customers and stakeholders;\n- work with metrics and A/B tests.\n\nWhat we expect: 5+ years in product roles, fintech background, fluent English.\n\nWe offer: hybrid work in London, visa support, private health insurance.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "relocation_support": true,
+      "experience_min_years": 5,
+      "salary_min": 70000,
+      "salary_max": 85000,
+      "salary_currency": "GBP",
+      "salary_period": "year",
+      "salary_is_gross": true,
+      "skills": [
+        "A/B testing",
+        "Jira",
+        "SQL"
+      ],
+      "languages": [
+        "English"
+      ]
+    }
+  },
+  {
+    "key": "hj-13",
+    "offer": "orbita-python-dev",
+    "profession": "backend",
+    "source": "html_jobboard",
+    "run": 1,
+    "external_id": "54031",
+    "age_hours": 120,
+    "title": "Python Developer (Middle / Senior)",
+    "company": "Орбита Софт",
+    "city": "Санкт-Петербург",
+    "url": "https://jobs.example.org/it/54031",
+    "text": "Орбита Софт ищет Python Developer уровня Middle или Senior в команду сервисов рекомендаций.\n\nЗадачи:\n- сервисы на Django и Celery;\n- очереди RabbitMQ и кэш Redis;\n- оптимизация запросов к PostgreSQL;\n- контейнеризация в Docker.\n\nТребования: опыт от 3 лет на Python, понимание асинхронных задач.\n\nУсловия: гибрид, офис на Петроградской, полная занятость.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "salary_min": 250000,
+      "salary_max": 350000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "Python",
+        "Django",
+        "Celery",
+        "RabbitMQ",
+        "Redis",
+        "PostgreSQL",
+        "Docker"
+      ]
+    },
+    "expect": {
+      "level": "middle",
+      "work_format": "hybrid",
+      "salary_min": 250000,
+      "salary_max": 350000,
+      "salary_currency": "RUB",
+      "skills_include": [
+        "python",
+        "django",
+        "celery",
+        "rabbitmq",
+        "redis",
+        "postgresql",
+        "docker"
+      ]
+    }
+  },
+  {
+    "key": "hj-14",
+    "offer": "line-php",
+    "profession": "backend",
+    "source": "html_jobboard",
+    "run": 1,
+    "external_id": "54029",
+    "age_hours": 144,
+    "title": "PHP-разработчик (Laravel)",
+    "company": "Веб-Студия Лайн",
+    "city": "Краснодар",
+    "url": "https://jobs.example.org/it/54029",
+    "text": "Веб-Студия Лайн делает интернет-магазины и корпоративные сайты для бизнеса юга России. Ищем PHP-разработчика.\n\nЗадачи:\n- бэкенд проектов на Laravel;\n- интеграции с платёжными системами и CRM;\n- работа с MySQL и Redis.\n\nТребования: опыт от 2 лет на PHP и Laravel, Git.\n\nУсловия: офис в центре Краснодара, полная занятость.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "salary_min": 120000,
+      "salary_max": 160000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "PHP",
+        "Laravel",
+        "MySQL",
+        "Redis",
+        "Git"
+      ]
+    }
+  },
+  {
+    "key": "hj-15",
+    "offer": "meridian-senior-react",
+    "profession": "frontend",
+    "source": "html_jobboard",
+    "run": 1,
+    "external_id": "54036",
+    "age_hours": 30,
+    "title": "Senior Frontend Developer (React)",
+    "company": "Меридиан",
+    "city": "г. Москва",
+    "url": "https://jobs.example.org/it/54036",
+    "text": "Команда интернет-банка Меридиан ищет Senior Frontend Developer. Стек: React, TypeScript, Redux, Next.js, Webpack.\n\nЗадачи: архитектура клиентской части, производительность интерфейсов, код-ревью и помощь коллегам.\n\nТребования: опыт от 5 лет во frontend, опыт наставничества.\n\nУсловия: гибрид, офис у Павелецкой, полная занятость, ДМС и компенсация спорта.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "salary_min": 320000,
+      "salary_max": 400000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "skills": [
+        "React",
+        "TypeScript",
+        "Redux",
+        "Next.js",
+        "Webpack"
+      ]
+    },
+    "expect": {
+      "level": "senior",
+      "work_format": "hybrid",
+      "salary_min": 320000,
+      "salary_max": 400000,
+      "salary_currency": "RUB",
+      "parse_quality": "full",
+      "skills_include": [
+        "react",
+        "typescript",
+        "redux",
+        "next.js",
+        "webpack"
+      ]
+    }
+  },
+  {
+    "key": "hj-16",
+    "offer": "retail-da",
+    "profession": "data",
+    "source": "html_jobboard",
+    "run": 1,
+    "external_id": "54035",
+    "age_hours": 26,
+    "title": "Аналитик данных (SQL, Python)",
+    "company": "ООО «Ритейл Аналитика»",
+    "city": "Moscow",
+    "url": "https://jobs.example.org/it/54035",
+    "text": "Ритейл Аналитика ищет аналитика данных в команду прогнозирования спроса для продуктовых сетей.\n\nЗадачи: витрины на SQL в ClickHouse, расчёт эффекта промо в Python, отчёты в Power BI.\n\nТребования: опыт от 2 лет в аналитике, статистика, pandas.\n\nУсловия: гибрид, офис у Белорусской, полная занятость, ДМС после испытательного срока.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "salary_min": 180000,
+      "salary_max": 230000,
+      "salary_currency": "RUB",
+      "salary_period": "month",
+      "salary_is_gross": false,
+      "skills": [
+        "SQL",
+        "ClickHouse",
+        "Python",
+        "pandas",
+        "Power BI",
+        "Statistics"
+      ]
+    },
+    "expect": {
+      "level": "middle",
+      "work_format": "hybrid",
+      "salary_min": 180000,
+      "salary_max": 230000,
+      "salary_currency": "RUB",
+      "parse_quality": "full",
+      "skills_include": [
+        "sql",
+        "clickhouse",
+        "python",
+        "pandas",
+        "power bi",
+        "statistics"
+      ]
+    }
+  },
+  {
+    "key": "hj-17",
+    "offer": "caucasus-ds",
+    "profession": "data",
+    "source": "html_jobboard",
+    "run": 1,
+    "external_id": "54021",
+    "age_hours": 1080,
+    "title": "Data Scientist",
+    "company": "Caucasus Analytics",
+    "city": "Тбилиси",
+    "url": "https://jobs.example.org/it/54021",
+    "text": "Caucasus Analytics строит модели кредитного скоринга для банков Грузии и Армении. Ищем Data Scientist в команду риск-моделей.\n\nЗадачи:\n- модели скоринга на CatBoost и XGBoost;\n- подготовка признаков в pandas и SQL;\n- мониторинг качества моделей.\n\nТребования: опыт от 2 лет в машинном обучении, Python, статистика.\n\nУсловия: гибрид, офис в Тбилиси, релокация с оплатой переезда и визовой поддержкой, полная занятость.",
+    "structured": {
+      "work_format": "hybrid",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "relocation_support": true,
+      "salary_min": 3500,
+      "salary_max": 4500,
+      "salary_currency": "USD",
+      "salary_period": "month",
+      "skills": [
+        "Python",
+        "CatBoost",
+        "XGBoost",
+        "pandas",
+        "SQL",
+        "Statistics",
+        "Machine Learning"
+      ]
+    }
+  },
+  {
+    "key": "hj-18",
+    "offer": "ararat-k8s",
+    "profession": "devops",
+    "source": "html_jobboard",
+    "run": 1,
+    "external_id": "54033",
+    "age_hours": 26,
+    "title": "DevOps Engineer (Kubernetes)",
+    "company": "Ararat Cloud",
+    "city": "Ереван",
+    "url": "https://jobs.example.org/it/54033",
+    "text": "Ararat Cloud ищет DevOps-инженера для управляемых кластеров Kubernetes. Мы облачный провайдер для компаний Армении и Грузии.\n\nЗадачи:\n- эксплуатация Kubernetes и Helm-чартов;\n- инфраструктура как код на Terraform и Ansible;\n- мониторинг на Prometheus и Grafana;\n- поддержка клиентов второй линии.\n\nТребования: опыт от 3 лет в эксплуатации Linux и Kubernetes, английский на уровне переписки.\n\nУсловия: офис в Ереване, релокация с оплатой переезда и первого месяца жилья, полная занятость.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "relocation_support": true,
+      "experience_min_years": 3,
+      "salary_min": 3000,
+      "salary_max": 3800,
+      "salary_currency": "USD",
+      "salary_period": "month",
+      "skills": [
+        "Kubernetes",
+        "Helm",
+        "Terraform",
+        "Ansible",
+        "Prometheus",
+        "Grafana",
+        "Linux"
+      ]
+    },
+    "expect": {
+      "level": "middle",
+      "work_format": "office",
+      "salary_min": 3000,
+      "salary_max": 3800,
+      "salary_currency": "USD",
+      "relocation": true,
+      "parse_quality": "full",
+      "skills_include": [
+        "kubernetes",
+        "helm",
+        "terraform"
+      ]
+    }
+  },
+  {
+    "key": "hj-19",
+    "offer": "silkroad-flutter",
+    "profession": "mobile",
+    "source": "html_jobboard",
+    "run": 1,
+    "external_id": "54027",
+    "age_hours": 192,
+    "title": "Flutter Developer",
+    "company": "Silk Road Apps",
+    "city": "Ташкент",
+    "url": "https://jobs.example.org/it/54027",
+    "text": "Silk Road Apps делает мобильные приложения для банков и ритейла Центральной Азии. Ищем Flutter-разработчика в офис в Ташкенте.\n\nЗадачи:\n- кроссплатформенные приложения на Flutter и Dart;\n- интеграции с REST API и Firebase;\n- публикация в App Store и Google Play.\n\nТребования: опыт от 2 лет с Flutter, понимание архитектуры BLoC.\n\nУсловия: офис в Ташкенте, релокация с оплатой билетов и жилья на первый месяц, полная занятость.",
+    "structured": {
+      "work_format": "office",
+      "employment_type": "full_time",
+      "experience_level": "middle",
+      "relocation_support": true,
+      "salary_min": 2500,
+      "salary_max": 3200,
+      "salary_currency": "USD",
+      "salary_period": "month",
+      "skills": [
+        "Flutter",
+        "Dart",
+        "REST API",
+        "Git"
+      ]
+    }
+  }
+]

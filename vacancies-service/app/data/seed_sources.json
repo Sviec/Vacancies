@@ -1,0 +1,96 @@
+[
+  {
+    "slug": "tg_it_jobs",
+    "source_type": "telegram",
+    "is_enabled": true,
+    "config": {
+      "channel": "@demo_it_jobs",
+      "limit": 100,
+      "keywords_filter": [],
+      "interval_hours": 3,
+      "demo": true
+    },
+    "runs": [
+      {"started_ago_hours": 74, "duration_seconds": 42, "status": "success"},
+      {"started_ago_hours": 26, "duration_seconds": 38, "status": "success"},
+      {"started_ago_hours": 2, "duration_seconds": 51, "status": "success", "resee_previous": true}
+    ]
+  },
+  {
+    "slug": "tg_relocate_remote",
+    "source_type": "telegram",
+    "is_enabled": true,
+    "config": {
+      "channel": "@demo_relocate_jobs",
+      "limit": 100,
+      "keywords_filter": ["remote", "релокация"],
+      "interval_hours": 3,
+      "demo": true
+    },
+    "runs": [
+      {"started_ago_hours": 74, "duration_seconds": 47, "status": "success"},
+      {"started_ago_hours": 28, "duration_seconds": 35, "status": "success"},
+      {"started_ago_hours": 3, "duration_seconds": 44, "status": "success", "resee_previous": true}
+    ]
+  },
+  {
+    "slug": "html_careerhub",
+    "source_type": "html",
+    "is_enabled": true,
+    "config": {
+      "url": "https://careers.example.com/vacancies",
+      "list_selector": "article.vacancy-card",
+      "fields": {
+        "title": "h2.vacancy-title",
+        "company": ".vacancy-company",
+        "city": ".vacancy-location",
+        "salary": ".vacancy-salary",
+        "description": ".vacancy-body",
+        "url": "a.vacancy-link@href",
+        "published_at": "time@datetime",
+        "skills": ".vacancy-tags li"
+      },
+      "pagination": {"next_selector": "a.pager-next", "max_pages": 5},
+      "delay_seconds": 2,
+      "interval_hours": 3,
+      "demo": true
+    },
+    "runs": [
+      {"started_ago_hours": 96, "duration_seconds": 118, "status": "success"},
+      {"started_ago_hours": 5, "duration_seconds": 97, "status": "success"}
+    ]
+  },
+  {
+    "slug": "html_jobboard",
+    "source_type": "html",
+    "is_enabled": true,
+    "config": {
+      "url": "https://jobs.example.org/it",
+      "list_selector": "div.job-item",
+      "fields": {
+        "title": ".job-item__title",
+        "company": ".job-item__employer",
+        "city": ".job-item__city",
+        "salary": ".job-item__salary",
+        "description": ".job-item__text",
+        "url": "a.job-item__link@href",
+        "published_at": ".job-item__date@data-published",
+        "skills": ".job-item__skills span"
+      },
+      "pagination": {"page_param": "page", "max_pages": 3},
+      "delay_seconds": 2,
+      "interval_hours": 3,
+      "demo": true
+    },
+    "runs": [
+      {"started_ago_hours": 49, "duration_seconds": 83, "status": "success"},
+      {"started_ago_hours": 25, "duration_seconds": 76, "status": "success"},
+      {
+        "started_ago_hours": 1,
+        "duration_seconds": 30,
+        "status": "failed",
+        "error_text": "TimeoutError: page.goto: Timeout 30000ms exceeded (https://jobs.example.org/it?page=1)"
+      }
+    ]
+  }
+]

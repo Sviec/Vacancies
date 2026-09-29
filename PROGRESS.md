@@ -14,7 +14,7 @@
 | 4 | `services/normalizer.py` + тесты | done | см. раздел «Этап 4» ниже | 26 допущений, см. ниже |
 | 5 | CRUD API резюме и вакансий | done | см. раздел «Этап 5» ниже | 26 допущений, см. ниже |
 | 6 | `services/resume_scorer.py` + `services/matching.py` + тесты | done | см. раздел «Этап 6» ниже | 20 допущений, см. ниже |
-| 7 | `scripts/seed.py` | not started | | |
+| 7 | `scripts/seed.py` | done | см. раздел «Этап 7» ниже | 13 допущений, см. ниже |
 | 8 | Демо-фронтенд (все 4 экрана) на сид-данных | not started | | |
 | 9 | Адаптеры LLM/profile с mock-реализациями | not started | | |
 | 10 | ИИ-функции (генерация, tailor, формулировка рекомендаций) | not started | | |
@@ -486,6 +486,81 @@
 
 ---
 
+## Этап 7 — `scripts/seed.py`
+
+**Статус:** `done`. Проверки закрытия:
+- `verifier` — блокеров нет. Независимый прогон тестов, дым-тест CLI и SQL-сверка на `vacancies_test`, живые запросы к API (uvicorn :8011), детерминизм: два сида с одинаковым `--now` дают одинаковый SHA256 снимка. Также `docker compose build api` и `seed --help` в контейнере.
+- `mock-mode-auditor` — блокеров нет. В графе импортов сида нет httpx, redis, rq и адаптеров; все ссылки фиктивные; у всех источников `demo: true`; `.env.example` поднимается в mock без ключей.
+- `determinism-checker` не требовался: нормализатор, скоринг и матчинг не менялись. Детерминизм сида покрыт тестом снимков.
+
+**Решения пользователя на этом этапе:**
+- `--reset` чистит весь домен вакансий (вакансии, публикации, матчи, действия, источники, запуски) и резюме демо-пользователя; нужен `--yes` или ввод имени БД в TTY.
+- Компании вымышленные; демо-действия проставляются (saved 3, applied 2, hidden 2, viewed 5).
+- Автосида при `compose up` нет — только ручная команда.
+- Оценка эталонного резюме вне диапазона — ошибка и откат (код 2).
+- `GET /sources` и `/sources/runs` — в начале этапа 8, только чтение.
+- Рабочая БД `vacancies` наполняется только после отдельного подтверждения пользователя (сначала `--dry-run`).
+
+### Команды
+
+- Локально из `vacancies-service/`: `.venv\Scripts\python -m scripts.seed [--dry-run] [--reset --yes] [--now ISO]`.
+- В Docker: `docker compose exec api python -m scripts.seed`; перед демо — `--reset --yes`, чтобы освежить даты.
+
+### Созданные и изменённые файлы
+
+| Файл | Назначение |
+|---|---|
+| `app/data/seed_sources.json` | 4 источника (2 telegram, 2 html) с историей из 11 запусков, один `failed` |
+| `app/data/seed_vacancies.json` | 72 публикации → 64 канона: 8 склеек (tg↔tg, tg↔html, html↔html), 4 partial-канона |
+| `app/services/seed_data.py` | чистый слой: pydantic-модели сида с перекрёстными проверками, `to_raw`, `build_run_batches` |
+| `app/services/seed.py` | `run_seed` / `reset_demo_data` / `format_report`; путь `RawVacancy` → `normalize_vacancy` → `ingest_batch`; только flush |
+| `scripts/__init__.py`, `scripts/seed.py` | CLI: `--reset`, `--yes`, `--dry-run`, `--now`, `--no-actions`, `--no-score-check`, `--preview`; запрет в `ENVIRONMENT=prod` |
+| `Dockerfile`, `docker-compose.yml` | `COPY scripts`, volume `./scripts` у api и worker |
+| `pyproject.toml` | ruff `src` включает `scripts`, T201 разрешён в `scripts/*` |
+| `README.md` (сервиса) | команды сида |
+| `tests/test_seed_data.py`, `tests/test_seed_cli.py` | офлайн: 25 тестов данных (склейки = задуманным офферам, распределения, правила FTS) и 15 тестов CLI |
+| `tests/integration/test_seed.py`, `test_seed_api.py`, `conftest.py` | фикстуры `seeded` и `no_app_engine`; счётчики, оценки, идемпотентность, reset, снимок, API и фильтры на сиде |
+
+### Подтверждено исполнением
+
+- `ruff check`, `ruff format --check`, `mypy app scripts` — чисто (53 файла).
+- `pytest` — 596 passed; `pytest -m integration` — 155 passed.
+- Сид: 4 источника, 11 запусков (найдено 103 публикации, новых 72), 64 вакансии, 8 склеек, 4 partial, 12 действий.
+- Запуски: `tg_it_jobs` 7/7, 6/6, 17/4; `tg_relocate_remote` 11/11, 7/7, 18/0; `html_careerhub` 10/10, 8/8; `html_jobboard` 12/12, 7/7, failed 0/0 с `last_error`.
+- Оценки при фиксированном и реальном `now`: strong 10.0 (`target_position`, основное), medium 6.31 (`target_position`), weak 2.91 (`all_vacancies`).
+- Рекомендации: выдачи трёх резюме различаются; top-5 strong — python-вакансии; top-5 weak — удалёнка; top-1 medium — Fullstack (Django + React).
+- CLI: `--dry-run` ничего не пишет; повтор идемпотентен; `--reset` без `--yes` без TTY и `ENVIRONMENT=prod` — код 3 до соединения; `--reset --yes` пересоздаёт данные.
+
+### Принятые допущения этапа 7 (в коде помечены `# TODO:`)
+
+| # | Допущение |
+|---|---|
+| 1 | Возраст публикаций считается от `now` запуска; повторный сид без `--reset` даты не освежает (ingest не меняет `published_at`) |
+| 2 | Единица идемпотентности — источник: существующий `slug` пропускается вместе с запусками и публикациями |
+| 3 | Эталонное резюме опознаётся по `title` у демо-пользователя |
+| 4 | Действия сидируются, только если у пользователя нет ни одного действия |
+| 5 | `--reset` чистит домен вакансий для всех пользователей, резюме — только демо-пользователя |
+| 6 | В `ENVIRONMENT=prod` сид запрещён целиком, флага обхода нет |
+| 7 | Оценка вне диапазона — ошибка и откат (код 2); проверяются только резюме, созданные в этом запуске |
+| 8 | Время запусков синтетическое, но `items_found`/`items_new` — фактический результат `ingest_batch`; `resee_previous` повторно подаёт прошлые публикации источника |
+| 9 | `last_run_at` источника — начало его последнего запуска |
+| 10 | Telegram-записи без структурных полей (title/company/city заданы явно, как от парсера), html-записи со структурными |
+| 11 | `raw_payload` сида имитирует формат `fetch_raw` этапа 11 |
+| 12 | `vacancy_matches` заранее не считаются; превью в отчёте идёт через `get_recommendations` |
+| 13 | `--now` обязан быть с таймзоной и не в будущем |
+
+Вымышленные компании, ссылки `example.com`/`example.org`/`t.me/demo_…` и `demo: true` у источников зафиксированы в JSON-данных.
+
+### Незакрытые замечания этапа 7 (не блокируют)
+
+- Отчёт CLI в консоли Windows (cp1251) показывает кириллицу и эмодзи как mojibake/`\U…` (`errors="backslashreplace"`); данные в БД и API корректны. В Docker проблемы нет.
+- Оценка strong 10.0, а не ≈9.85 из плана: рынок сида покрывает все 11 навыков резюме, это внутри диапазона.
+- Отдельного теста на `config.demo is True` у источников сида нет (проверено аудитом вручную).
+- Индексы по `EXPLAIN` (допущение 21 этапа 5) на 64 строках не показательны — пересмотреть на реальных объёмах после этапа 11.
+- В данных поправлен текст оффера «Верстальщик на проект» (добавлены Figma/SCSS/Webpack/Git), чтобы top-1 для medium был Fullstack, а не partial-вёрстка.
+
+---
+
 ## Долги, запланированные на конкретные этапы
 
 Найдены проверками на этапах 1–2, исправлять нужно там, где появится соответствующий код.
@@ -502,16 +577,15 @@
 
 - Пересчёт оценки в `_invalidate_derived`, `user_actions` и `exclude_hidden` в `/recommended` — сделано.
 
-### Этап 7 (seed)
+### Этап 7 (seed) — закрыт
 
-- Сид должен создавать и `vacancies`, и `vacancy_postings` (минимум два источника на один канонический оффер — для UI «источники»).
-- `contacts` в сиде — только ключи `ResumeContacts`; лишний ключ уронит `ResumeRead`.
-- Вакансии строить через `RawVacancy` → `normalize_vacancy` → `ingest_batch`, не вставлять строки в таблицы напрямую; коммит — в самом сиде (`ingest` не коммитит).
-- Для склейки в UI давать одинаковую тройку company/title/city в разных источниках с разными текстами.
-- Резюме сида — из `app/data/demo_resumes.json` через `build_resume`/`create_resume`. Оценка считается автоматически, поэтому после сида нужна проверка диапазонов: ≥8.5, ~6, ~3.
-- Навыки strong-резюме должны быть частотными в вакансиях сида по его `target_position`, и таких вакансий должно быть ≥5 (FTS). Иначе рынок строится по всем вакансиям и оценка strong может выйти ниже 8.5.
+- Публикации и каноны через `normalize_vacancy` → `ingest_batch`, склейки из разных источников, резюме из `demo_resumes.json`, проверка диапазонов оценок, ≥5 вакансий по FTS для strong — сделано.
 
 ### Этап 8 (фронтенд)
+
+- **В начале этапа:** `GET /api/v1/sources` и `GET /api/v1/sources/runs` только на чтение (решение пользователя на этапе 7) — экран «Источники» строится на сид-данных (`last_run_status`, `last_error`, история запусков).
+- Кнопка «открыть оригинал» ведёт на фиктивные ссылки сида (`example.com`/`example.org`/`t.me/demo_…`) — ожидаемо в демо.
+- По умолчанию лента скрывает `hidden` (62 из 64 на сиде).
 
 - **Словарь токенов неполон** под литеральные hex макетов: нет `#57534E` (описания, компании), `--accent-hover` (`#334155`), `--accent-border` (`#CBD5E1`), `--overlay` (`#1C1917` 15–20% для drawer и модалок), `--surface-inset` (`#F0EFED`), `#94A3B8` для светлой темы, `#E2E8F0`, `#D6D3D1` для dashed-границ, токенов теней (карточка, дропдаун, модалка, drawer) и радиуса карточки.
 - Переносить вёрстку макетов **только через токены**: `bg-white` → `bg-surface`, `text-[#1C1917]` → `text-ink`, `border-[#E7E5E4]` → `border-line`. Копирование hex-классов сломает тёмную тему.
@@ -544,3 +618,10 @@
 - `to_normalized` парсера возвращает `RawVacancy`, дальше общий `normalize_vacancy` + `ingest_batch`; RQ-задача коммитит сама.
 - HTML-парсер должен сам вырезать теги до `description_raw`: `clean_description` убирает только markdown.
 - По одному RQ-заданию на источник (гонка по `(source, external_id)` не закрыта, допущение 24 этапа 4).
+- Формат `sources.config` зафиксирован сидом: telegram `{channel, limit, keywords_filter, interval_hours}`; html `{url, list_selector, fields{…, "sel@attr"}, pagination{next_selector | page_param, max_pages}, delay_seconds, interval_hours}`. Соглашение `@attr` реализовать в HTML-парсере или менять вместе с сидом.
+- Источники с `config.demo=true` реальным парсером не обходятся; `POST /sources/{id}/run` для них — 409 или имитация (решить на этапе).
+- `parse_runs.items_found`/`items_new` — из результата `ingest_batch`, как в сиде.
+
+### Этап 12 (README)
+
+- Порядок `docker compose up` → `docker compose exec api python -m scripts.seed`; `--reset --yes` перед демо, чтобы освежить даты; `--dry-run` для предпросмотра.
