@@ -56,7 +56,7 @@ export function ErrorState({
       <h2 className={cn("font-semibold text-ink", compact ? "text-[14px]" : "text-[16px]")}>
         {title}
       </h2>
-      <p className="mt-1.5 text-[13px] leading-6 text-danger">{describeError(error)}</p>
+      <p className="mt-1.5 text-[13px] leading-[1.5] text-danger">{describeError(error)}</p>
       {onRetry && (
         <Button
           variant="secondary"

@@ -24,11 +24,13 @@ function focusables(container: HTMLElement): HTMLElement[] {
 /**
  * Доступность модального слоя: фокус на первый элемент и возврат фокуса,
  * цикл Tab внутри, закрытие по Esc, блокировка прокрутки body.
- * Хук вызывается в компоненте, который смонтирован, пока диалог открыт.
+ * Активен, пока `active === true`: панель в этот момент уже смонтирована, а
+ * на время exit-анимации фокус и прокрутка уже отпущены.
  */
 export function useDialogA11y(
   containerRef: RefObject<HTMLElement | null>,
   onClose: () => void,
+  active = true,
 ): void {
   const onCloseRef = useRef(onClose);
   useEffect(() => {
@@ -36,6 +38,9 @@ export function useDialogA11y(
   }, [onClose]);
 
   useEffect(() => {
+    if (!active) {
+      return;
+    }
     const id = Symbol("dialog");
     stack.push(id);
     const previouslyFocused = document.activeElement as HTMLElement | null;
@@ -95,5 +100,5 @@ export function useDialogA11y(
         previouslyFocused.focus({ preventScroll: true });
       }
     };
-  }, [containerRef]);
+  }, [active, containerRef]);
 }

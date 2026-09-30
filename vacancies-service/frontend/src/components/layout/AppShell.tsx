@@ -124,7 +124,7 @@ export function PageHeader({ eyebrow, title, description, actions }: PageHeaderP
           </div>
         )}
         <h1 className="text-[30px] font-semibold tracking-[-0.045em] text-ink md:text-[34px]">{title}</h1>
-        {description && <p className="mt-2 max-w-2xl text-[14px] leading-6 text-ink-muted">{description}</p>}
+        {description && <p className="mt-2 max-w-2xl text-[14px] leading-[1.5] text-ink-muted">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
     </div>
