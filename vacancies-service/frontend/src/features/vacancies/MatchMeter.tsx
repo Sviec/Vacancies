@@ -10,7 +10,7 @@ const TONE_CLASSES: Record<MatchTone, string> = {
 };
 
 const SIZES = {
-  sm: { box: 44, radius: 18, stroke: 3, text: "text-[11px]" },
+  sm: { box: 44, radius: 18, stroke: 3, text: "text-[13px]" },
   lg: { box: 58, radius: 24, stroke: 4, text: "text-[13px]" },
 } as const;
 

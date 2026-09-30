@@ -61,7 +61,7 @@ function Pagination({ page, totalPages, onPage }: PaginationProps) {
       <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => onPage(page - 1)}>
         <ChevronLeft size={14} aria-hidden /> Назад
       </Button>
-      <span className="text-[12px] text-ink-muted tabular-nums">
+      <span className="text-[13px] text-ink-muted tabular-nums">
         стр. {page} из {totalPages}
       </span>
       <Button size="sm" variant="secondary" disabled={page >= totalPages} onClick={() => onPage(page + 1)}>

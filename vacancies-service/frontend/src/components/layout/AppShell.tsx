@@ -29,7 +29,7 @@ function HealthIndicator() {
       role="status"
       title={title}
       aria-label={title}
-      className="flex h-8 items-center gap-2 rounded-lg px-2 text-[12px] text-ink-muted"
+      className="flex h-8 items-center gap-2 rounded-lg px-2 text-[13px] text-ink-muted"
     >
       <span
         aria-hidden

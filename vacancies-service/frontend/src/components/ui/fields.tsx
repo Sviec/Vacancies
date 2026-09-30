@@ -30,20 +30,20 @@ export function FieldShell({ label, hint, error, className, children }: FieldShe
   const errorId = `${id}-error`;
   const describedBy = [error ? errorId : null, hint ? hintId : null].filter(Boolean).join(" ");
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
+    <div className={cn("flex flex-col gap-2", className)}>
       {label && (
-        <label htmlFor={id} className="text-[12px] font-medium text-ink-body">
+        <label htmlFor={id} className="text-[13px] font-medium text-ink-body">
           {label}
         </label>
       )}
       {children({ id, describedBy: describedBy || undefined, invalid: Boolean(error) })}
       {error && (
-        <p id={errorId} className="text-[12px] leading-5 text-danger">
+        <p id={errorId} className="text-[13px] leading-5 text-danger">
           {error}
         </p>
       )}
       {hint && !error && (
-        <p id={hintId} className="text-[12px] leading-5 text-ink-muted">
+        <p id={hintId} className="text-[13px] leading-5 text-ink-muted">
           {hint}
         </p>
       )}

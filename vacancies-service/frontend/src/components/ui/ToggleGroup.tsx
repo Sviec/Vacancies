@@ -5,7 +5,7 @@ export interface Option<T extends string> {
   label: string;
 }
 
-const CHIP = "rounded-md border px-2.5 py-1.5 text-[12px] disabled:cursor-not-allowed disabled:opacity-60";
+const CHIP = "rounded-md border px-2.5 py-1.5 text-[13px] disabled:cursor-not-allowed disabled:opacity-60";
 const CHIP_ON = "border-accent-border bg-accent-soft font-medium text-accent";
 const CHIP_OFF = "border-line bg-surface text-ink-muted hover:border-accent-border hover:text-ink";
 
@@ -81,7 +81,7 @@ export function SegmentedControl<T extends string>({
             disabled={disabled}
             onClick={() => onChange(option.value)}
             className={cn(
-              "rounded-md px-2.5 py-1 text-[12px] disabled:cursor-not-allowed disabled:opacity-60",
+              "rounded-md px-2.5 py-1 text-[13px] disabled:cursor-not-allowed disabled:opacity-60",
               active ? "bg-surface font-medium text-ink shadow-card" : "text-ink-muted hover:text-ink",
             )}
           >

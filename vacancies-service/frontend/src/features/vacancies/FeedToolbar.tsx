@@ -37,7 +37,7 @@ function ResumeSelect({ items, activeId, loading, failed, onSelect }: ResumeSele
     return <Skeleton className="h-9 w-full sm:w-72" rounded="lg" />;
   }
   if (failed) {
-    return <p className="text-[12px] text-danger">Резюме не загрузились — лента без процента соответствия</p>;
+    return <p className="text-[13px] text-danger">Резюме не загрузились — лента без процента соответствия</p>;
   }
   if (items.length === 0) {
     return (

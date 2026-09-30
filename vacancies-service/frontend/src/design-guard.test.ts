@@ -11,8 +11,11 @@ import { describe, expect, it } from "vitest";
 
 const SRC = fileURLToPath(new URL(".", import.meta.url));
 
-/** Статический `-rotate-90` у кольца MatchMeter — дуга начинается сверху. */
-const ALLOWED_ROTATE = new Set(["features/vacancies/MatchMeter.tsx"]);
+/** Статический `-rotate-90` у колец MatchMeter / ScoreCircle — дуга начинается сверху. */
+const ALLOWED_ROTATE = new Set([
+  "features/vacancies/MatchMeter.tsx",
+  "features/editor/ScoreCircle.tsx",
+]);
 
 const FORBIDDEN: { pattern: RegExp; reason: string; allowlist?: Set<string> }[] = [
   { pattern: /#[0-9a-fA-F]{3,8}\b/, reason: "hex-цвет в кавычках/коде — нужен токен" },

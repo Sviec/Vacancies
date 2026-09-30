@@ -38,7 +38,7 @@ export function VacancyCard({ vacancy, href, now, sourceTypes, showHidden, actio
     <article className="lift relative rounded-card border border-line bg-surface p-5 shadow-card">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <div className="mb-2 flex flex-wrap items-center gap-1.5 text-[11px] text-ink-muted">
+          <div className="mb-2 flex flex-wrap items-center gap-2 text-[13px] text-ink-muted">
             {sources.map((slug) => {
               const Icon = sourceIcon(sourceTypes[slug]);
               return (
@@ -62,7 +62,7 @@ export function VacancyCard({ vacancy, href, now, sourceTypes, showHidden, actio
           </h3>
           <p className="mt-1 text-[13px] text-ink-body">{vacancy.company ?? "Компания не указана"}</p>
         </div>
-        <div className="relative z-10 flex shrink-0 items-center gap-1.5">
+        <div className="relative z-10 flex shrink-0 items-center gap-2">
           {vacancy.match_score != null && <MatchMeter score={vacancy.match_score} />}
           <IconButton
             label={saved ? "Убрать из сохранённых" : "Сохранить вакансию"}
@@ -82,12 +82,12 @@ export function VacancyCard({ vacancy, href, now, sourceTypes, showHidden, actio
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[12px] text-ink-muted">
-        <span className="inline-flex items-center gap-1.5">
+      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[13px] text-ink-muted">
+        <span className="inline-flex items-center gap-2">
           <MapPin size={13} aria-hidden />
           {formatLocation(vacancy.city, vacancy.country, vacancy.work_format)}
         </span>
-        <span className="inline-flex items-center gap-1.5">
+        <span className="inline-flex items-center gap-2">
           <CircleDollarSign size={13} aria-hidden />
           {formatSalary({
             min: vacancy.salary_min,
@@ -99,7 +99,7 @@ export function VacancyCard({ vacancy, href, now, sourceTypes, showHidden, actio
       </div>
 
       {shown.length > 0 && (
-        <ul aria-label="Навыки" className="mt-4 flex flex-wrap gap-1.5">
+        <ul aria-label="Навыки" className="mt-4 flex flex-wrap gap-2">
           {shown.map((skill) => (
             <li key={skill.name}>
               <Chip tone={skill.matched ? "positive" : "neutral"}>{skill.name}</Chip>
@@ -114,7 +114,7 @@ export function VacancyCard({ vacancy, href, now, sourceTypes, showHidden, actio
       )}
 
       {(vacancy.parse_quality === "partial" || saved || userActions.includes("applied") || (showHidden && hidden)) && (
-        <div className="mt-4 flex flex-wrap items-center gap-1.5">
+        <div className="mt-4 flex flex-wrap items-center gap-2">
           {vacancy.parse_quality === "partial" && (
             <Badge tone="warn" title="Часть полей не удалось разобрать из источника">
               неполные данные
@@ -129,7 +129,7 @@ export function VacancyCard({ vacancy, href, now, sourceTypes, showHidden, actio
                 type="button"
                 disabled={busy}
                 onClick={() => actions.unhide(vacancy.id)}
-                className="relative z-10 rounded-md px-1.5 py-0.5 text-[12px] font-medium text-accent hover:text-accent-hover disabled:opacity-60"
+                className="relative z-10 rounded-md px-2 py-1 text-[13px] font-medium text-accent hover:text-accent-hover disabled:opacity-60"
               >
                 Вернуть
               </button>

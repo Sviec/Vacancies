@@ -51,7 +51,7 @@ export function Drawer({ open, onClose, title, children, footer }: DrawerProps) 
           className="fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-line bg-canvas shadow-drawer md:max-w-[520px]"
         >
           <div className="flex items-center justify-between border-b border-line px-6 py-4">
-            <span id={titleId} className="text-[12px] font-medium text-ink-muted">
+            <span id={titleId} className="text-[13px] font-medium text-ink-muted">
               {title}
             </span>
             <IconButton label="Закрыть" onClick={onClose} className="-mr-2">

@@ -26,7 +26,7 @@ export function Chip({ tone = "neutral", children, className, onRemove, removeLa
   return (
     <span
       className={cn(
-        "inline-flex max-w-full items-center gap-1 rounded-md border px-2 py-1 text-[12px] leading-none",
+        "inline-flex max-w-full items-center gap-1 rounded-md border px-2 py-1 text-[13px] leading-none",
         TONES[tone],
         className,
       )}

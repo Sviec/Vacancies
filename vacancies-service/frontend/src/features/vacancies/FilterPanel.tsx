@@ -65,7 +65,7 @@ const normalizeSalary = (text: string): string => {
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <fieldset className="min-w-0">
-      <legend className="mb-2 text-[11px] font-semibold tracking-[0.09em] text-ink-muted uppercase">{title}</legend>
+      <legend className="mb-2 text-[13px] font-semibold tracking-[0.09em] text-ink-muted uppercase">{title}</legend>
       {children}
     </fieldset>
   );
@@ -221,7 +221,7 @@ export function FilterPanel({ filters, onChange, onReset }: FilterPanelProps) {
             <Skeleton className="h-7 w-28" />
           </div>
         ) : meta.isError ? (
-          <p className="text-[12px] text-ink-muted">Список источников недоступен</p>
+          <p className="text-[13px] text-ink-muted">Список источников недоступен</p>
         ) : (
           <ToggleGroup
             label="Источники"

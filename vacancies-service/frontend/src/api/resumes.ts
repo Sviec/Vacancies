@@ -27,6 +27,7 @@ export function useResume(id: string) {
   return useQuery({
     queryKey: queryKeys.resumes.detail(id),
     queryFn: ({ signal }) => apiFetch<ResumeRead>(resumePath(id), { signal }),
+    enabled: Boolean(id),
   });
 }
 

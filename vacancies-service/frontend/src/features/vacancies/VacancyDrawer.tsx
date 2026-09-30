@@ -255,7 +255,7 @@ export function VacancyDrawer({
               href={origin}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-auto inline-flex h-9 items-center gap-2 rounded-lg bg-accent px-3.5 text-[13px] font-medium text-on-accent hover:bg-accent-hover"
+              className="ml-auto inline-flex h-9 items-center gap-2 rounded-lg bg-accent px-4 text-[13px] font-medium text-on-accent hover:bg-accent-hover"
             >
               <ExternalLink size={15} aria-hidden /> Открыть оригинал
             </a>
@@ -280,11 +280,11 @@ function MetaGrid({
   return (
     <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {items.map((item) => (
-        <div key={item.label} className="rounded-lg bg-surface-inset px-3 py-2.5">
-          <dt className="text-[11px] font-medium tracking-[0.06em] text-ink-muted uppercase">
+        <div key={item.label} className="rounded-lg bg-surface-inset px-3 py-2">
+          <dt className="text-[13px] font-medium tracking-[0.06em] text-ink-muted uppercase">
             {item.label}
           </dt>
-          <dd className="mt-1 flex items-start gap-1.5 text-[13px] text-ink">
+          <dd className="mt-1 flex items-start gap-2 text-[13px] text-ink">
             {item.icon}
             <span>{item.value}</span>
           </dd>
@@ -326,8 +326,8 @@ function MatchBreakdown({
 
       {(details.skills.matched.length > 0 || details.skills.missing.length > 0) && (
         <div className="mb-4">
-          <p className="mb-2 text-[12px] text-ink-muted">{describeCriterion("skills", details.skills)}</p>
-          <ul className="flex flex-wrap gap-1.5">
+          <p className="mb-2 text-[13px] text-ink-muted">{describeCriterion("skills", details.skills)}</p>
+          <ul className="flex flex-wrap gap-2">
             {details.skills.matched.map((skill) => (
               <li key={`m-${skill}`}>
                 <Chip tone="positive">{skill}</Chip>
@@ -363,15 +363,15 @@ function CriterionBar({
   return (
     <li>
       <div className="mb-1 flex items-baseline justify-between gap-3">
-        <span className="text-[12px] font-medium text-ink">{MATCH_CRITERION_TITLES[criterionKey]}</span>
-        <span className="text-[11px] text-ink-muted tabular-nums">
+        <span className="text-[13px] font-medium text-ink">{MATCH_CRITERION_TITLES[criterionKey]}</span>
+        <span className="text-[13px] text-ink-muted tabular-nums">
           {formatPoints(breakdown.points, max)}
         </span>
       </div>
       <div className="h-1 overflow-hidden rounded-full bg-surface-inset" aria-hidden>
         <div className="h-full rounded-full bg-accent" style={{ width: `${ratio * 100}%` }} />
       </div>
-      <p className="mt-1.5 text-[12px] leading-[1.5] text-ink-muted">
+      <p className="mt-2 text-[13px] leading-[1.5] text-ink-muted">
         {describeCriterion(criterionKey, breakdown)}
       </p>
     </li>
@@ -399,14 +399,14 @@ function PostingsList({
           return (
             <li
               key={posting.id}
-              className="flex flex-wrap items-center gap-2 rounded-lg border border-line px-3 py-2.5"
+              className="flex flex-wrap items-center gap-2 rounded-lg border border-line px-3 py-2"
             >
               <Icon size={14} aria-hidden className="text-ink-muted" />
               <span className="text-[13px] font-medium text-ink">{posting.source}</span>
-              <span className="text-[12px] text-ink-muted">
+              <span className="text-[13px] text-ink-muted">
                 {SOURCE_TYPE_LABELS[posting.source_type]}
               </span>
-              <span className="text-[12px] text-ink-muted">
+              <span className="text-[13px] text-ink-muted">
                 {formatRelativeDate(posting.published_at, now)}
               </span>
               {posting.parse_quality === "partial" && <Badge tone="warn">неполные данные</Badge>}
@@ -415,7 +415,7 @@ function PostingsList({
                   href={posting.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="ml-auto inline-flex items-center gap-1 text-[12px] font-medium text-accent hover:text-accent-hover"
+                  className="ml-auto inline-flex items-center gap-1 text-[13px] font-medium text-accent hover:text-accent-hover"
                 >
                   Открыть <ExternalLink size={12} aria-hidden />
                 </a>
