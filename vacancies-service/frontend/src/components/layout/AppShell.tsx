@@ -54,7 +54,7 @@ export function AppShell() {
             </span>
             <span className="hidden sm:block">
               <span className="block text-[14px] font-semibold tracking-[-0.01em] text-ink">Вакансии</span>
-              <span className="block text-[11px] text-ink-subtle">карьерное пространство</span>
+              <span className="block text-[13px] text-ink-subtle">карьерное пространство</span>
             </span>
           </Link>
 

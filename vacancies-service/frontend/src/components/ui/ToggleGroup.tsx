@@ -5,7 +5,7 @@ export interface Option<T extends string> {
   label: string;
 }
 
-const CHIP = "rounded-md border px-2.5 py-1.5 text-[13px] disabled:cursor-not-allowed disabled:opacity-60";
+const CHIP = "rounded-md border px-3 py-1 text-[13px] disabled:cursor-not-allowed disabled:opacity-60";
 const CHIP_ON = "border-accent-border bg-accent-soft font-medium text-accent";
 const CHIP_OFF = "border-line bg-surface text-ink-muted hover:border-accent-border hover:text-ink";
 
@@ -26,7 +26,7 @@ export function ToggleGroup<T extends string>({ label, options, value, onChange,
     onChange(options.map((item) => item.value).filter((item) => next.includes(item)));
   };
   return (
-    <div role="group" aria-label={label} className={cn("flex flex-wrap gap-1.5", className)}>
+    <div role="group" aria-label={label} className={cn("flex flex-wrap gap-2", className)}>
       {options.map((option) => {
         const active = value.includes(option.value);
         return (
@@ -68,7 +68,7 @@ export function SegmentedControl<T extends string>({
     <div
       role="radiogroup"
       aria-label={label}
-      className={cn("inline-flex flex-wrap gap-0.5 rounded-lg border border-line bg-surface-muted p-0.5", className)}
+      className={cn("inline-flex flex-wrap gap-1 rounded-lg border border-line bg-surface-muted p-1", className)}
     >
       {options.map((option) => {
         const active = option.value === value;
@@ -81,7 +81,7 @@ export function SegmentedControl<T extends string>({
             disabled={disabled}
             onClick={() => onChange(option.value)}
             className={cn(
-              "rounded-md px-2.5 py-1 text-[13px] disabled:cursor-not-allowed disabled:opacity-60",
+              "rounded-md px-3 py-1 text-[13px] disabled:cursor-not-allowed disabled:opacity-60",
               active ? "bg-surface font-medium text-ink shadow-card" : "text-ink-muted hover:text-ink",
             )}
           >

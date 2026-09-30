@@ -34,7 +34,7 @@ export function FeedSkeleton() {
             <Skeleton className="h-3 w-36" />
             <Skeleton className="h-3 w-28" />
           </div>
-          <div className="mt-4 flex gap-1.5">
+          <div className="mt-4 flex gap-2">
             <Skeleton className="h-6 w-14" />
             <Skeleton className="h-6 w-[72px]" />
             <Skeleton className="h-6 w-12" />
@@ -147,7 +147,7 @@ export function VacancyFeed({
         description={
           <>
             Наполните базу демо-данными:{" "}
-            <code className="rounded bg-surface-muted px-1.5 py-0.5 text-[13px] text-ink-body">
+            <code className="rounded bg-surface-muted px-2 py-1 text-[13px] text-ink-body">
               docker compose exec api python -m scripts.seed
             </code>
           </>

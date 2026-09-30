@@ -216,7 +216,7 @@ export function FilterPanel({ filters, onChange, onReset }: FilterPanelProps) {
 
       <Group title="Источники">
         {meta.isPending ? (
-          <div className="flex gap-1.5">
+          <div className="flex gap-2">
             <Skeleton className="h-7 w-24" />
             <Skeleton className="h-7 w-28" />
           </div>
