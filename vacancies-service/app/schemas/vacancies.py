@@ -3,7 +3,7 @@
 from datetime import UTC, datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.enums import (
     EmploymentType,
@@ -21,6 +21,7 @@ from app.schemas.common import (
     PaginatedResponse,
     VacancySort,
 )
+from app.schemas.scoring import MatchDetails
 
 
 class VacancyCardRead(BaseModel):
@@ -77,6 +78,18 @@ class VacancyDetailRead(VacancyCardRead):
     source_type: SourceType
     is_active: bool
     postings: list[VacancyPostingBriefRead] = Field(default_factory=list)
+    # Заполняются, только если в запросе передан `resume_id`.
+    match_score: float | None = Field(default=None, ge=0, le=100)
+    match_details: MatchDetails | None = None
+
+
+class VacancyListItem(VacancyCardRead):
+    """Карточка ленты: все источники оффера и (при `resume_id`) балл соответствия."""
+
+    # Все источники публикаций оффера по алфавиту; победитель — в `source`.
+    sources: list[str] = Field(default_factory=list)
+    match_score: float | None = Field(default=None, ge=0, le=100)
+    match_details: MatchDetails | None = None
 
 
 MAX_SOURCE_FILTER_VALUES = 20
@@ -109,9 +122,20 @@ class VacancyListQuery(BaseModel):
     exclude_hidden: bool = True
     # «Сохранённые отдельным списком» (п. 5.7 ТЗ).
     saved_only: bool = False
+    # Резюме для `match_score` в карточках и `sort=match`.
+    resume_id: UUID | None = None
     sort: VacancySort = VacancySort.RELEVANCE
     page: PageNumber = 1
     page_size: PageSize = 20
+
+    @model_validator(mode="after")
+    def _match_requires_resume(self) -> "VacancyListQuery":
+        # TODO: `sort=match` без `resume_id` — 422; основное резюме
+        # автоматически не подставляется.
+        if self.sort == VacancySort.MATCH and self.resume_id is None:
+            msg = "sort=match requires resume_id"
+            raise ValueError(msg)
+        return self
 
     @field_validator("q", "country", "city")
     @classmethod
@@ -141,7 +165,7 @@ class VacancyListQuery(BaseModel):
         return value
 
 
-VacancyListResponse = PaginatedResponse[VacancyCardRead]
+VacancyListResponse = PaginatedResponse[VacancyListItem]
 
 
 class VacancyUserState(BaseModel):

@@ -59,6 +59,30 @@ async def test_recommended_validates_query_before_db(app: FastAPI, client: Async
         assert response.json()["error"]["code"] == "VALIDATION_ERROR"
 
 
+async def test_sources_runs_route_exists(app: FastAPI, client: AsyncClient) -> None:
+    app.dependency_overrides[get_session] = _exploding_session
+    # 503 — запрос дошёл до сервиса источников (не 404 и не 405).
+    for path in ("/api/v1/sources", "/api/v1/sources/runs"):
+        response = await client.get(path)
+        assert response.status_code == 503, path
+        assert response.json()["error"]["code"] == "DEPENDENCY_UNAVAILABLE"
+
+
+async def test_sources_runs_validates_query_before_db(app: FastAPI, client: AsyncClient) -> None:
+    app.dependency_overrides[get_session] = _exploding_session
+    for query in ("limit=0", "limit=201", "source_id=junk", "status=unknown", "page=1"):
+        response = await client.get(f"/api/v1/sources/runs?{query}")
+        assert response.status_code == 422, query
+        assert response.json()["error"]["code"] == "VALIDATION_ERROR"
+
+
+async def test_sort_match_without_resume_is_422(app: FastAPI, client: AsyncClient) -> None:
+    app.dependency_overrides[get_session] = _exploding_session
+    response = await client.get("/api/v1/vacancies?sort=match")
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "VALIDATION_ERROR"
+
+
 def test_recommendations_router_included_before_vacancies() -> None:
     # Порядок проверяется по вызовам `api_router.include_router(<module>.router)`.
     tree = ast.parse(inspect.getsource(router_module))

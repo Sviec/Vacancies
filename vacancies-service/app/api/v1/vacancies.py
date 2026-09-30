@@ -5,6 +5,7 @@
 в `api_router` раньше этого роутера.
 """
 
+from datetime import UTC, datetime
 from typing import Annotated
 from uuid import UUID
 
@@ -18,6 +19,7 @@ from app.schemas.vacancies import (
     VacancyCardRead,
     VacancyDetailRead,
     VacancyFiltersMeta,
+    VacancyListItem,
     VacancyListQuery,
     VacancyListResponse,
     VacancyUserState,
@@ -29,19 +31,31 @@ router = APIRouter(prefix="/vacancies", tags=["vacancies"])
 
 # TODO: списочные query-параметры передаются повтором ключа
 # (`work_format=remote&work_format=hybrid`), без синтаксиса `param[]`.
+# TODO: GET с `resume_id` пишет в БД — пересчитанный кэш `vacancy_matches`
+# коммитится здесь, как в `/recommended`.
 @router.get("", response_model=VacancyListResponse)
 async def list_vacancies(
     query: Annotated[VacancyListQuery, Query()],
     session: SessionDep,
     user_id: CurrentUserDep,
 ) -> VacancyListResponse:
-    page = await vacancies.list_vacancies(session, user_id, query)
-    items = [
-        VacancyCardRead.model_validate(vacancy).model_copy(
-            update={"user_actions": page.actions.get(vacancy.id, [])}
+    page = await vacancies.list_vacancies(session, user_id, query, now=datetime.now(UTC))
+    if query.resume_id is not None:
+        await session.commit()
+    items = []
+    for vacancy in page.items:
+        match_result = page.matches.get(vacancy.id)
+        items.append(
+            VacancyListItem.model_validate(
+                {
+                    **VacancyCardRead.model_validate(vacancy).model_dump(),
+                    "sources": page.sources.get(vacancy.id, []),
+                    "user_actions": page.actions.get(vacancy.id, []),
+                    "match_score": match_result.score if match_result is not None else None,
+                    "match_details": match_result.details if match_result is not None else None,
+                }
+            )
         )
-        for vacancy in page.items
-    ]
     return VacancyListResponse(
         items=items, total=page.total, page=query.page, page_size=query.page_size
     )
@@ -54,10 +68,23 @@ async def get_filters_meta(session: SessionDep) -> VacancyFiltersMeta:
 
 @router.get("/{vacancy_id}", response_model=VacancyDetailRead)
 async def get_vacancy(
-    vacancy_id: UUID, session: SessionDep, user_id: CurrentUserDep
+    vacancy_id: UUID,
+    session: SessionDep,
+    user_id: CurrentUserDep,
+    resume_id: UUID | None = None,
 ) -> VacancyDetailRead:
-    vacancy, actions = await vacancies.get_vacancy(session, user_id, vacancy_id)
-    return VacancyDetailRead.model_validate(vacancy).model_copy(update={"user_actions": actions})
+    vacancy, actions, match_result = await vacancies.get_vacancy(
+        session, user_id, vacancy_id, resume_id=resume_id, now=datetime.now(UTC)
+    )
+    if resume_id is not None:
+        await session.commit()
+    return VacancyDetailRead.model_validate(vacancy).model_copy(
+        update={
+            "user_actions": actions,
+            "match_score": match_result.score if match_result is not None else None,
+            "match_details": match_result.details if match_result is not None else None,
+        }
+    )
 
 
 # TODO: ответ на действие — 200 с полным множеством действий по вакансии.

@@ -1,18 +1,23 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MotionConfig } from "framer-motion";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router/dom";
 
-import App from "@/App";
+import { ApiError } from "@/api/client";
+import { ToasterProvider } from "@/components/ui/Toaster";
 import { ThemeProvider } from "@/lib/theme";
+import { router } from "@/router";
 import "./index.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 30_000,
-      // Одна попытка повтора: демо работает локально, длинная цепочка ретраев
-      // только задерживает показ состояния ошибки.
-      retry: 1,
+      // Одна попытка повтора и только для сетевых и серверных ошибок: 4xx
+      // (не найдено, неверные параметры) повтор не исправит.
+      retry: (failureCount, error) =>
+        failureCount < 1 && !(error instanceof ApiError && error.status >= 400 && error.status < 500),
       refetchOnWindowFocus: false,
     },
   },
@@ -27,7 +32,12 @@ createRoot(container).render(
   <StrictMode>
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <App />
+        {/* reducedMotion="user" гасит transform; opacity и длительность обнуляют пресеты motion.ts. */}
+        <MotionConfig reducedMotion="user">
+          <ToasterProvider>
+            <RouterProvider router={router} />
+          </ToasterProvider>
+        </MotionConfig>
       </QueryClientProvider>
     </ThemeProvider>
   </StrictMode>,

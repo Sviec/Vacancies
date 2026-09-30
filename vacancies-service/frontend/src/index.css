@@ -40,6 +40,24 @@
   --skeleton-base: #f1f0ee;
   --skeleton-shine: #fafaf9;
   --lift-shadow: 0 10px 28px rgb(28 25 23 / 0.06);
+
+  /* Этап 8: оттенки из макета career-service, вынесенные в токены. */
+  --ink-body: #57534e; /* описания, компании: 7.4:1 на --surface */
+  --accent-hover: #334155;
+  --accent-border: #cbd5e1;
+  /* TODO: значение из макета даёт 2.5:1 на --canvas — ниже WCAG AA. Только
+     для декоративных eyebrow-подписей, дублирующих заголовок; не для текста,
+     который нужно прочитать. */
+  --accent-muted: #94a3b8;
+  --overlay: rgb(28 25 23 / 0.18);
+  --surface-inset: #f0efed;
+  --line-strong: #d6d3d1; /* dashed-границы пустых состояний */
+  --line-cool: #e2e8f0;
+
+  --elevation-card: 0 1px 2px rgb(28 25 23 / 0.02);
+  --elevation-pop: 0 10px 30px rgb(28 25 23 / 0.12);
+  --elevation-modal: 0 24px 70px rgb(28 25 23 / 0.16);
+  --elevation-drawer: -16px 0 40px rgb(28 25 23 / 0.08);
 }
 
 .dark {
@@ -73,6 +91,24 @@
   --skeleton-base: #221f1d;
   --skeleton-shine: #2e2a27;
   --lift-shadow: 0 10px 28px rgb(0 0 0 / 0.45);
+
+  /* Между --ink и --ink-muted: 13.9:1 на фоне, 12.2:1 на поверхности. */
+  --ink-body: #d6d3d1;
+  /* Акцент в тёмной теме светлый, поэтому hover — ещё светлее. */
+  --accent-hover: #cbd5e1;
+  --accent-border: #475569;
+  /* Не #94A3B8 (сливается с --accent): 5.6:1 на фоне, 5.0:1 на поверхности. */
+  --accent-muted: #7c8aa0;
+  --overlay: rgb(0 0 0 / 0.55);
+  /* Утоплена относительно --surface, но светлее --canvas. */
+  --surface-inset: #161311;
+  --line-strong: #57534e;
+  --line-cool: #334155;
+
+  --elevation-card: 0 1px 2px rgb(0 0 0 / 0.3);
+  --elevation-pop: 0 10px 30px rgb(0 0 0 / 0.5);
+  --elevation-modal: 0 24px 70px rgb(0 0 0 / 0.6);
+  --elevation-drawer: -16px 0 40px rgb(0 0 0 / 0.5);
 }
 
 /* `inline` обязателен. Без него Tailwind объявит --color-canvas: var(--canvas)
@@ -96,14 +132,32 @@
   --color-warn-soft: var(--warn-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
+  --color-ink-body: var(--ink-body);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-border: var(--accent-border);
+  --color-accent-muted: var(--accent-muted);
+  --color-overlay: var(--overlay);
+  --color-surface-inset: var(--surface-inset);
+  --color-line-strong: var(--line-strong);
+  --color-line-cool: var(--line-cool);
+
+  /* Утилиты shadow-card / shadow-pop / shadow-modal / shadow-drawer. */
+  --shadow-card: var(--elevation-card);
+  --shadow-pop: var(--elevation-pop);
+  --shadow-modal: var(--elevation-modal);
+  --shadow-drawer: var(--elevation-drawer);
+
+  /* rounded-card — радиус карточек ленты и резюме. */
+  --radius-card: 0.75rem;
 
   --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ---------------------------------------------------------------------------
-   Анимации. Тайминги перенесены из макетов career-service без изменений.
-   Разовые анимации появления и переходы укладываются в раздел 8 ТЗ: 150–250 мс,
-   ease-out, не более двух анимируемых свойств одновременно.
+   Анимации. Появление карточек, drawer и модалки — только Framer Motion
+   (src/lib/motion.ts); в CSS остаются shimmer у skeleton и hover-подъём .lift.
+   Переходы укладываются в раздел 8 ТЗ: 150–250 мс, ease-out, не более двух
+   анимируемых свойств одновременно.
 
    TODO: допущение — зацикленный shimmer у .skeleton идёт 1.25 с с ease-in-out и
    формально выходит за лимит «не дольше 300 мс» из раздела 8. Лимит относится к
@@ -112,28 +166,6 @@
    (career-shimmer), анимируется одно свойство, и вся анимация отключается при
    prefers-reduced-motion.
 --------------------------------------------------------------------------- */
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes drawer {
-  from {
-    opacity: 0;
-    transform: translateX(26px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 @keyframes shimmer {
   0% {
     background-position: 120% 0;
@@ -144,14 +176,6 @@
 }
 
 @layer components {
-  .rise {
-    animation: rise 220ms ease-out both;
-  }
-
-  .drawer {
-    animation: drawer 220ms ease-out both;
-  }
-
   /* Загрузка показывается skeleton-плейсхолдерами, а не спиннером по центру
      экрана — это прямо запрещено разделом 8 ТЗ. */
   .skeleton {

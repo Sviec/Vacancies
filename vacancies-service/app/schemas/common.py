@@ -22,6 +22,8 @@ class VacancySort(StrEnum):
     RELEVANCE = "relevance"
     DATE = "date"
     SALARY = "salary"
+    # По баллу соответствия резюме; требует `resume_id`, сортирует сервис.
+    MATCH = "match"
 
 
 def validate_salary_range(salary_min: int | None, salary_max: int | None) -> None:

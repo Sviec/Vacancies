@@ -16,6 +16,8 @@ node_modules/
 dist/
 .vite/
 *.tsbuildinfo
+vacancies-service/frontend/.screenshots/
+vacancies-service/frontend/coverage/
 
 # Env
 .env

@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { fileURLToPath, URL } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
@@ -27,6 +28,7 @@ export default defineConfig({
     // браузере CORS не возникает вообще, а в Docker запрос идёт на
     // http://api:8000 по внутреннему DNS Compose. Переменной вида
     // VITE_API_BASE_URL с абсолютным хостом в проекте сознательно нет.
+    // Клиентские маршруты поэтому не должны начинаться с /api и /health.
     proxy: {
       "/api": {
         target: process.env.VITE_API_PROXY_TARGET ?? "http://localhost:8000",
@@ -37,5 +39,10 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+  },
+  // Тесты только для чистых функций (решение по этапу 8): среда node, без DOM.
+  test: {
+    environment: "node",
+    include: ["src/**/*.test.ts"],
   },
 });

@@ -3,9 +3,10 @@
  *
  * Все пути — относительные (`/health`, `/api/v1/...`): на них настроен прокси
  * Vite, поэтому запрос всегда уходит на тот же origin и CORS в браузере не
- * возникает. Модуль переиспользуют все экраны этапа 8, поэтому он не знает
- * ничего про конкретные ресурсы.
+ * возникает. Модуль не знает ничего про конкретные ресурсы.
  */
+
+export const API_PREFIX = "/api/v1";
 
 /** Конверт ошибки из раздела 6 ТЗ. */
 interface ErrorEnvelope {
@@ -48,15 +49,46 @@ function isErrorEnvelope(value: unknown): value is ErrorEnvelope {
   );
 }
 
+type QueryValue = string | number | boolean | null | undefined;
+
+/**
+ * Query-строка в формате бэкенда: массивы — повтором ключа, булевы —
+ * `true`/`false`; `undefined`, `null`, `""` и пустые массивы пропускаются.
+ * Возвращает строку с ведущим `?` или пустую строку.
+ */
+export function buildQuery(params: Record<string, QueryValue | readonly QueryValue[]>): string {
+  const search = new URLSearchParams();
+  for (const [key, raw] of Object.entries(params)) {
+    const values = Array.isArray(raw) ? raw : [raw];
+    for (const value of values) {
+      if (value === undefined || value === null || value === "") {
+        continue;
+      }
+      search.append(key, String(value));
+    }
+  }
+  const query = search.toString();
+  return query ? `?${query}` : "";
+}
+
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
-    ...init,
-    headers: {
-      Accept: "application/json",
-      ...(init?.body ? { "Content-Type": "application/json" } : {}),
-      ...init?.headers,
-    },
-  });
+  let response: Response;
+  try {
+    response = await fetch(path, {
+      ...init,
+      headers: {
+        Accept: "application/json",
+        ...(init?.body ? { "Content-Type": "application/json" } : {}),
+        ...init?.headers,
+      },
+    });
+  } catch (error) {
+    // Отмену запроса (react-query) не превращаем в сетевую ошибку.
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw error;
+    }
+    throw new ApiError("NETWORK_ERROR", "Сервис недоступен", 0);
+  }
 
   if (!response.ok) {
     // Тело может оказаться не JSON: например, ошибку вернул прокси, а не
@@ -84,19 +116,13 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
     );
   }
 
+  if (response.status === 204) {
+    return undefined as T;
+  }
   return (await response.json()) as T;
 }
 
-/** Зеркало pydantic-модели `CheckResult` из app/api/health.py. */
-export interface CheckResult {
-  status: "ok" | "error";
-  latency_ms: number | null;
-  error: string | null;
-}
-
-/** Зеркало pydantic-модели `HealthResponse` из app/api/health.py. */
-export interface HealthResponse {
-  status: "ok" | "degraded";
-  version: string;
-  checks: Record<string, CheckResult>;
+/** Тело запроса в JSON для `apiFetch`. */
+export function jsonBody(method: string, body: unknown): RequestInit {
+  return { method, body: JSON.stringify(body) };
 }

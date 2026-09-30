@@ -121,13 +121,14 @@ async def refresh_matches(
     return results
 
 
-def _sort_key(item: RecommendedItem) -> tuple[float, bool, float, str]:
-    published = item.vacancy.published_at
+def match_sort_key(vacancy: Vacancy, result: MatchResult) -> tuple[float, bool, float, str]:
+    """Общий порядок `/recommended` и `/vacancies?sort=match`: балл, свежесть, id."""
+    published = vacancy.published_at
     return (
-        -item.result.score,
+        -result.score,
         published is None,
         -published.timestamp() if published is not None else 0.0,
-        str(item.vacancy.id),
+        str(vacancy.id),
     )
 
 
@@ -151,7 +152,8 @@ async def get_recommendations(
     vacancies = await _candidate_vacancies(session, user_id, exclude_hidden=query.exclude_hidden)
     results = await refresh_matches(session, resume, vacancies, now=now)
     items = sorted(
-        (RecommendedItem(vacancy=v, result=results[v.id]) for v in vacancies), key=_sort_key
+        (RecommendedItem(vacancy=v, result=results[v.id]) for v in vacancies),
+        key=lambda item: match_sort_key(item.vacancy, item.result),
     )[: query.limit]
     actions = await actions_for(session, user_id, [item.vacancy.id for item in items])
     return Recommendations(resume_id=resume.id, items=items, actions=actions)

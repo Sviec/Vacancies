@@ -23,6 +23,7 @@ from app.schemas import (
     MatchDetails,
     MatchSkillsBreakdown,
     NormalizedVacancy,
+    ParseRunListQuery,
     ParseRunRead,
     RecommendationsQuery,
     ResumeCreate,
@@ -39,8 +40,11 @@ from app.schemas import (
     VacancyCardRead,
     VacancyDetailRead,
     VacancyFiltersMeta,
+    VacancyListItem,
     VacancyListQuery,
+    VacancySort,
 )
+from app.schemas.sources import source_location
 
 VALID_HASH = "a" * 64
 
@@ -302,7 +306,12 @@ def test_source_and_parse_run_from_attributes() -> None:
         config={"channel": "@secret"},
     )
     item = SourceListItem.model_validate(source)
-    assert "config" not in item.model_dump()
+    dumped = item.model_dump()
+    assert "config" not in dumped
+    # `location` заполняет роутер по белому списку, не from_attributes.
+    assert dumped["location"] is None
+    assert dumped["last_run_items_found"] is None
+    assert dumped["last_run_items_new"] is None
 
     run = SimpleNamespace(
         id=uuid4(),
@@ -495,6 +504,73 @@ def test_recommendations_query_bounds() -> None:
             RecommendationsQuery(limit=bad)
     with pytest.raises(ValidationError):
         RecommendationsQuery.model_validate({"page": 1})
+
+
+# --- Лента с матчем и источники (этап 8) ---
+
+
+def test_sort_match_requires_resume_id() -> None:
+    with pytest.raises(ValidationError, match="sort=match requires resume_id"):
+        VacancyListQuery(sort=VacancySort.MATCH)
+    query = VacancyListQuery(sort=VacancySort.MATCH, resume_id=uuid4())
+    assert query.sort == VacancySort.MATCH
+    assert VacancyListQuery(resume_id=uuid4()).sort == VacancySort.RELEVANCE
+
+
+def test_vacancy_list_item_defaults() -> None:
+    fields = VacancyListItem.model_fields
+    assert {"sources", "match_score", "match_details"} <= fields.keys()
+    for bad in (-1, 101):
+        with pytest.raises(ValidationError):
+            VacancyListItem.model_validate(
+                {
+                    "id": uuid4(),
+                    "title": "t",
+                    "company": None,
+                    "city": None,
+                    "country": None,
+                    "work_format": WorkFormat.REMOTE,
+                    "salary_min": None,
+                    "salary_max": None,
+                    "salary_currency": None,
+                    "salary_period": None,
+                    "salary_is_gross": None,
+                    "skills": [],
+                    "published_at": None,
+                    "source": "tg_it_jobs",
+                    "postings_count": 1,
+                    "parse_quality": ParseQuality.FULL,
+                    "match_score": bad,
+                }
+            )
+
+
+def test_parse_run_list_query_bounds() -> None:
+    query = ParseRunListQuery()
+    assert (query.source_id, query.status, query.limit) == (None, None, 50)
+    assert ParseRunListQuery(limit=200).limit == 200
+    for bad in (0, 201):
+        with pytest.raises(ValidationError):
+            ParseRunListQuery(limit=bad)
+    with pytest.raises(ValidationError):
+        ParseRunListQuery.model_validate({"page": 1})
+
+
+@pytest.mark.parametrize(
+    ("source_type", "config", "expected"),
+    [
+        (SourceType.TELEGRAM, {"channel": "@jobs", "url": "https://x"}, "@jobs"),
+        (SourceType.HTML, {"url": "https://x", "channel": "@jobs"}, "https://x"),
+        (SourceType.HTML, {"url": 42}, None),
+        (SourceType.HTML, {"url": ""}, None),
+        (SourceType.TELEGRAM, {}, None),
+        (SourceType.API, {"url": "https://api"}, None),
+    ],
+)
+def test_source_location_whitelist(
+    source_type: SourceType, config: dict[str, object], expected: str | None
+) -> None:
+    assert source_location(source_type, config) == expected
 
 
 # --- ErrorResponse ---

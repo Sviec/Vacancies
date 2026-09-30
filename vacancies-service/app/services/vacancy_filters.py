@@ -135,7 +135,12 @@ def build_conditions(
 def build_order_by(
     sort: VacancySort, rank: ColumnElement[float] | None
 ) -> list[ColumnElement[Any]]:
-    """Ключи сортировки; последний всегда `id` — детерминированный разрыв ничьих."""
+    """Ключи сортировки; последний всегда `id` — детерминированный разрыв ничьих.
+
+    `MATCH` в SQL сортируется как `DATE`: порядок по баллу соответствия
+    выстраивает сервис ленты через `recommendations.match_sort_key`.
+    """
+    # TODO: SQL-сортировки по матчу нет — `MATCH` падает в ветку «по дате».
     fresh_first = Vacancy.published_at.desc().nulls_last()
     tiebreak = Vacancy.id.asc()
     if sort == VacancySort.RELEVANCE and rank is not None:

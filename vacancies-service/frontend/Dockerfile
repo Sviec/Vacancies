@@ -10,6 +10,9 @@ WORKDIR /srv
 # `npm ci` требует package-lock.json; `|| npm install` — запасной путь для
 # первой сборки, когда лок-файл ещё не сгенерирован.
 COPY package.json package-lock.json* ./
+# Playwright нужен только для локальных скриншотов (`npm run shots`):
+# браузеры в образ не скачиваются.
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 RUN npm ci || npm install
 
 COPY . .

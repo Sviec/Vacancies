@@ -140,6 +140,14 @@ def test_order_relevance_without_query_equals_date() -> None:
     ]
 
 
+def test_order_match_falls_back_to_date() -> None:
+    # Порядок по матчу строит сервис; в SQL `MATCH` — это сортировка по дате.
+    for with_rank in (False, True):
+        assert _order_sql(VacancySort.MATCH, with_rank=with_rank) == _order_sql(
+            VacancySort.DATE, with_rank=False
+        )
+
+
 def test_order_salary() -> None:
     keys = _order_sql(VacancySort.SALARY, with_rank=False)
     assert keys == [

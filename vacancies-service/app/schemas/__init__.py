@@ -47,12 +47,19 @@ from app.schemas.scoring import (
     ScoreCriterionKey,
     ScoreIssue,
 )
-from app.schemas.sources import ParseRunRead, SourceListItem
+from app.schemas.sources import (
+    ParseRunListQuery,
+    ParseRunListResponse,
+    ParseRunRead,
+    SourceListItem,
+    SourceListResponse,
+)
 from app.schemas.vacancies import (
     VacancyActionRequest,
     VacancyCardRead,
     VacancyDetailRead,
     VacancyFiltersMeta,
+    VacancyListItem,
     VacancyListQuery,
     VacancyListResponse,
     VacancyPostingBriefRead,
@@ -72,6 +79,8 @@ __all__ = [
     "PageNumber",
     "PageSize",
     "PaginatedResponse",
+    "ParseRunListQuery",
+    "ParseRunListResponse",
     "ParseRunRead",
     "RecommendationsQuery",
     "RecommendedVacancyItem",
@@ -101,10 +110,12 @@ __all__ = [
     "ScoreCriterionKey",
     "ScoreIssue",
     "SourceListItem",
+    "SourceListResponse",
     "VacancyActionRequest",
     "VacancyCardRead",
     "VacancyDetailRead",
     "VacancyFiltersMeta",
+    "VacancyListItem",
     "VacancyListQuery",
     "VacancyListResponse",
     "VacancyPostingBriefRead",
