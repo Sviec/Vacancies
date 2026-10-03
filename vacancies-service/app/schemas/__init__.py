@@ -1,5 +1,12 @@
 """Публичный API пакета схем: реэкспорт основных классов."""
 
+from app.schemas.adapters import (
+    CriterionFailure,
+    ProfileSnapshot,
+    RecommendationPhrases,
+    VacancyEnrichment,
+    VacancyEnrichmentInput,
+)
 from app.schemas.ai import ResumeDraft, ResumeGenerateRequest, ResumeTailorRequest
 from app.schemas.common import (
     ContentHashHex,
@@ -68,6 +75,7 @@ from app.schemas.vacancies import (
 
 __all__ = [
     "ContentHashHex",
+    "CriterionFailure",
     "CurrencyCode",
     "ErrorDetail",
     "ErrorResponse",
@@ -82,6 +90,8 @@ __all__ = [
     "ParseRunListQuery",
     "ParseRunListResponse",
     "ParseRunRead",
+    "ProfileSnapshot",
+    "RecommendationPhrases",
     "RecommendationsQuery",
     "RecommendedVacancyItem",
     "RecommendedVacancyListResponse",
@@ -114,6 +124,8 @@ __all__ = [
     "VacancyActionRequest",
     "VacancyCardRead",
     "VacancyDetailRead",
+    "VacancyEnrichment",
+    "VacancyEnrichmentInput",
     "VacancyFiltersMeta",
     "VacancyListItem",
     "VacancyListQuery",

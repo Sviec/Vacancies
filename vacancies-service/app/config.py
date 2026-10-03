@@ -54,6 +54,8 @@ class Settings(BaseSettings):
     demo_user_id: UUID = UUID("00000000-0000-0000-0000-000000000001")
 
     # --- Адаптеры внешних систем (раздел 9) ---
+    # TODO: Real без ключа или URL бросает ExternalServiceError в методе
+    # адаптера; model_validator на старте Settings не делается.
     llm_mode: Literal["mock", "real"] = "mock"
     llm_provider: Literal["openai", "anthropic", "openrouter"] = "openai"
     llm_api_key: SecretStr | None = None

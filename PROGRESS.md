@@ -16,7 +16,7 @@
 | 6 | `services/resume_scorer.py` + `services/matching.py` + тесты | done | см. раздел «Этап 6» ниже | 20 допущений, см. ниже |
 | 7 | `scripts/seed.py` | done | см. раздел «Этап 7» ниже | 13 допущений, см. ниже |
 | 8 | Демо-фронтенд (все 4 экрана) на сид-данных | done | см. раздел «Этап 8» ниже | 12 допущений, см. ниже |
-| 9 | Адаптеры LLM/profile с mock-реализациями | not started | | |
+| 9 | Адаптеры LLM/profile с mock-реализациями | done | см. раздел «Этап 9» ниже | 8 допущений, см. ниже |
 | 10 | ИИ-функции (генерация, tailor, формулировка рекомендаций) | not started | | |
 | 11 | Парсеры (telegram → html) + RQ-задачи + планировщик | not started | | |
 | 12 | README с инструкцией запуска | not started | | |
@@ -622,6 +622,43 @@
 
 ---
 
+## Этап 9 — адаптеры LLM и profile с mock-реализациями
+
+**Статус:** `done`. Проверки закрытия:
+- `mock-mode-auditor` — блокеров нет. Mock не открывает сеть и не читает ключ; real только при `*_mode=real`; SDK openai/anthropic нет.
+- `verifier` — блокеров нет. 26 тестов адаптеров, ruff и mypy чистые. Эндпоинтов generate/tailor нет. `resume_scorer.py`, `matching.py`, `normalizer.py` не менялись.
+
+### Созданные и изменённые файлы
+
+| Файл | Назначение |
+|---|---|
+| `app/schemas/adapters.py` | `ProfileSnapshot`, `CriterionFailure`, `VacancyEnrichmentInput`, `VacancyEnrichment` |
+| `app/adapters/fixtures.py` | константные фикстуры mock |
+| `app/adapters/llm.py` | `LLMAdapter`: mock и httpx-real, повтор невалидного JSON |
+| `app/adapters/profile.py` | `ProfileAdapter`: mock и `GET /users/{id}` |
+| `app/adapters/__init__.py` | пакет |
+| `app/api/deps.py` | `LLMAdapterDep`, `ProfileAdapterDep` |
+| `app/schemas/__init__.py` | реэкспорт DTO |
+| `app/config.py`, `.env.example` | комментарий: пустой ключ не валит старт |
+| `tests/test_adapters_llm.py`, `test_adapters_profile.py`, `test_adapter_deps.py` | офлайн-тесты, real через `MockTransport` |
+
+Роуты адаптеры не вызывают. Фронтенд на этом этапе не менялся.
+
+### Принятые допущения этапа 9
+
+| # | Допущение |
+|---|---|
+| 1 | Real без ключа или URL бросает `ExternalServiceError` в методе адаптера; `model_validator` на старте не делается |
+| 2 | `LLM_PROVIDER=anthropic` не вызывает Messages API: без `LLM_BASE_URL` вызов падает, с URL идёт OpenAI-compatible `/chat/completions` |
+| 3 | Profile-core: `GET {PROFILE_SERVICE_URL}/users/{user_id}` без авторизации; лишние поля корня игнорируются |
+| 4 | Mock не разбирает `raw_text` и `description_raw`; фикстуры — константы Python |
+| 5 | Повтор только для невалидного JSON или схемы; HTTP и таймаут не повторяются |
+| 6 | `content` чата обязан быть строкой; массив контента не поддерживается |
+| 7 | `tailor_resume` есть в Protocol, HTTP-эндпоинт — этап 10; парсеры обогащение не вызывают |
+| 8 | Экран «Профиль» по-прежнему копирует поля резюме; адаптер эти поля только умеет отдать |
+
+---
+
 ## Долги, запланированные на конкретные этапы
 
 Найдены проверками на этапах 1–2, исправлять нужно там, где появится соответствующий код.
@@ -646,13 +683,11 @@
 
 - Read-only `/sources` и `/sources/runs`, четыре экрана, токены, примитивы, stagger 30 мс, модалка фильтров, состояния skeleton/empty/error — сделано.
 
-### Этап 9 (адаптеры LLM и profile)
+### Этап 9 (адаптеры LLM и profile) — закрыт
 
-- Добавить `model_validator`: режим `real` без ключа или URL — явная ошибка конфига на старте, а не таймаут в сеть. Режим `mock` ключа не требует.
-- При `llm_mode="mock"` не читать `llm_api_key` и не создавать HTTP-клиент, даже если ключ заполнен. То же для `profile_mode="mock"` и `profile_service_url`.
-- Выбор реализации — через `Depends` по `settings.*_mode`, без try/except вокруг реального SDK. Mock — детерминированные фикстуры, не `random` и не сеть.
-- Пустые строки в `.env` уже нормализуются в `None`, поэтому в адаптере проверять `is None`, а не truthiness `SecretStr`.
-- В тестах инстанцировать `Settings(_env_file=None)`, иначе локальный `.env` с `LLM_MODE=real` сломает офлайн-тесты.
+- Mock не читает ключ и не создаёт HTTP-клиент. Real выбирается только при `*_mode=real`, через `Depends`.
+- Пустой ключ или URL не валит старт: `ExternalServiceError` бросается в методе адаптера. `model_validator` на `Settings` сознательно не добавлен.
+- Повтор невалидного JSON — одна дополнительная попытка внутри адаптера. Эндпоинты generate/tailor — этап 10.
 
 ### Этап 10 (ИИ-функции)
 
