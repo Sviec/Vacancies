@@ -9,6 +9,7 @@ import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.adapters.llm import MockLLMAdapter
 from app.config import get_settings
 from app.db.models import (
     ParseRun,
@@ -154,8 +155,12 @@ async def test_reset_restores_seed_and_keeps_other_users(
 ) -> None:
     after_seed = await _row_counts(db_session)
     stranger = uuid.uuid4()
-    foreign = await create_resume(db_session, stranger, ResumeCreate(title="Foreign resume"))
-    await create_resume(db_session, _demo_user(), ResumeCreate(title="Extra demo resume"))
+    foreign = await create_resume(
+        db_session, stranger, ResumeCreate(title="Foreign resume"), llm=MockLLMAdapter()
+    )
+    await create_resume(
+        db_session, _demo_user(), ResumeCreate(title="Extra demo resume"), llm=MockLLMAdapter()
+    )
 
     report = await run_seed(
         db_session, SeedOptions(now=seeded.now, user_id=_demo_user(), reset=True)

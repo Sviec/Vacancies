@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { API_PREFIX, apiFetch, jsonBody } from "@/api/client";
 import { queryKeys } from "@/api/query-keys";
@@ -20,6 +20,17 @@ export function useResumes() {
   return useQuery({
     queryKey: queryKeys.resumes.list,
     queryFn: ({ signal }) => apiFetch<ResumeListResponse>(RESUMES, { signal }),
+  });
+}
+
+/** Полные резюме для превью профиля. Список сам секции не отдаёт. */
+export function useResumeDetails(ids: readonly string[]) {
+  return useQueries({
+    queries: ids.map((id) => ({
+      queryKey: queryKeys.resumes.detail(id),
+      queryFn: ({ signal }: { signal: AbortSignal }) =>
+        apiFetch<ResumeRead>(resumePath(id), { signal }),
+    })),
   });
 }
 
@@ -80,6 +91,22 @@ export function useDeleteResume() {
       queryClient.removeQueries({ queryKey: queryKeys.resumes.detail(id) });
       await invalidate();
     },
+  });
+}
+
+interface ResumeGenerateBody {
+  raw_text: string;
+  target_position: string | null;
+}
+
+/** Черновик резюме из сырого текста. Инвалидация — как у создания. */
+export function useGenerateResume() {
+  const invalidate = useInvalidateAfterResumeChange();
+  return useMutation({
+    // TODO: тело задано вручную; schema.gen.ts на этапе 10 не обновляется.
+    mutationFn: (body: ResumeGenerateBody) =>
+      apiFetch<ResumeRead>(`${RESUMES}/generate`, jsonBody("POST", body)),
+    onSuccess: invalidate,
   });
 }
 

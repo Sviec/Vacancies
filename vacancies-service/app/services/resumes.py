@@ -16,6 +16,7 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.adapters.llm import LLMAdapter
 from app.db.models import (
     Resume,
     ResumeCourse,
@@ -210,12 +211,18 @@ async def _promote_next_primary(session: AsyncSession, user_id: UUID) -> None:
     )
 
 
-async def _invalidate_derived(session: AsyncSession, resume: Resume, *, today: date) -> None:
+async def _invalidate_derived(
+    session: AsyncSession,
+    resume: Resume,
+    *,
+    today: date,
+    llm: LLMAdapter,
+) -> None:
     """Пересчитать оценку и сбросить кэш матчинга после содержательного изменения."""
     # TODO: оценка пересчитывается синхронно (решение пользователя), матчи
     # удаляются и перестраиваются лениво при следующем GET /vacancies/recommended.
     await session.execute(delete(VacancyMatch).where(VacancyMatch.resume_id == resume.id))
-    await resume_scoring.rescore(session, resume, today=today)
+    await resume_scoring.rescore(session, resume, today=today, llm=llm)
 
 
 def _today(today: date | None) -> date:
@@ -269,6 +276,7 @@ async def create_resume(
     *,
     origin: ResumeOrigin = ResumeOrigin.MANUAL,
     today: date | None = None,
+    llm: LLMAdapter,
 ) -> Resume:
     """Создать резюме с секциями и сразу оценить его.
 
@@ -284,7 +292,7 @@ async def create_resume(
     if had_primary and data.is_primary:
         await _set_primary(session, user_id, resume)
     loaded = await _reload(session, user_id, resume.id)
-    await resume_scoring.rescore(session, loaded, today=_today(today))
+    await resume_scoring.rescore(session, loaded, today=_today(today), llm=llm)
     return loaded
 
 
@@ -295,6 +303,7 @@ async def update_resume(
     data: ResumeUpdate,
     *,
     today: date | None = None,
+    llm: LLMAdapter,
 ) -> Resume:
     """Частичное обновление; секции из тела заменяются целиком."""
     resume = await get_resume(session, user_id, resume_id)
@@ -332,7 +341,7 @@ async def update_resume(
     # TODO: любое изменение, кроме `title` и `is_primary`, удаляет
     # vacancy_matches и пересчитывает score / score_details.
     if set(payload) - _NON_DERIVED_FIELDS:
-        await _invalidate_derived(session, resume, today=_today(today))
+        await _invalidate_derived(session, resume, today=_today(today), llm=llm)
 
     return await _reload(session, user_id, resume_id)
 

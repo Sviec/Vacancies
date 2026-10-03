@@ -22,7 +22,7 @@ def get_current_user_id() -> UUID:
 
 
 def get_llm_adapter(settings: Annotated[Settings, Depends(get_settings)]) -> LLMAdapter:
-    """LLM-адаптер по `llm_mode`. На этапе 9 ни один роут его не вызывает."""
+    """LLM-адаптер по `llm_mode`. Роуты резюме получают его через `LLMAdapterDep`."""
     return build_llm_adapter(settings)
 
 

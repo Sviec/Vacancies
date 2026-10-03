@@ -8,8 +8,8 @@ from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from httpx import AsyncClient
 
+from app.api.v1 import resumes, vacancies
 from app.api.v1 import router as router_module
-from app.api.v1 import vacancies
 from app.db.session import get_session
 from app.utils.errors import DependencyUnavailableError
 
@@ -23,6 +23,18 @@ class _ExplodingSession:
 
 async def _exploding_session() -> AsyncIterator[_ExplodingSession]:
     yield _ExplodingSession()
+
+
+def test_generate_declared_before_resume_id() -> None:
+    paths = [route.path for route in resumes.router.routes if isinstance(route, APIRoute)]
+    assert paths.index("/resumes/generate") < paths.index("/resumes/{resume_id}")
+
+
+async def test_generate_validates_body_before_db(app: FastAPI, client: AsyncClient) -> None:
+    app.dependency_overrides[get_session] = _exploding_session
+    response = await client.post("/api/v1/resumes/generate", json={})
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "VALIDATION_ERROR"
 
 
 def test_filters_meta_declared_before_vacancy_id() -> None:

@@ -18,6 +18,7 @@ from uuid import UUID
 from sqlalchemy import ColumnElement, CursorResult, delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.adapters.llm import MockLLMAdapter
 from app.db.models import (
     ParseRun,
     Resume,
@@ -264,7 +265,12 @@ async def _seed_resumes(
             found
             if found is not None
             else await create_resume(
-                session, options.user_id, entry.payload, today=options.now.date()
+                session,
+                options.user_id,
+                entry.payload,
+                today=options.now.date(),
+                # TODO: сид всегда считает оценку через MockLLMAdapter, даже при llm_mode=real.
+                llm=MockLLMAdapter(),
             )
         )
         result = ResumeSeedResult(

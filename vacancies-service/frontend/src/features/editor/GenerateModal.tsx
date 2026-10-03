@@ -1,9 +1,13 @@
 import { Sparkles } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
+import { useGenerateResume } from "@/api/resumes";
 import { Button } from "@/components/ui/Button";
+import { describeError } from "@/components/ui/ErrorState";
 import { TextArea, TextField } from "@/components/ui/fields";
 import { Modal } from "@/components/ui/Modal";
+import { useToast } from "@/components/ui/Toaster";
 import { FEATURES } from "@/lib/features";
 
 interface GenerateModalProps {
@@ -11,22 +15,45 @@ interface GenerateModalProps {
   onClose: () => void;
 }
 
-/**
- * Модалка ИИ-генерации. Отправка выключена флагом FEATURES.aiGenerate
- * до этапа 10; хук useGenerateResume заготовлен, но не вызывается.
- */
+/** Модалка ИИ-генерации: черновик сохраняется и открывается в редакторе. */
 export function GenerateModal({ open, onClose }: GenerateModalProps) {
+  const navigate = useNavigate();
+  const toast = useToast();
+  const generate = useGenerateResume();
   const [brief, setBrief] = useState("");
   const [target, setTarget] = useState("");
+  // TODO: лимит raw_text 10 000 символов только на фронте, API его не проверяет.
   const tooLong = brief.length > 10_000;
   const canSubmit = FEATURES.aiGenerate && brief.trim() !== "" && !tooLong;
+
+  function submit() {
+    if (!canSubmit || generate.isPending) {
+      return;
+    }
+    const position = target.trim();
+    generate.mutate(
+      {
+        raw_text: brief.trim(),
+        target_position: position === "" ? null : position,
+      },
+      {
+        onSuccess: (resume) => {
+          onClose();
+          navigate(`/resumes/${resume.id}`);
+        },
+        onError: (error) => {
+          toast({ message: describeError(error), tone: "danger" });
+        },
+      },
+    );
+  }
 
   return (
     <Modal
       open={open}
       onClose={onClose}
       title="Сгенерировать через ИИ"
-      description="Опишите опыт обычными словами — на этапе 10 появится черновик структуры."
+      description="Опишите опыт обычными словами — черновик откроется в редакторе."
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
@@ -34,17 +61,17 @@ export function GenerateModal({ open, onClose }: GenerateModalProps) {
           </Button>
           <Button
             variant="primary"
-            disabled={!canSubmit}
-            title={
-              FEATURES.aiGenerate
-                ? undefined
-                : "ИИ-генерация подключается на этапе 10"
-            }
-            onClick={() => {
-              // TODO: ИИ-генерация включается на этапе 10 — useGenerateResume пока не вызываем.
-            }}
+            disabled={!canSubmit || generate.isPending}
+            title={FEATURES.aiGenerate ? undefined : "ИИ-генерация подключается на этапе 10"}
+            onClick={submit}
           >
-            <Sparkles size={15} aria-hidden /> Сгенерировать
+            {generate.isPending ? (
+              "Генерируем…"
+            ) : (
+              <>
+                <Sparkles size={15} aria-hidden /> Сгенерировать
+              </>
+            )}
           </Button>
         </>
       }
@@ -74,14 +101,4 @@ export function GenerateModal({ open, onClose }: GenerateModalProps) {
       </div>
     </Modal>
   );
-}
-
-/** Заготовка хука генерации — не вызывается, пока FEATURES.aiGenerate = false. */
-export function useGenerateResume() {
-  return {
-    mutate: () => {
-      throw new Error("ИИ-генерация ещё не подключена");
-    },
-    isPending: false,
-  };
 }

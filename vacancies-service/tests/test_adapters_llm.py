@@ -15,6 +15,7 @@ from app.enums import EmploymentType, ExperienceLevel, WorkFormat
 from app.schemas.adapters import CriterionFailure, VacancyEnrichmentInput
 from app.schemas.ai import ResumeGenerateRequest
 from app.schemas.scoring import ScoreCriterionKey, ScoreIssue
+from app.services.resume_scorer import render_recommendation
 from app.utils.errors import ExternalServiceError, LLMResponseInvalidError
 
 _USER = UUID("00000000-0000-0000-0000-000000000001")
@@ -111,27 +112,31 @@ async def test_mock_tailor_changes_only_summary() -> None:
     assert changed == original
 
 
-async def test_mock_recommendations_follow_input_order() -> None:
+async def test_mock_recommendations_match_templates_in_input_order() -> None:
     adapter = MockLLMAdapter()
     failures = [
         CriterionFailure(
             key=ScoreCriterionKey.LANGUAGES,
-            issues=[ScoreIssue(code="missing", context={"b": 1, "a": "x", "flag": False})],
+            issues=[ScoreIssue(code="missing_languages")],
         ),
-        CriterionFailure(key=ScoreCriterionKey.COMPLETENESS, issues=[]),
         CriterionFailure(
-            key=ScoreCriterionKey.SKILLS_RELEVANCE,
+            key=ScoreCriterionKey.EDUCATION_COURSES,
             issues=[
-                ScoreIssue(code="low", context={}),
-                ScoreIssue(code="gap", context={"skill": "sql"}),
+                ScoreIssue(code="missing_education"),
+                ScoreIssue(code="missing_courses"),
             ],
         ),
+        CriterionFailure(
+            key=ScoreCriterionKey.COMPLETENESS,
+            issues=[ScoreIssue(code="missing_block", context={"block": "summary"})],
+        ),
+        CriterionFailure(key=ScoreCriterionKey.GOALS_SPECIFICITY, issues=[]),
     ]
-    assert await adapter.phrase_recommendations(failures) == [
-        "languages:missing|a=x,b=1,flag=false",
-        "completeness:",
-        "skills_relevance:low|,gap|skill=sql",
+    phrases = await adapter.phrase_recommendations(failures)
+    assert phrases == [
+        render_recommendation(failure.key, failure.issues) or "" for failure in failures
     ]
+    assert phrases[3] == ""
     assert await adapter.phrase_recommendations([]) == []
 
 

@@ -26,7 +26,7 @@ from app.schemas.adapters import (
     VacancyEnrichmentInput,
 )
 from app.schemas.ai import ResumeDraft, ResumeGenerateRequest
-from app.schemas.scoring import ScoreIssue
+from app.services.resume_scorer import render_recommendation
 from app.utils.errors import ExternalServiceError, LLMResponseInvalidError
 
 _SERVICE = "llm"
@@ -40,7 +40,11 @@ _SYSTEM_PROMPT = (
     "The object must match the JSON schema from the user message."
 )
 _TASK_GENERATE = "Generate a resume draft from the input."
-_TASK_TAILOR = "Tailor the resume draft to the vacancy."
+_TASK_TAILOR = (
+    "Tailor the resume draft to the vacancy. "
+    "Rewrite the summary and the emphasis of experience descriptions and achievements "
+    "to match the vacancy; do not change the JSON shape."
+)
 _TASK_RECOMMENDATIONS = "Write one recommendation phrase per criterion failure, in input order."
 _TASK_ENRICH = "Extract structured vacancy fields from the input."
 
@@ -52,8 +56,7 @@ class LLMAdapter(Protocol):
         """Собрать черновик резюме из сырого текста."""
         ...
 
-    # TODO: tailor_resume есть в Protocol, HTTP-эндпоинт — этап 10. Обогащение
-    # никто из парсеров не вызывает.
+    # TODO: обогащение вакансии никто из парсеров не вызывает (этап 11).
     async def tailor_resume(
         self,
         draft: ResumeDraft,
@@ -92,8 +95,8 @@ class MockLLMAdapter:
         return draft.model_copy(update={"summary": summary}, deep=True)
 
     async def phrase_recommendations(self, failures: Sequence[CriterionFailure]) -> list[str]:
-        """Формат `{key}:{code|k=v}`, ключи context отсортированы, порядок входа сохранён."""
-        return [_format_failure(failure) for failure in failures]
+        """Шаблон `render_recommendation` на каждый провал. Порядок входа сохраняется."""
+        return [_mock_phrase(failure) for failure in failures]
 
     async def enrich_vacancy(self, vacancy: VacancyEnrichmentInput) -> VacancyEnrichment:
         """Стабильное обогащение. description_raw не читается."""
@@ -228,23 +231,10 @@ def _resolve_base_url(settings: Settings) -> str:
     return default
 
 
-def _format_failure(failure: CriterionFailure) -> str:
-    if not failure.issues:
-        return f"{failure.key}:"
-    rendered = ",".join(_format_issue(issue) for issue in failure.issues)
-    return f"{failure.key}:{rendered}"
-
-
-def _format_issue(issue: ScoreIssue) -> str:
-    pairs = ",".join(f"{key}={_context_value(issue.context[key])}" for key in sorted(issue.context))
-    return f"{issue.code}|{pairs}"
-
-
-def _context_value(value: str | int | bool) -> str:
-    """bool раньше int: bool — подкласс int, иначе true стало бы 1."""
-    if isinstance(value, bool):
-        return "true" if value else "false"
-    return str(value)
+def _mock_phrase(failure: CriterionFailure) -> str:
+    # TODO: если шаблон вернул None, mock отдаёт пустую строку, а не пропуск элемента.
+    text = render_recommendation(failure.key, failure.issues)
+    return "" if text is None else text
 
 
 def _clip(text: str) -> str:
