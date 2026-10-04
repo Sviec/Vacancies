@@ -43,6 +43,7 @@ export type SourceType = Schemas["SourceType"];
 export type ParseRunRead = Schemas["ParseRunRead"];
 export type ParseRunListResponse = Schemas["ParseRunListResponse"];
 export type RunStatus = Schemas["RunStatus"];
+export type SourceRunAccepted = Schemas["SourceRunAccepted"];
 
 export type HealthResponse = Schemas["HealthResponse"];
 export type CheckResult = Schemas["CheckResult"];

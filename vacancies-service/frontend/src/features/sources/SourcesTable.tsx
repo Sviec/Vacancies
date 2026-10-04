@@ -2,12 +2,15 @@ import { Database } from "lucide-react";
 import { useState } from "react";
 import type { ReactNode } from "react";
 
+import { ApiError } from "@/api/client";
+import { useRunSource } from "@/api/sources";
 import type { SourceListItem } from "@/api/types";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { RunStatusBadge } from "@/features/sources/RunStatusBadge";
+import { runErrorMessage } from "@/features/sources/run-error";
 import { sourceIcon } from "@/features/vacancies/source-meta";
 import { cn } from "@/lib/cn";
 import { FEATURES } from "@/lib/features";
@@ -21,8 +24,6 @@ const ABSOLUTE = new Intl.DateTimeFormat("ru-RU", {
   hour: "2-digit",
   minute: "2-digit",
 });
-
-const RUN_HINT = "Ручной запуск появится вместе с парсерами (этап 11)";
 
 interface SourcesTableProps {
   items: SourceListItem[] | undefined;
@@ -77,6 +78,23 @@ export function SourcesTable({
   now,
 }: SourcesTableProps) {
   const [expandedError, setExpandedError] = useState<string | null>(null);
+  const [rowState, setRowState] = useState<Record<string, { error?: string; queued?: boolean }>>(
+    {},
+  );
+  const runMutation = useRunSource();
+
+  const startRun = (sourceId: string) => {
+    setRowState((current) => ({ ...current, [sourceId]: {} }));
+    runMutation.mutate(sourceId, {
+      onSuccess: () => {
+        setRowState((current) => ({ ...current, [sourceId]: { queued: true } }));
+      },
+      onError: (error: unknown) => {
+        const code = error instanceof ApiError ? error.code : "";
+        setRowState((current) => ({ ...current, [sourceId]: { error: runErrorMessage(code) } }));
+      },
+    });
+  };
 
   let body: ReactNode;
   if (isPending) {
@@ -116,6 +134,8 @@ export function SourcesTable({
               const showError =
                 source.last_run_status === "failed" && Boolean(source.last_error);
               const expanded = expandedError === source.id;
+              const pending = runMutation.isPending && runMutation.variables === source.id;
+              const row = rowState[source.id];
               return (
                 <tr
                   key={source.id}
@@ -177,15 +197,22 @@ export function SourcesTable({
                     <Button
                       size="sm"
                       variant="secondary"
-                      disabled={!FEATURES.runSource}
-                      title={RUN_HINT}
+                      disabled={!FEATURES.runSource || pending}
                       onClick={(event) => {
                         event.stopPropagation();
-                        // TODO: ручной запуск парсера включается на этапе 11 (FEATURES.runSource).
+                        startRun(source.id);
                       }}
                     >
                       Запустить
                     </Button>
+                    {row?.queued ? (
+                      <p className="mt-1 text-[13px] text-ink-muted">Поставлено в очередь</p>
+                    ) : null}
+                    {row?.error ? (
+                      <p className="mt-1 max-w-[220px] text-[13px] leading-5 text-danger">
+                        {row.error}
+                      </p>
+                    ) : null}
                   </td>
                 </tr>
               );

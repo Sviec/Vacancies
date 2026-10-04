@@ -18,7 +18,7 @@
 | 8 | Демо-фронтенд (все 4 экрана) на сид-данных | done | см. раздел «Этап 8» ниже | 12 допущений, см. ниже |
 | 9 | Адаптеры LLM/profile с mock-реализациями | done | см. раздел «Этап 9» ниже | 8 допущений, см. ниже |
 | 10 | ИИ-функции (генерация, tailor, формулировка рекомендаций) | done | см. раздел «Этап 10» ниже | 8 допущений, см. ниже |
-| 11 | Парсеры (telegram → html) + RQ-задачи + планировщик | not started | | |
+| 11 | Парсеры (telegram → html) + RQ-задачи + планировщик | done | см. раздел «Этап 11» ниже | 14 допущений, см. ниже |
 | 12 | README с инструкцией запуска | not started | | |
 
 ---
@@ -700,6 +700,57 @@
 
 ---
 
+## Этап 11 — парсеры (telegram → html) + RQ-задачи + планировщик
+
+**Статус:** `done`. Проверки закрытия:
+- `parser-extensibility-checker` — блокеров нет. Новый HTML-сайт — строка `sources.config`, без правки Python.
+- `mock-mode-auditor` — блокеров нет. `PARSERS_ENABLED=false` не ходит наружу; демо-источник — 409 `DEMO_SOURCE`.
+- `visual-reviewer` — блокеров нет. Кнопка «Запустить» активна, текст 409 по-русски по `code`. Смотрел код, браузер не открывал.
+- `verifier` — блокеров нет. ruff, mypy, pytest 683, фронтенд 92 теста и typecheck.
+
+### Созданные и изменённые файлы
+
+| Файл | Назначение |
+|---|---|
+| `app/parsers/` | база, реестр, config, HTML (selectolax + Playwright) и Telegram (Telethon) |
+| `app/services/parsing.py` | прогон: `parse_run`, `normalize_vacancy`, `ingest_batch`, commit |
+| `app/tasks/queue.py`, `parse_source.py`, `scheduler.py` | lock, RQ-задача, отдельный планировщик |
+| `app/api/v1/sources.py`, `app/schemas/sources.py`, `app/utils/errors.py` | `POST /sources/{id}/run` → 202 или 409 |
+| `app/tasks/worker.py` | воркер без встроенного планировщика |
+| `Dockerfile`, `docker-compose.yml`, `.env.example`, `pyproject.toml` | Chromium в образе, сервис `scheduler`, пин `rq<2` |
+| `tests/test_*parser*.py`, `test_parsing_schedule.py`, `test_source_run_api.py`, `tests/integration/test_parse_job.py` | офлайн-тесты и интеграция прогона |
+| `frontend/.../SourcesTable.tsx`, `run-error.ts`, `features.ts`, `api/sources.ts` | кнопка «Запустить» и русские тексты 409 |
+
+`normalizer.py`, `matching.py`, `resume_scorer.py` и сид не менялись.
+
+### Подтверждено исполнением
+
+- `ruff check`, `ruff format --check`, `mypy app`, `pytest` (683 passed, интеграция deselected).
+- Фронтенд: `npm test` (92), `npm run typecheck`.
+- `pytest -m integration tests/integration/test_parse_job.py` не запускался: Postgres на `127.0.0.1:5433` соединения не принимает.
+- Экран источников в браузере не прокликан: дев-сервер для проверки не поднимался.
+
+### Принятые допущения этапа 11
+
+| # | Допущение |
+|---|---|
+| 1 | Остаёмся на `rq<2` и `rq-scheduler` 0.13; воркер на `Worker.work` не переписываем |
+| 2 | `to_normalized` возвращает `RawVacancy`, не `NormalizedVacancy` из ТЗ 5.1 |
+| 3 | Новый HTML-сайт — строка `sources.config`; новый тип — класс и `register` |
+| 4 | LLM-обогащение partial не вызывается |
+| 5 | CSS разбирает selectolax после `page.content()`; `@attr` — по последнему `@` |
+| 6 | robots.txt не 200 и не 404 — прогон failed; 404 — обход можно |
+| 7 | Оба ключа пагинации сразу: побеждает `next_selector` |
+| 8 | Нет url у карточки: `external_id` = `{page_url}#{index}` |
+| 9 | Ошибки отдельных публикаций в `ingest_batch` не переводят run в `failed` |
+| 10 | Первый плановый запуск через один интервал; смена интервала — рестарт scheduler |
+| 11 | Lock живёт до `rq_default_timeout`, если воркер умер |
+| 12 | Нет интерактивного логина Telegram; нет файла сессии — failed `parse_run` |
+| 13 | Chromium с `--no-sandbox` из-за non-root в образе |
+| 14 | `demo is True` проверяется раньше `parsers_enabled`, ответ `DEMO_SOURCE` |
+
+---
+
 ## Долги, запланированные на конкретные этапы
 
 Найдены проверками на этапах 1–2, исправлять нужно там, где появится соответствующий код.
@@ -736,18 +787,17 @@
 - Числа скора считает код. Ошибка формулировки оставляет шаблонные тексты.
 - `FEATURES.aiGenerate` включён, модалка создаёт черновик и открывает его редактор.
 
-### Этап 11 (парсеры)
+### Этап 11 (парсеры) — закрыт
 
-- Playwright потребует либо `playwright install --with-deps chromium` в образе, либо базовый образ `mcr.microsoft.com/playwright/python`.
-- Держать `PARSERS_ENABLED=false` в демо-конфиге: при включении HTML-парсер пойдёт за `robots.txt` во внешнюю сеть.
-- Пересмотреть пин `rq<2` вместе с выбором планировщика.
-- `to_normalized` парсера возвращает `RawVacancy`, дальше общий `normalize_vacancy` + `ingest_batch`; RQ-задача коммитит сама.
-- HTML-парсер должен сам вырезать теги до `description_raw`: `clean_description` убирает только markdown.
-- По одному RQ-заданию на источник (гонка по `(source, external_id)` не закрыта, допущение 24 этапа 4).
-- Формат `sources.config` зафиксирован сидом: telegram `{channel, limit, keywords_filter, interval_hours}`; html `{url, list_selector, fields{…, "sel@attr"}, pagination{next_selector | page_param, max_pages}, delay_seconds, interval_hours}`. Соглашение `@attr` реализовать в HTML-парсере или менять вместе с сидом.
-- Источники с `config.demo=true` реальным парсером не обходятся; `POST /sources/{id}/run` для них — 409 или имитация (решить на этапе). Кнопка «Запустить» на экране уже есть и ждёт флаг `FEATURES.runSource`.
-- `parse_runs.items_found`/`items_new` — из результата `ingest_batch`, как в сиде.
+- Playwright Chromium ставится в `python:3.12-slim` через `playwright install --with-deps`. `PARSERS_ENABLED=false` в демо.
+- Пин `rq<2` и `rq-scheduler` 0.13 оставлен. `to_normalized` → `RawVacancy` → `normalize_vacancy` → `ingest_batch`.
+- HTML вырезает теги сам. `@attr` по последнему `@`. Один RQ-job на источник. Демо — 409 `DEMO_SOURCE`. Счётчики — из `ingest_batch`.
+- `FEATURES.runSource` включён. Гонка `(source, external_id)` в БД по-прежнему не закрыта.
 
 ### Этап 12 (README)
 
 - Порядок `docker compose up` → `docker compose exec api python -m scripts.seed`; `--reset --yes` перед демо, чтобы освежить даты; `--dry-run` для предпросмотра.
+
+### После этапов 11 и 12
+
+- Генерация через готовую модель и варианты развёртывания — `docs/llm-generation.md`. Сейчас не делать: демо остаётся на `LLM_MODE=mock`.

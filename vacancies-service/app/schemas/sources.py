@@ -83,3 +83,10 @@ class ParseRunListResponse(BaseModel):
     """Ответ GET /sources/runs: свежие запуски сверху."""
 
     items: list[ParseRunRead]
+
+
+class SourceRunAccepted(BaseModel):
+    """Ответ POST /sources/{id}/run: задача поставлена в очередь, обход ещё не начался."""
+
+    source_id: UUID
+    job_id: str

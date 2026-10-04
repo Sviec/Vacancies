@@ -21,15 +21,16 @@ dependencies = [
     # зависимость добавлена заранее, чтобы образ этапа 1 уже её содержал.
     "alembic>=1.14",
     "redis>=5.2",
-    # TODO: rq запиннен <2 ради совместимости с rq-scheduler; пересмотреть на этапе 11 (раздел 5.1 ТЗ).
-    # Актуальный rq-scheduler 0.14.0 требует rq>=2, поэтому при пине rq<2
-    # приходится брать rq-scheduler 0.13.x — это последняя версия, работающая с rq 1.x.
-    # На этапе 11 решить: либо переход на пару rq 2.x + rq-scheduler 0.14,
-    # либо отказ от rq-scheduler в пользу собственного планировщика.
+    # TODO: остаёмся на rq>=1.16,<2 и rq-scheduler>=0.13.1,<0.14. rq 2 и
+    # rq-scheduler 0.14 не подключаем: интервалы уже есть в 0.13, воркер на
+    # Worker.work не переписываем.
     "rq>=1.16,<2",
     "rq-scheduler>=0.13.1,<0.14",
     "httpx>=0.28",
     "structlog>=24.4",
+    "telethon>=1.37",
+    "playwright>=1.49",
+    "selectolax>=0.3.27",
 ]
 
 [project.optional-dependencies]
@@ -42,13 +43,6 @@ dev = [
     # types-redis сознательно не добавлен: пакет объявлен obsolete, его стабы
     # соответствуют redis 4.6 и перекрывают собственные аннотации redis>=5
     # (например, в них нет Redis.aclose). Используем inline-типы из redis.
-]
-# Ставится на этапе 11 (парсеры) и в образ этапа 1 не входит:
-# Playwright тянет ~400 МБ браузеров.
-parsers = [
-    "telethon>=1.37",
-    "playwright>=1.49",
-    "selectolax>=0.3.27",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -102,7 +96,7 @@ warn_unreachable = true
 disallow_untyped_decorators = false
 
 [[tool.mypy.overrides]]
-module = ["rq.*", "rq_scheduler.*", "telethon.*", "selectolax.*"]
+module = ["rq.*", "rq_scheduler.*", "telethon.*", "selectolax.*", "playwright.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

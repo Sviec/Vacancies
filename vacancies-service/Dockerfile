@@ -1,6 +1,6 @@
-# Один образ обслуживает оба Python-сервиса: api (uvicorn) и worker (RQ).
+# Один образ обслуживает api (uvicorn), worker (RQ) и scheduler.
 # Они отличаются только командой запуска, поэтому docker-compose.yml объявляет
-# у обоих одинаковые `build: .` и `image: vacancies-service:local` — Compose
+# у всех одинаковые `build: .` и `image: vacancies-service:local` — Compose
 # собирает образ ровно один раз.
 FROM python:3.12-slim
 
@@ -10,11 +10,10 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /srv
 
-# apt-get сознательно не вызывается: у asyncpg и остальных зависимостей есть
-# готовые колёса cp312, компилятор не нужен.
-# TODO: на этапе 11 добавится Playwright — тогда потребуется либо
-# `playwright install --with-deps chromium` (тянет системные библиотеки
-# Chromium), либо переход на базовый образ mcr.microsoft.com/playwright/python.
+# Системные библиотеки Chromium ставит `playwright install --with-deps`
+# (apt-get вызывается внутри этой команды, отдельно его не дублируем).
+# Базовый образ Microsoft не используем: один python:3.12-slim на api, worker
+# и scheduler.
 
 # Порядок COPY даёт кэш слоёв: тяжёлый слой с зависимостями пересобирается
 # только при правке pyproject.toml или app/__init__.py, а не при каждой правке
@@ -26,6 +25,12 @@ COPY pyproject.toml README.md ./
 COPY app/__init__.py app/__init__.py
 
 RUN pip install --upgrade pip && pip install -e ".[dev]"
+
+# Браузер ставится до USER app: каталог должен быть читаем непривилегированным
+# пользователем, от которого Chromium запускается с --no-sandbox.
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN playwright install --with-deps chromium \
+    && chmod -R a+rX /ms-playwright
 
 COPY app ./app
 COPY scripts ./scripts

@@ -54,6 +54,41 @@ class ConflictError(AppError):
     default_message: ClassVar[str] = "Operation conflicts with the current state"
 
 
+class DemoSourceError(ConflictError):
+    """Демо-источник сида не обходится ни вручную, ни планировщиком."""
+
+    code: ClassVar[str] = "DEMO_SOURCE"
+    default_message: ClassVar[str] = "Demo source is not crawled"
+
+
+class ParsersDisabledError(ConflictError):
+    """PARSERS_ENABLED=false: наружу не ходим и задачи не ставим."""
+
+    code: ClassVar[str] = "PARSERS_DISABLED"
+    default_message: ClassVar[str] = "Parsers are disabled"
+
+
+class SourceDisabledError(ConflictError):
+    """Источник выключен (`is_enabled` ложен)."""
+
+    code: ClassVar[str] = "SOURCE_DISABLED"
+    default_message: ClassVar[str] = "Source is disabled"
+
+
+class SourceNotRunnableError(ConflictError):
+    """Для типа источника нет зарегистрированного парсера."""
+
+    code: ClassVar[str] = "SOURCE_NOT_RUNNABLE"
+    default_message: ClassVar[str] = "Source type has no parser"
+
+
+class SourceAlreadyRunningError(ConflictError):
+    """По источнику уже есть активная задача обхода."""
+
+    code: ClassVar[str] = "SOURCE_ALREADY_RUNNING"
+    default_message: ClassVar[str] = "A parse job for this source is already running"
+
+
 class RateLimitedError(AppError):
     """Превышен лимит обращений (свой или внешнего источника)."""
 

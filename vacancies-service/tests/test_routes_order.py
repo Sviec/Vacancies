@@ -80,6 +80,13 @@ async def test_sources_runs_route_exists(app: FastAPI, client: AsyncClient) -> N
         assert response.json()["error"]["code"] == "DEPENDENCY_UNAVAILABLE"
 
 
+def test_sources_runs_declared_before_source_run() -> None:
+    from app.api.v1 import sources
+
+    paths = [route.path for route in sources.router.routes if isinstance(route, APIRoute)]
+    assert paths.index("/sources/runs") < paths.index("/sources/{source_id}/run")
+
+
 async def test_sources_runs_validates_query_before_db(app: FastAPI, client: AsyncClient) -> None:
     app.dependency_overrides[get_session] = _exploding_session
     for query in ("limit=0", "limit=201", "source_id=junk", "status=unknown", "page=1"):

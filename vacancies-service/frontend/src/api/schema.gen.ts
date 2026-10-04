@@ -147,6 +147,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/resumes/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate Resume
+         * @description Черновик LLM сохраняется со статусом generated. Ошибки адаптера не ловятся.
+         */
+        post: operations["generate_resume_api_v1_resumes_generate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/resumes/{resume_id}": {
         parameters: {
             query?: never;
@@ -177,6 +197,26 @@ export interface paths {
         put?: never;
         /** Score Resume */
         post: operations["score_resume_api_v1_resumes__resume_id__score_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/resumes/{resume_id}/tailor": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Tailor Resume
+         * @description Подстроить резюме под вакансию. Ошибки адаптера не ловятся.
+         */
+        post: operations["tailor_resume_api_v1_resumes__resume_id__tailor_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -228,6 +268,26 @@ export interface paths {
         get: operations["list_runs_api_v1_sources_runs_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sources/{source_id}/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Enqueue Source Run
+         * @description Поставить ручной обход. До Redis ничего не пишется и парсер не вызывается.
+         */
+        post: operations["enqueue_source_run_api_v1_sources__source_id__run_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -634,6 +694,16 @@ export interface components {
             achievements: string | null;
         };
         /**
+         * ResumeGenerateRequest
+         * @description Тело POST /resumes/generate.
+         */
+        ResumeGenerateRequest: {
+            /** Raw Text */
+            raw_text: string;
+            /** Target Position */
+            target_position?: string | null;
+        };
+        /**
          * ResumeLanguageCreate
          * @description Владение языком (вход).
          */
@@ -802,6 +872,17 @@ export interface components {
             level: number | null;
         };
         /**
+         * ResumeTailorRequest
+         * @description Тело POST /resumes/{id}/tailor.
+         */
+        ResumeTailorRequest: {
+            /**
+             * Vacancy Id
+             * Format: uuid
+             */
+            vacancy_id: string;
+        };
+        /**
          * ResumeUpdate
          * @description Частичное обновление резюме.
          *
@@ -920,6 +1001,19 @@ export interface components {
         SourceListResponse: {
             /** Items */
             items: components["schemas"]["SourceListItem"][];
+        };
+        /**
+         * SourceRunAccepted
+         * @description Ответ POST /sources/{id}/run: задача поставлена в очередь, обход ещё не начался.
+         */
+        SourceRunAccepted: {
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+            /** Job Id */
+            job_id: string;
         };
         /**
          * SourceType
@@ -1408,6 +1502,39 @@ export interface operations {
             };
         };
     };
+    generate_resume_api_v1_resumes_generate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResumeGenerateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResumeRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_resume_api_v1_resumes__resume_id__get: {
         parameters: {
             query?: never;
@@ -1534,6 +1661,41 @@ export interface operations {
             };
         };
     };
+    tailor_resume_api_v1_resumes__resume_id__tailor_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                resume_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResumeTailorRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResumeRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     duplicate_resume_api_v1_resumes__resume_id__duplicate_post: {
         parameters: {
             query?: never;
@@ -1605,6 +1767,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ParseRunListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    enqueue_source_run_api_v1_sources__source_id__run_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourceRunAccepted"];
                 };
             };
             /** @description Validation Error */

@@ -3,8 +3,8 @@
 # TODO: RQ использует fork, поэтому воркер работает только в Docker/Linux;
 # локально на Windows он не запускается.
 
-Задачи здесь не регистрируются — они появятся на этапе 11 вместе с
-`app/tasks/queue.py` и планировщиком.
+Расписание парсеров — отдельный процесс `python -m app.tasks.scheduler`.
+Воркер задачи только исполняет.
 """
 
 import redis
@@ -28,7 +28,7 @@ def main() -> None:
         default_timeout=settings.rq_default_timeout,
     )
     logger.info("worker_starting", queue=settings.rq_queue_name)
-    # with_scheduler=False: на этапе 1 планировать нечего.
+    # with_scheduler=False: планировщик не поток воркера, а процесс app.tasks.scheduler.
     Worker([queue], connection=connection).work(with_scheduler=False)
 
 

@@ -1,5 +1,5 @@
 # Критерий приёмки 1 (раздел 11 ТЗ): одна команда `docker compose up` поднимает
-# postgres, redis, api, worker и frontend. Плюс одноразовый migrate, который
+# postgres, redis, api, worker, scheduler и frontend. Плюс одноразовый migrate, который
 # накатывает схему до старта api и worker и завершается с кодом 0.
 #
 # Ключ `version:` намеренно отсутствует — в Compose v2+ он устарел и вызывает
@@ -131,6 +131,26 @@ services:
       - ./app:/srv/app
       - ./scripts:/srv/scripts
       - ./tests:/srv/tests
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  scheduler:
+    # Тот же образ, что у api и worker. PARSERS_ENABLED берётся из .env
+    # (в примере false) и здесь не переопределяется.
+    build: .
+    image: vacancies-service:local
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-vacancies}:${POSTGRES_PASSWORD:-vacancies}@postgres:5432/${POSTGRES_DB:-vacancies}
+      REDIS_URL: redis://redis:6379/0
+    command: python -m app.tasks.scheduler
+    volumes:
+      - ./app:/srv/app
     depends_on:
       postgres:
         condition: service_healthy
