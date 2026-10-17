@@ -6,6 +6,7 @@ __pycache__
 .ruff_cache
 .git
 .env
+.env.prod
 frontend
 htmlcov
 *.session

@@ -26,6 +26,14 @@ class AppError(Exception):
         super().__init__(self.message)
 
 
+class UnauthenticatedError(AppError):
+    """Нет куки сессии или токен не найден."""
+
+    code: ClassVar[str] = "UNAUTHORIZED"
+    http_status: ClassVar[int] = 401
+    default_message: ClassVar[str] = "Authentication required"
+
+
 class NotFoundError(AppError):
     """Запрошенный ресурс не существует."""
 

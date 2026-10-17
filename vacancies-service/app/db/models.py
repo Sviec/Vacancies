@@ -63,6 +63,33 @@ from app.enums import (
 )
 
 
+class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    """Учётная запись. Демо-пользователя нет: резюме и действия принадлежат ей."""
+
+    __tablename__ = "users"
+
+    email: Mapped[str] = mapped_column(String(255))
+    password_hash: Mapped[str] = mapped_column(String(255))
+
+    __table_args__ = (UniqueConstraint("email"),)
+
+
+class AuthSession(UUIDPrimaryKeyMixin, Base):
+    """Сессия входа. В куке лежит случайный токен, в базе — только его sha256."""
+
+    __tablename__ = "auth_sessions"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    token_hash: Mapped[str] = mapped_column(String(64))
+    expires_at: Mapped[datetime] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint("token_hash"),
+        Index(None, "user_id"),
+    )
+
+
 class Source(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     """Источник вакансий: Telegram-канал, сайт или API (раздел 4, п. 5.1 ТЗ)."""
 
@@ -390,10 +417,7 @@ class Resume(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     __tablename__ = "resumes"
 
-    # Без FK: пользователи живут в `profile-core-service` (раздел 9 ТЗ).
-    # Авторизации в сервисе нет (п. 0.2), `user_id` всегда передаётся
-    # в сервисный слой явно.
-    user_id: Mapped[uuid.UUID] = mapped_column()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
 
     title: Mapped[str] = mapped_column(String(255))
     is_primary: Mapped[bool] = mapped_column(Boolean, server_default=text("false"))
@@ -691,8 +715,7 @@ class UserVacancyAction(UUIDPrimaryKeyMixin, Base):
 
     __tablename__ = "user_vacancy_actions"
 
-    # Без FK: пользователи живут в `profile-core-service` (раздел 9 ТЗ).
-    user_id: Mapped[uuid.UUID] = mapped_column()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("vacancies.id", ondelete="CASCADE"))
     action: Mapped[UserAction] = mapped_column(enum_column(UserAction, name="action"))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())

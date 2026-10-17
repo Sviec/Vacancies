@@ -1,7 +1,7 @@
 """CLI сида демо-данных (этап 7).
 
 Запуск из `vacancies-service/`:
-    python -m scripts.seed [--dry-run] [--reset --yes] [--now ISO] [--no-actions]
+    python -m scripts.seed [--dry-run] [--reset --yes] [--now ISO] --email user@example.com
                            [--no-score-check] [--preview N]
 
 Коды выхода: 0 — успех; 1 — ошибка данных, ingest или БД; 2 — оценка эталонного
@@ -21,6 +21,7 @@ from sqlalchemy.exc import DBAPIError, ProgrammingError
 
 from app.config import Settings, get_settings
 from app.db.session import dispose_engine, get_sessionmaker, init_engine
+from app.services.auth import find_user_id_by_email
 from app.services.seed import EXIT_DATA_ERROR, SeedError, SeedOptions, format_report, run_seed
 from app.services.seed_data import load_seed_dataset
 from app.utils.logging import configure_logging
@@ -66,7 +67,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--reset",
         action="store_true",
-        help="delete the whole vacancy domain and demo user's resumes before seeding",
+        help="delete the whole vacancy domain and this user's resumes before seeding",
     )
     parser.add_argument("--yes", action="store_true", help="confirm --reset without a prompt")
     parser.add_argument(
@@ -89,6 +90,11 @@ def build_parser() -> argparse.ArgumentParser:
         type=_non_negative,
         default=3,
         help="number of top recommendations per resume in the report (0 disables)",
+    )
+    parser.add_argument(
+        "--email",
+        default=None,
+        help="registered account that receives the sample resumes and actions",
     )
     return parser
 
@@ -133,6 +139,9 @@ async def amain(args: argparse.Namespace, settings: Settings) -> int:
     ):
         _error("--reset was not confirmed (use --yes or type the database name in a terminal)")
         return EXIT_REFUSED
+    if not args.email:
+        _error("pass --email of an account registered in the app")
+        return EXIT_DATA_ERROR
 
     try:
         dataset = load_seed_dataset()
@@ -140,17 +149,21 @@ async def amain(args: argparse.Namespace, settings: Settings) -> int:
         _error(f"invalid seed data: {exc}")
         return EXIT_DATA_ERROR
 
-    options = SeedOptions(
-        now=now,
-        user_id=settings.demo_user_id,
-        reset=args.reset,
-        with_actions=not args.no_actions,
-        check_scores=not args.no_score_check,
-        preview_top=args.preview,
-    )
     init_engine(settings)
     try:
         async with get_sessionmaker()() as session:
+            user_id = await find_user_id_by_email(session, args.email)
+            if user_id is None:
+                _error("no account with this email; register in the app first")
+                return EXIT_DATA_ERROR
+            options = SeedOptions(
+                now=now,
+                user_id=user_id,
+                reset=args.reset,
+                with_actions=not args.no_actions,
+                check_scores=not args.no_score_check,
+                preview_top=args.preview,
+            )
             try:
                 report = await run_seed(session, options, dataset=dataset)
             except BaseException:

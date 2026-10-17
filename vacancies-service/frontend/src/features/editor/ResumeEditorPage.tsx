@@ -50,7 +50,7 @@ export function ResumeEditorPage() {
             description="Возможно, его удалили или ссылка устарела."
             action={
               <Link to="/resumes" className={cn(buttonClasses("primary", "md"))}>
-                К списку резюме
+                К профилю
               </Link>
             }
           />
@@ -179,7 +179,13 @@ function ResumeEditorLoaded({
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="order-2 min-w-0 space-y-4 lg:order-1">
-          <BasicsSection draft={draft} errors={fieldErrors} today={todayIso} onChange={onChange} />
+          <BasicsSection
+            draft={draft}
+            errors={fieldErrors}
+            today={todayIso}
+            onChange={onChange}
+            locked
+          />
           <GoalsSection
             draft={draft}
             errors={fieldErrors}
@@ -187,6 +193,7 @@ function ResumeEditorLoaded({
             onChange={onChange}
             countries={countries}
             cities={cities}
+            locked
           />
           <ExperienceSection
             draft={draft}
@@ -199,6 +206,7 @@ function ResumeEditorLoaded({
             errors={fieldErrors}
             today={todayIso}
             onChange={onChange}
+            locked
           />
           <CoursesSection draft={draft} errors={fieldErrors} today={todayIso} onChange={onChange} />
           <SkillsSection
@@ -213,6 +221,7 @@ function ResumeEditorLoaded({
             errors={fieldErrors}
             today={todayIso}
             onChange={onChange}
+            locked
           />
         </div>
         <div className="order-1 lg:order-2">

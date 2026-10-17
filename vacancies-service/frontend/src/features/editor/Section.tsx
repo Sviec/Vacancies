@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Link } from "react-router";
 
 import { cn } from "@/lib/cn";
 
@@ -7,12 +8,14 @@ interface SectionProps {
   number: string;
   title: string;
   hint?: string;
+  /** Секция берётся из профиля и в редакторе резюме не правится. */
+  locked?: boolean;
   children: ReactNode;
   className?: string;
 }
 
 /** Секция формы редактора (Section макета через токены). */
-export function Section({ id, number, title, hint, children, className }: SectionProps) {
+export function Section({ id, number, title, hint, locked = false, children, className }: SectionProps) {
   return (
     <section
       id={id}
@@ -27,7 +30,17 @@ export function Section({ id, number, title, hint, children, className }: Sectio
           {hint && <p className="mt-1 text-[13px] leading-5 text-ink-muted">{hint}</p>}
         </div>
       </div>
-      {children}
+      {locked && (
+        <p className="mb-4 text-[13px] leading-5 text-ink-muted">
+          Общие данные профиля.{" "}
+          <Link to="/resumes" className="font-medium text-accent hover:text-accent-hover">
+            Изменить в профиле
+          </Link>
+        </p>
+      )}
+      <fieldset disabled={locked} className="m-0 min-w-0 border-0 p-0">
+        {children}
+      </fieldset>
     </section>
   );
 }

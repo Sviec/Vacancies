@@ -2,9 +2,11 @@
 
 from fastapi import APIRouter
 
-from app.api.v1 import recommendations, resumes, sources, vacancies
+from app.api.v1 import auth, recommendations, resumes, sources, vacancies
 
 api_router = APIRouter(prefix="/api/v1")
+
+api_router.include_router(auth.router)
 
 # ВАЖЕН ПОРЯДОК: recommendations подключается раньше vacancies, потому что
 # маршрут /vacancies/recommended (раздел 5.6 ТЗ) должен матчиться раньше

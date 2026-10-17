@@ -1,8 +1,9 @@
 import { BriefcaseBusiness, Sparkles } from "lucide-react";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
-import { Link, NavLink, Outlet, ScrollRestoration } from "react-router";
+import { Link, NavLink, Outlet, ScrollRestoration, useNavigate } from "react-router";
 
+import { useCurrentUser, useLogout } from "@/api/auth";
 import { useHealth } from "@/api/health";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { describeError } from "@/components/ui/ErrorState";
@@ -11,7 +12,7 @@ import { cn } from "@/lib/cn";
 const NAV_ITEMS = [
   { to: "/vacancies", label: "Вакансии" },
   // Без `end`: на `/resumes/:id` (редактор) пункт тоже активен.
-  { to: "/resumes", label: "Резюме" },
+  { to: "/resumes", label: "Профиль" },
   { to: "/sources", label: "Источники" },
 ] as const;
 
@@ -44,6 +45,10 @@ function HealthIndicator() {
 }
 
 export function AppShell() {
+  const current = useCurrentUser();
+  const logout = useLogout();
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-[100dvh] bg-canvas font-sans text-ink">
       <header className="sticky top-0 z-30 border-b border-line bg-canvas/95 backdrop-blur-md">
@@ -85,6 +90,20 @@ export function AppShell() {
           </nav>
 
           <div className="flex items-center gap-1">
+            {current.data && (
+              <span className="hidden max-w-40 truncate px-2 text-[13px] text-ink-muted md:inline">
+                {current.data.email}
+              </span>
+            )}
+            <button
+              type="button"
+              className="rounded-lg px-3 py-2 text-[13px] text-ink-muted hover:bg-surface-muted hover:text-ink"
+              onClick={() => {
+                logout.mutate(undefined, { onSuccess: () => navigate("/login") });
+              }}
+            >
+              Выйти
+            </button>
             <HealthIndicator />
             <ThemeToggle />
           </div>

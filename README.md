@@ -22,7 +22,9 @@ Copy-Item .env.example .env
 
 В скопированном файле уже `LLM_MODE=mock`, `PROFILE_MODE=mock` и
 `PARSERS_ENABLED=false`. Демо после сида работает без API-ключей и без
-интернета. Реальный LLM отложен, см. [docs/llm-generation.md](docs/llm-generation.md).
+интернета. Как включить обход каналов и сайтов и подключить модель —
+[docs/parsing-and-models.md](docs/parsing-and-models.md). Выбор и дообучение
+модели — [docs/llm-generation.md](docs/llm-generation.md).
 
 ## Запуск
 
@@ -49,13 +51,21 @@ API: http://localhost:8000. Живой стек отвечает `GET /health` �
 Сид запускается вручную, когда контейнеры уже работают.
 
 ```
-docker compose exec api python -m scripts.seed --dry-run
-docker compose exec api python -m scripts.seed
-docker compose exec api python -m scripts.seed --reset --yes
+docker compose exec api python -m scripts.seed --dry-run --email you@example.com
+docker compose exec api python -m scripts.seed --email you@example.com
+docker compose exec api python -m scripts.seed --reset --yes --email you@example.com
 ```
 
-`--dry-run` печатает отчёт и откатывает транзакцию, в базу ничего не пишет.
+`--email` — почта уже зарегистрированной учётной записи: сид кладёт ей
+пример резюме и действий. Общего демо-пользователя нет. Без `--email` команда
+останавливается до записи. `--dry-run` печатает отчёт и откатывает транзакцию.
 Без флагов запись идемпотентна: уже существующие источники пропускаются.
 Перед показом демо нужен `--reset --yes`: повторный сид без сброса не
 обновляет даты публикаций. В `ENVIRONMENT=prod` сид запрещён и до базы не
 доходит.
+
+## Маленький сервер
+
+Машина 2 ядра / 4 ГБ RAM / 40 ГБ SSD поднимает только API, Postgres, Redis и
+статический фронтенд. Модель и парсеры туда не ставятся. Команды и лимиты
+памяти — в [docs/deploy.md](docs/deploy.md).

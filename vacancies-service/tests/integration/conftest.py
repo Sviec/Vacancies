@@ -35,10 +35,12 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import NullPool
+from tests.constants import TEST_USER_EMAIL, TEST_USER_ID
 
 from app.api.deps import get_current_user_id
 from app.config import get_settings
 from app.db import session as db_session_module
+from app.db.models import User
 from app.db.session import get_session
 from app.main import create_app
 from app.services.seed import SeedOptions, SeedReport, run_seed
@@ -150,6 +152,20 @@ async def db_session(migrated_test_database: str) -> AsyncIterator[AsyncSession]
         await engine.dispose()
 
 
+@pytest.fixture(autouse=True)
+async def _account(db_session: AsyncSession) -> None:
+    """Строка users для TEST_USER_ID. Резюме ссылаются на неё внешним ключом."""
+    if await db_session.get(User, TEST_USER_ID) is None:
+        db_session.add(
+            User(
+                id=TEST_USER_ID,
+                email=TEST_USER_EMAIL,
+                password_hash="not-a-login",  # noqa: S106
+            )
+        )
+        await db_session.flush()
+
+
 @pytest.fixture
 def app_for_db(db_session: AsyncSession) -> Iterator[FastAPI]:
     """Приложение, чьи эндпоинты работают в транзакции `db_session`.
@@ -168,6 +184,7 @@ def app_for_db(db_session: AsyncSession) -> Iterator[FastAPI]:
             raise
 
     application.dependency_overrides[get_session] = _session_override
+    application.dependency_overrides[get_current_user_id] = lambda: TEST_USER_ID
     yield application
     application.dependency_overrides.clear()
 
@@ -197,12 +214,16 @@ def no_app_engine(monkeypatch: pytest.MonkeyPatch) -> None:
 async def seeded(db_session: AsyncSession, no_app_engine: None) -> SeedReport:
     """Демо-данные сида в транзакции `db_session` на реальное «сейчас»."""
     now = datetime.now(UTC).replace(microsecond=0)
-    return await run_seed(db_session, SeedOptions(now=now, user_id=get_settings().demo_user_id))
+    return await run_seed(db_session, SeedOptions(now=now, user_id=TEST_USER_ID))
 
 
 @pytest.fixture
-def other_user(app_for_db: FastAPI) -> uuid.UUID:
-    """Подменить текущего пользователя на другого (тесты изоляции)."""
+async def other_user(app_for_db: FastAPI, db_session: AsyncSession) -> uuid.UUID:
+    """Подменить текущего пользователя на другого, уже записанного в users."""
     user_id = uuid.uuid4()
+    db_session.add(
+        User(id=user_id, email=f"{user_id}@example.com", password_hash="not-a-login")  # noqa: S106
+    )
+    await db_session.flush()
     app_for_db.dependency_overrides[get_current_user_id] = lambda: user_id
     return user_id

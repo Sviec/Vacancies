@@ -1,0 +1,20 @@
+# Статика демо-страницы. Сборка Node остаётся только на этапе build,
+# на сервер уезжает nginx:alpine.
+FROM node:24-alpine AS build
+
+WORKDIR /srv
+
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+
+COPY package.json package-lock.json* ./
+RUN npm ci || npm install
+
+COPY . .
+RUN npm run build
+
+FROM nginx:1.27-alpine
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /srv/dist /usr/share/nginx/html
+
+EXPOSE 80

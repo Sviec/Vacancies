@@ -9,10 +9,12 @@ import {
   useCreateResume,
   useDeleteResume,
   useDuplicateResume,
+  useResume,
+  useResumeDetails,
   useResumes,
   useUpdateResume,
 } from "@/api/resumes";
-import type { ResumeListItem } from "@/api/types";
+import type { ResumeCreate, ResumeListItem, ResumeRead } from "@/api/types";
 import { PageHeader } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -20,7 +22,19 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toaster";
+import { ProfilePanel } from "@/features/resumes/ProfilePanel";
 import { ResumeCard } from "@/features/resumes/ResumeCard";
+import type { ProfileForm } from "@/features/resumes/profile";
+import {
+  clearProfilePhoto,
+  emptyProfile,
+  mergeProfileIntoStoredDrafts,
+  profileFromResume,
+  profileToUpdate,
+  readProfilePhoto,
+  validateProfile,
+  writeProfilePhoto,
+} from "@/features/resumes/profile";
 import { rise, useReducedMotionSafe } from "@/lib/motion";
 import { pluralRu } from "@/lib/format";
 
@@ -35,7 +49,25 @@ export function ResumesPage() {
   const update = useUpdateResume();
   const remove = useDeleteResume();
 
+  const items = query.data?.items ?? [];
+  const primary = items.find((item) => item.is_primary) ?? items[0];
+  const primaryQuery = useResume(primary?.id ?? "");
+  const details = useResumeDetails(items.map((item) => item.id));
+  const detailById = new Map<string, ResumeRead>();
+  items.forEach((item, index) => {
+    const data = details[index]?.data;
+    if (data) {
+      detailById.set(item.id, data);
+    }
+  });
+
+  const [edited, setEdited] = useState<ProfileForm | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [photo, setPhoto] = useState<string | null>(() => readProfilePhoto());
+  const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<ResumeListItem | null>(null);
+  const form = edited ?? (primaryQuery.data ? profileFromResume(primaryQuery.data) : emptyProfile());
+
   const busyId =
     duplicate.isPending || update.isPending || remove.isPending
       ? (duplicate.variables ??
@@ -44,12 +76,32 @@ export function ResumesPage() {
         null)
       : null;
 
+  const changeForm = (next: ProfileForm) => {
+    setEdited(next);
+  };
+
   const createBlank = () => {
+    const profileErrors = validateProfile(form, new Date());
+    const shared = Object.keys(profileErrors).length === 0 ? profileToUpdate(form) : {};
+    const body: ResumeCreate = {
+      title: "Новое резюме",
+      is_primary: items.length === 0,
+      contacts: shared.contacts ?? undefined,
+      education: shared.education ?? undefined,
+      languages: shared.languages ?? undefined,
+      desired_city: shared.desired_city,
+      desired_country: shared.desired_country,
+    };
     create.mutate(
-      { title: "Новое резюме", is_primary: false },
+      body,
       {
         onSuccess: (resume) => {
-          toast({ message: "Резюме создано" });
+          toast({
+            message:
+              Object.keys(profileErrors).length === 0
+                ? "Резюме создано с данными профиля"
+                : "Резюме создано. Общие данные не перенесены — в профиле есть ошибки",
+          });
           void navigate(`/resumes/${resume.id}`);
         },
         onError: (error) => {
@@ -62,17 +114,81 @@ export function ResumesPage() {
     );
   };
 
-  let body: ReactNode;
-  if (query.isPending) {
-    body = <ResumesSkeleton />;
-  } else if (query.isError) {
-    body = <ErrorState error={query.error} onRetry={() => void query.refetch()} />;
-  } else if (query.data.items.length === 0) {
-    body = (
+  const saveProfile = async () => {
+    const nextErrors = validateProfile(form, new Date());
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      toast({ message: "Исправьте ошибки в профиле", tone: "danger" });
+      return;
+    }
+    if (items.length === 0) {
+      toast({ message: "Сначала создайте резюме — профиль записывается в него" });
+      return;
+    }
+    setSaving(true);
+    try {
+      const body = profileToUpdate(form);
+      for (const item of items) {
+        await update.mutateAsync({ id: item.id, body });
+      }
+      mergeProfileIntoStoredDrafts(
+        items.map((item) => item.id),
+        form,
+      );
+      setEdited(null);
+      toast({ message: "Профиль записан во все резюме" });
+    } catch (error) {
+      toast({
+        message: error instanceof ApiError ? error.message : "Не удалось сохранить профиль",
+        tone: "danger",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  let panel: ReactNode;
+  if (primary && primaryQuery.isPending) {
+    panel = <ProfileSkeleton />;
+  } else if (primary && primaryQuery.isError) {
+    panel = (
+      <ErrorState
+        error={primaryQuery.error}
+        title="Не удалось загрузить профиль"
+        onRetry={() => void primaryQuery.refetch()}
+        retrying={primaryQuery.isFetching}
+      />
+    );
+  } else {
+    panel = (
+      <ProfilePanel
+        form={form}
+        errors={errors}
+        photo={photo}
+        saving={saving}
+        onChange={changeForm}
+        onPhoto={(dataUrl) => {
+          if (dataUrl) {
+            writeProfilePhoto(dataUrl);
+            setPhoto(dataUrl);
+          } else {
+            clearProfilePhoto();
+            setPhoto(null);
+          }
+        }}
+        onPhotoError={(message) => toast({ message, tone: "danger" })}
+        onSave={() => void saveProfile()}
+      />
+    );
+  }
+
+  let list: ReactNode;
+  if (items.length === 0) {
+    list = (
       <EmptyState
         icon={FileText}
         title="Создайте первое резюме"
-        description="Несколько версий для разных ролей помогут точнее видеть соответствие вакансиям."
+        description="Общие данные слева перенесутся в него при создании, если в профиле нет ошибок."
         action={
           <Button variant="primary" onClick={createBlank} disabled={create.isPending}>
             <Plus size={16} aria-hidden /> Новое резюме
@@ -81,18 +197,23 @@ export function ResumesPage() {
       />
     );
   } else {
-    const items = query.data.items;
-    body = (
+    list = (
       <>
-        <p className="mb-4 text-[13px] text-ink-muted">
-          {items.length}{" "}
-          {pluralRu(items.length, ["резюме", "резюме", "резюме"])}
-        </p>
-        <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <p className="text-[13px] text-ink-muted">
+            {items.length} {pluralRu(items.length, ["резюме", "резюме", "резюме"])}
+          </p>
+          <Button variant="secondary" size="sm" onClick={createBlank} disabled={create.isPending}>
+            <Plus size={14} aria-hidden /> Новое резюме
+          </Button>
+        </div>
+        <ul className="flex flex-col gap-3">
           {items.map((resume, index) => (
             <motion.li key={resume.id} {...rise(index, reduced)}>
               <ResumeCard
                 resume={resume}
+                detail={detailById.get(resume.id)}
+                photo={photo}
                 now={now}
                 busy={busyId === resume.id}
                 onDuplicate={() => {
@@ -124,20 +245,6 @@ export function ResumesPage() {
               />
             </motion.li>
           ))}
-          <li>
-            <button
-              type="button"
-              onClick={createBlank}
-              disabled={create.isPending}
-              className="flex min-h-[270px] w-full flex-col items-center justify-center rounded-card border border-dashed border-line-strong bg-transparent text-center hover:border-accent-border hover:bg-surface disabled:opacity-60"
-            >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-surface text-accent-muted shadow-card">
-                <Plus size={18} aria-hidden />
-              </span>
-              <span className="mt-3 text-[14px] font-medium text-ink-body">Добавить ещё одно</span>
-              <span className="mt-1 text-[13px] text-ink-muted">Для новой цели или языка</span>
-            </button>
-          </li>
         </ul>
       </>
     );
@@ -147,21 +254,35 @@ export function ResumesPage() {
     <>
       <PageHeader
         eyebrow="Ваши материалы"
-        title="Мои резюме"
-        description="Несколько точных версий для разных ролей. Обновляйте их по мере того, как растёт ваш опыт."
-        actions={
-          <Button variant="primary" onClick={createBlank} disabled={create.isPending}>
-            <Plus size={16} aria-hidden /> Новое резюме
-          </Button>
-        }
+        title="Профиль"
+        description="Общие данные слева одни на все версии. Справа — резюме под разные роли: в превью видны опыт, навыки и оценка."
       />
-      {body}
+      <div className="grid items-start gap-5 lg:grid-cols-[320px_minmax(0,1fr)]">
+        {query.isPending ? (
+          <>
+            <ProfileSkeleton />
+            <ResumesSkeleton />
+          </>
+        ) : query.isError ? (
+          <ErrorState
+            className="lg:col-span-2"
+            error={query.error}
+            onRetry={() => void query.refetch()}
+            retrying={query.isFetching}
+          />
+        ) : (
+          <>
+            {panel}
+            <div className="min-w-0">{list}</div>
+          </>
+        )}
+      </div>
       <ConfirmDialog
         open={deleteTarget !== null}
         title="Удалить резюме?"
         description={
           deleteTarget?.is_primary
-            ? "Это основное резюме — основным станет самое свежее из оставшихся."
+            ? "Это основное резюме — основным станет самое свежее из оставшихся. Общие данные профиля останутся."
             : `«${deleteTarget?.title ?? ""}» будет удалено без возможности восстановления.`
         }
         confirmLabel="Удалить"
@@ -189,19 +310,36 @@ export function ResumesPage() {
   );
 }
 
+function ProfileSkeleton() {
+  return (
+    <div aria-busy="true" aria-label="Загрузка профиля" className="rounded-card border border-line bg-surface p-5 shadow-card">
+      <Skeleton className="h-5 w-2/5" />
+      <Skeleton className="mt-3 h-4 w-full" />
+      <Skeleton className="mt-2 h-4 w-4/5" />
+      <div className="mt-5 flex items-center gap-4">
+        <Skeleton className="h-16 w-16 rounded-full" />
+        <Skeleton className="h-8 w-32" />
+      </div>
+      <Skeleton className="mt-5 h-4 w-1/3" />
+      <Skeleton className="mt-3 h-9 w-full" />
+      <Skeleton className="mt-3 h-9 w-full" />
+      <Skeleton className="mt-3 h-9 w-full" />
+    </div>
+  );
+}
+
 function ResumesSkeleton() {
   return (
-    <ul aria-busy="true" aria-label="Загрузка резюме" className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <ul aria-busy="true" aria-label="Загрузка резюме" className="flex flex-col gap-3">
       {Array.from({ length: 3 }, (_, index) => (
-        <li key={index} className="rounded-card border border-line bg-surface p-5 shadow-card">
-          <div className="flex justify-between">
-            <Skeleton className="h-10 w-10 rounded-lg" />
-            <Skeleton className="h-8 w-8 rounded-lg" />
+        <li key={index} className="flex gap-4 rounded-card border border-line bg-surface p-5 shadow-card">
+          <Skeleton className="h-12 w-12 rounded-full" />
+          <div className="min-w-0 flex-1">
+            <Skeleton className="h-5 w-2/5" />
+            <Skeleton className="mt-2 h-4 w-1/3" />
+            <Skeleton className="mt-3 h-4 w-4/5" />
+            <Skeleton className="mt-2 h-4 w-3/5" />
           </div>
-          <Skeleton className="mt-5 h-5 w-3/5" />
-          <Skeleton className="mt-2 h-4 w-2/5" />
-          <Skeleton className="mt-5 h-4 w-4/5" />
-          <Skeleton className="mt-4 h-8 w-full" />
         </li>
       ))}
     </ul>

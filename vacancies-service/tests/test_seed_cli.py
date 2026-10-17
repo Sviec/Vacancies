@@ -55,6 +55,7 @@ def test_parser_defaults() -> None:
     assert args.no_actions is False
     assert args.no_score_check is False
     assert args.preview == 3
+    assert args.email is None
 
 
 def test_parser_rejects_negative_preview() -> None:

@@ -8,9 +8,9 @@ from typing import Any
 import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from tests.constants import TEST_USER_ID
 
 from app.adapters.llm import MockLLMAdapter
-from app.config import get_settings
 from app.db.models import (
     ParseRun,
     Resume,
@@ -42,7 +42,7 @@ _TABLES = (Source, ParseRun, Vacancy, VacancyPosting, VacancyMatch, UserVacancyA
 
 
 def _demo_user() -> uuid.UUID:
-    return get_settings().demo_user_id
+    return TEST_USER_ID
 
 
 async def _row_counts(session: AsyncSession) -> dict[str, int]:

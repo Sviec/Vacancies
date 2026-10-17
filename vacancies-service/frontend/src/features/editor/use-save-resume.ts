@@ -49,12 +49,32 @@ export function useSaveResume({
   const serverPayload = useMemo(() => toPayload(fromResume(resume)), [resume]);
   const draftPayload = useMemo(() => toPayload(draft), [draft]);
   const draftKey = useMemo(() => JSON.stringify(draftPayload), [draftPayload]);
-  const diff = useMemo(
-    () => diffPayload(serverPayload, draftPayload),
-    [serverPayload, draftPayload],
-  );
+  const diff = useMemo(() => {
+    const next = diffPayload(serverPayload, draftPayload);
+    // Контакты, жильё, образование и языки пишет только страница профиля.
+    delete next.contacts;
+    delete next.education;
+    delete next.languages;
+    delete next.desired_city;
+    delete next.desired_country;
+    return next;
+  }, [serverPayload, draftPayload]);
   const dirty = Object.keys(diff).length > 0;
-  const clientErrors = useMemo(() => validateDraft(draft, new Date()), [draft]);
+  const clientErrors = useMemo(() => {
+    const errors = validateDraft(draft, new Date());
+    for (const key of Object.keys(errors)) {
+      if (
+        key.startsWith("contacts.") ||
+        key.startsWith("education.") ||
+        key.startsWith("languages.") ||
+        key === "desired_city" ||
+        key === "desired_country"
+      ) {
+        delete errors[key];
+      }
+    }
+    return errors;
+  }, [draft]);
   const hasClientErrors = Object.keys(clientErrors).length > 0;
   const holdError = errorSnapshot !== null && errorSnapshot === draftKey;
 

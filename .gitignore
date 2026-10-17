@@ -23,7 +23,9 @@ vacancies-service/frontend/coverage/
 .env
 .env.local
 .env.*.local
+.env.prod
 !.env.example
+!.env.prod.example
 
 # Telethon
 *.session

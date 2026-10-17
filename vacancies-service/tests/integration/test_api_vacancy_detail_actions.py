@@ -8,8 +8,8 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from tests.constants import TEST_USER_ID
 
-from app.config import get_settings
 from app.db.models import UserVacancyAction, Vacancy
 from app.enums import UserAction
 from factories import ingest_raws, make_raw
@@ -96,7 +96,7 @@ async def test_post_action_is_idempotent(
         select(UserVacancyAction).where(UserVacancyAction.vacancy_id == uuid.UUID(merged_id))
     )
     assert row is not None
-    assert row.user_id == get_settings().demo_user_id
+    assert row.user_id == TEST_USER_ID
 
 
 async def test_saved_and_hidden_are_mutually_exclusive(
@@ -170,7 +170,7 @@ async def test_actions_are_per_user(
 ) -> None:
     db_session.add(
         UserVacancyAction(
-            user_id=get_settings().demo_user_id,
+            user_id=TEST_USER_ID,
             vacancy_id=uuid.UUID(merged_id),
             action=UserAction.HIDDEN,
         )

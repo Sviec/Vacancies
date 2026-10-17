@@ -823,4 +823,5 @@
 
 ### После этапов 11 и 12
 
-- Генерация через готовую модель и варианты развёртывания — `docs/llm-generation.md`. Сейчас не делать: демо остаётся на `LLM_MODE=mock`.
+- Генерация через скачанную модель — `docs/llm-generation.md`. Первый кандидат Qwen2.5-Instruct 7B через Ollama на машине, где хватает RAM. Демо остаётся на `LLM_MODE=mock`.
+- Публикация на 2 ядра / 4 ГБ / 40 ГБ — `docs/deploy.md` и `docker-compose.prod.yml`. На этот сервер модель, Chromium, worker и scheduler не ставятся.

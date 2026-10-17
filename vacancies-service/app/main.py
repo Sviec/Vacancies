@@ -57,12 +57,11 @@ def create_app() -> FastAPI:
         openapi_url="/openapi.json",
     )
 
-    # TODO: allow_credentials=False — авторизации нет (п. 0.2 ТЗ), куки не
-    # используются. Пересмотреть, когда появится auth.
+    # Кука сессии ходит только на перечисленные origin. `*` с credentials нельзя.
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
-        allow_credentials=False,
+        allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
         expose_headers=[REQUEST_ID_HEADER],

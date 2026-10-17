@@ -28,6 +28,8 @@ from app.db import models  # noqa: F401 — импорт наполняет Base
 from app.db.base import Base
 
 EXPECTED_TABLES = {
+    "users",
+    "auth_sessions",
     "sources",
     "vacancies",
     "vacancy_postings",

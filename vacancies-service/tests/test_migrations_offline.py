@@ -25,8 +25,11 @@ def test_single_head() -> None:
 
 def test_initial_revision_is_root() -> None:
     script = _script_directory()
-    heads = script.get_heads()
-    revision = script.get_revision(heads[0])
+    revision = script.get_revision(script.get_heads()[0])
+    while revision.down_revision is not None:
+        parent = revision.down_revision
+        assert isinstance(parent, str)
+        revision = script.get_revision(parent)
     assert revision.down_revision is None
 
 

@@ -9,9 +9,9 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from tests.constants import TEST_USER_ID
 
 from app.api.deps import get_current_user_id
-from app.config import get_settings
 from app.db.models import Vacancy, VacancyMatch
 from app.enums import WorkFormat
 from app.schemas.recommendations import RecommendationsQuery
@@ -276,9 +276,7 @@ async def test_later_now_updates_only_changed_rows(
     before = await _matches(db_session, backend)
 
     later = datetime.now(UTC) + timedelta(days=10)
-    result = await get_recommendations(
-        db_session, get_settings().demo_user_id, RecommendationsQuery(), now=later
-    )
+    result = await get_recommendations(db_session, TEST_USER_ID, RecommendationsQuery(), now=later)
     assert result.resume_id == uuid.UUID(backend)
     after = await _matches(db_session, backend)
 

@@ -1,24 +1,34 @@
 """Общие FastAPI-зависимости слоя API."""
 
+from datetime import UTC, datetime
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import Depends
+from fastapi import Depends, Request
 
 from app.adapters.llm import LLMAdapter, build_llm_adapter
 from app.adapters.profile import ProfileAdapter, build_profile_adapter
 from app.config import Settings, get_settings
+from app.db.session import SessionDep
+from app.services import auth
+from app.utils.errors import UnauthenticatedError
 
 
-def get_current_user_id() -> UUID:
-    """Идентификатор текущего пользователя.
+async def get_current_user_id(request: Request, session: SessionDep) -> UUID:
+    """Идентификатор текущего пользователя по куке сессии.
 
-    Авторизации нет (п. 0.2 ТЗ): всегда `DEMO_USER_ID` из конфига. Сервисы
-    получают `user_id` только параметром, поэтому подменить источник можно
-    в одном месте.
+    Сервисы по-прежнему получают `user_id` параметром. Нет куки или сессия
+    просрочена — 401, общего демо-пользователя больше нет.
     """
-    # TODO: будущий auth заменяет только тело этой функции (разбор токена).
-    return get_settings().demo_user_id
+    settings = get_settings()
+    token = request.cookies.get(settings.session_cookie_name)
+    if not token:
+        raise UnauthenticatedError()
+    user_id = await auth.user_id_for_token(session, token, now=datetime.now(UTC))
+    if user_id is None:
+        await session.commit()
+        raise UnauthenticatedError()
+    return user_id
 
 
 def get_llm_adapter(settings: Annotated[Settings, Depends(get_settings)]) -> LLMAdapter:

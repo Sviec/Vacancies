@@ -13,7 +13,9 @@ from collections.abc import AsyncIterator, Iterator
 import pytest
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
+from tests.constants import TEST_USER_ID
 
+from app.api.deps import get_current_user_id
 from app.api.health import CheckResult, check_database, check_redis
 from app.config import Settings
 from app.main import create_app
@@ -39,6 +41,7 @@ def app() -> Iterator[FastAPI]:
     application = create_app()
     application.dependency_overrides[check_database] = _ok_check
     application.dependency_overrides[check_redis] = _ok_check
+    application.dependency_overrides[get_current_user_id] = lambda: TEST_USER_ID
     yield application
     application.dependency_overrides.clear()
 

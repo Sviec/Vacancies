@@ -59,7 +59,7 @@ interface CommonFieldProps {
 }
 
 type TextFieldProps = CommonFieldProps & Omit<ComponentProps<"input">, "type"> & {
-  type?: "text" | "email" | "url" | "tel" | "search" | "date";
+  type?: "text" | "email" | "url" | "tel" | "search" | "date" | "password";
 };
 
 export function TextField({ label, hint, error, containerClassName, className, type = "text", ...props }: TextFieldProps) {

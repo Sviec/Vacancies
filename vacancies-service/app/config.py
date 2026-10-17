@@ -10,7 +10,6 @@ mock-режиме, без внешних ключей и без доступа �
 
 from functools import lru_cache
 from typing import Annotated, Literal
-from uuid import UUID
 
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
@@ -48,10 +47,11 @@ class Settings(BaseSettings):
     rq_queue_name: str = "vacancies"
     rq_default_timeout: int = 900
 
-    # --- Демо-пользователь ---
-    # Авторизации в этой версии нет (п. 0.2 ТЗ): user_id всегда передаётся
-    # в сервисный слой явно, а его значение по умолчанию берётся отсюда.
-    demo_user_id: UUID = UUID("00000000-0000-0000-0000-000000000001")
+    # --- Сессия входа ---
+    # Случайный токен в httpOnly-куке. Secure включайте, когда сайт открыт по HTTPS.
+    session_cookie_name: str = "session"
+    session_ttl_seconds: int = 14 * 24 * 60 * 60
+    session_cookie_secure: bool = False
 
     # --- Адаптеры внешних систем (раздел 9) ---
     # TODO: Real без ключа или URL бросает ExternalServiceError в методе

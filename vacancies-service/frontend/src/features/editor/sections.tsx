@@ -1,4 +1,5 @@
 import { Plus, Trash2, X } from "lucide-react";
+import { Link } from "react-router";
 
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -36,9 +37,11 @@ interface SectionProps {
   countries?: string[];
   cities?: string[];
   suggestedSkills?: string[];
+  /** Контакты, жильё, образование и языки правятся только в профиле. */
+  locked?: boolean;
 }
 
-export function BasicsSection({ draft, errors, onChange }: SectionProps) {
+export function BasicsSection({ draft, errors, onChange, locked = false }: SectionProps) {
   return (
     <Section
       id="basics"
@@ -64,6 +67,14 @@ export function BasicsSection({ draft, errors, onChange }: SectionProps) {
           rows={4}
           containerClassName="md:col-span-2"
         />
+        {locked && (
+          <p className="text-[13px] leading-5 text-ink-muted md:col-span-2">
+            Контакты общие для всех резюме.{" "}
+            <Link to="/resumes" className="font-medium text-accent hover:text-accent-hover">
+              Изменить в профиле
+            </Link>
+          </p>
+        )}
         {CONTACT_FIELDS.map((field) => (
           <TextField
             key={field.key}
@@ -71,6 +82,7 @@ export function BasicsSection({ draft, errors, onChange }: SectionProps) {
             type={field.type}
             value={draft.contacts[field.key]}
             error={errors[`contacts.${field.key}`]}
+            disabled={locked}
             onChange={(event) =>
               onChange({
                 ...draft,
@@ -84,7 +96,14 @@ export function BasicsSection({ draft, errors, onChange }: SectionProps) {
   );
 }
 
-export function GoalsSection({ draft, errors, onChange, countries = [], cities = [] }: SectionProps) {
+export function GoalsSection({
+  draft,
+  errors,
+  onChange,
+  countries = [],
+  cities = [],
+  locked = false,
+}: SectionProps) {
   return (
     <Section
       id="goals"
@@ -112,11 +131,20 @@ export function GoalsSection({ draft, errors, onChange, countries = [], cities =
           <option value="EUR">EUR</option>
           <option value="KZT">KZT</option>
         </Select>
+        {locked && (
+          <p className="text-[13px] leading-5 text-ink-muted md:col-span-2">
+            Страна и город — место жительства из профиля.{" "}
+            <Link to="/resumes" className="font-medium text-accent hover:text-accent-hover">
+              Изменить в профиле
+            </Link>
+          </p>
+        )}
         <TextField
           label="Страна"
           list="resume-countries"
           value={draft.desired_country}
           error={errors.desired_country}
+          disabled={locked}
           onChange={(event) => onChange({ ...draft, desired_country: event.target.value })}
         />
         <datalist id="resume-countries">
@@ -129,6 +157,7 @@ export function GoalsSection({ draft, errors, onChange, countries = [], cities =
           list="resume-cities"
           value={draft.desired_city}
           error={errors.desired_city}
+          disabled={locked}
           onChange={(event) => onChange({ ...draft, desired_city: event.target.value })}
         />
         <datalist id="resume-cities">
@@ -295,9 +324,9 @@ export function ExperienceSection({ draft, errors, today, onChange }: SectionPro
   );
 }
 
-export function EducationSection({ draft, errors, onChange }: SectionProps) {
+export function EducationSection({ draft, errors, onChange, locked = false }: SectionProps) {
   return (
-    <Section id="education" number="04" title="Образование">
+    <Section id="education" number="04" title="Образование" locked={locked}>
       <div className="space-y-4">
         {draft.education.map((item, index) => {
           const prefix = `education.${index}`;
@@ -574,9 +603,9 @@ export function SkillsSection({ draft, errors, onChange, suggestedSkills = [] }:
   );
 }
 
-export function LanguagesSection({ draft, errors, onChange }: SectionProps) {
+export function LanguagesSection({ draft, errors, onChange, locked = false }: SectionProps) {
   return (
-    <Section id="languages" number="07" title="Языки">
+    <Section id="languages" number="07" title="Языки" locked={locked}>
       <div className="space-y-3">
         {draft.languages.map((item, index) => {
           const prefix = `languages.${index}`;
