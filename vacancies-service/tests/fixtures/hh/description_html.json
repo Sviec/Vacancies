@@ -1,0 +1,17 @@
+{
+  "id": "1011",
+  "name": "Специалист по качеству данных",
+  "alternate_url": "https://hh.ru/vacancy/1011",
+  "employer": {"name": "Северная лаборатория"},
+  "published_at": "2026-10-28T15:04:05+0300",
+  "archived": false,
+  "description": "<p>Ищем разработчика в R&amp;D.</p><ul><li>PostgreSQL</li><li>код-ревью</li></ul><p>Офис<br>в будни</p>",
+  "experience": {"id": "between3And6"},
+  "languages": [
+    {"id": "eng", "level": {"id": "b2"}},
+    {"id": "qqq", "level": {"id": "c1"}},
+    {"id": "rus", "level": {"id": "l1"}}
+  ],
+  "address": {"city": "Москва"},
+  "area": {"id": 1, "name": "Москва"}
+}

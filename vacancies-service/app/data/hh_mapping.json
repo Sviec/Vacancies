@@ -1,0 +1,60 @@
+{
+  "experience_min_years": {
+    "noExperience": 0,
+    "between1And3": 1,
+    "between3And6": 3,
+    "moreThan6": 6
+  },
+  "work_format": {
+    "REMOTE": "remote",
+    "HYBRID": "hybrid",
+    "ON_SITE": "office",
+    "FIELD_WORK": "office"
+  },
+  "employment_form": {
+    "FULL": "full_time",
+    "PART": "part_time",
+    "PROJECT": "contract",
+    "SIDE_JOB": "part_time",
+    "FLY_IN_FLY_OUT": "unknown"
+  },
+  "employment": {
+    "full": "full_time",
+    "part": "part_time",
+    "project": "contract",
+    "probation": "internship",
+    "volunteer": "unknown"
+  },
+  "salary_range_mode": {
+    "MONTH": "month",
+    "HOUR": "hour",
+    "SHIFT": null,
+    "FLY_IN_FLY_OUT": null,
+    "SERVICE": null
+  },
+  "currency": {
+    "RUR": "RUB",
+    "BYR": "BYN",
+    "USD": "USD",
+    "EUR": "EUR",
+    "KZT": "KZT",
+    "UAH": "UAH",
+    "AZN": "AZN",
+    "UZS": "UZS",
+    "GEL": "GEL",
+    "KGS": "KGS"
+  },
+  "language": {
+    "eng": "en",
+    "rus": "ru"
+  },
+  "language_level": {
+    "a1": "A1",
+    "a2": "A2",
+    "b1": "B1",
+    "b2": "B2",
+    "c1": "C1",
+    "c2": "C2",
+    "l1": "native"
+  }
+}

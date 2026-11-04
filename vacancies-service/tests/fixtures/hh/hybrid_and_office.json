@@ -1,0 +1,10 @@
+{
+  "id": "1007",
+  "name": "Специалист по качеству данных",
+  "alternate_url": "https://hh.ru/vacancy/1007",
+  "employer": {"name": "Северная лаборатория"},
+  "published_at": "2026-10-28T15:04:05+0300",
+  "archived": false,
+  "description": "<p>Команда ведёт внутренние справочники и отвечает на вопросы коллег по процессам.</p>",
+  "work_format": [{"id": "ON_SITE"}, {"id": "HYBRID"}]
+}

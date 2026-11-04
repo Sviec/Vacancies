@@ -1,0 +1,20 @@
+{
+  "id": "1002",
+  "name": "Специалист по качеству данных",
+  "alternate_url": "https://hh.ru/vacancy/1002",
+  "employer": {"name": "Северная лаборатория"},
+  "published_at": "2026-10-28T15:04:05+0300",
+  "archived": false,
+  "description": "<p>Команда ведёт внутренние справочники и отвечает на вопросы коллег по процессам.</p>",
+  "salary_range": {
+    "from": 3000,
+    "to": 5000,
+    "currency": "USD",
+    "gross": false,
+    "mode": {"id": "MONTH"},
+    "frequency": {"id": "MONTHLY"}
+  },
+  "employment": {"id": "part"},
+  "employment_form": {"id": "FULL"},
+  "work_format": [{"id": "REMOTE"}]
+}
