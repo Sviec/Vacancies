@@ -1,11 +1,21 @@
 # vacancies-service
 
 Сервис агрегации вакансий из внешних источников, ведения резюме и подбора
-рекомендаций под конкретное резюме. Работает автономно, без авторизации и без
-остальных сервисов платформы.
+рекомендаций под конкретное резюме. Работает автономно, без остальных
+сервисов платформы. Вход — по почте и паролю.
 
-Полное техническое задание: [TZ_vacancies_service.md](TZ_vacancies_service.md).
-Локальная разработка и проверки — в [vacancies-service/README.md](vacancies-service/README.md).
+## Документация
+
+| Файл | О чём |
+|---|---|
+| [TZ_vacancies_service.md](TZ_vacancies_service.md) | исходное ТЗ, этапы 1–12 |
+| [PROGRESS.md](PROGRESS.md) | статус этапов, отклонения от ТЗ, допущения |
+| [docs/roadmap.md](docs/roadmap.md) | план этапов 13+ |
+| [docs/hh-api.md](docs/hh-api.md) | API hh.ru и план подключения (этап 13) |
+| [docs/parsing.md](docs/parsing.md) | включить обход Telegram и HTML-сайтов |
+| [docs/llm.md](docs/llm.md) | подключить, выбрать и дообучить модель |
+| [docs/deploy.md](docs/deploy.md) | сервер 2 ядра / 4 ГБ и деплой через GitHub |
+| [vacancies-service/README.md](vacancies-service/README.md) | локальная разработка и проверки |
 
 ## Подготовка
 
@@ -22,9 +32,8 @@ Copy-Item .env.example .env
 
 В скопированном файле уже `LLM_MODE=mock`, `PROFILE_MODE=mock` и
 `PARSERS_ENABLED=false`. Демо после сида работает без API-ключей и без
-интернета. Как включить обход каналов и сайтов и подключить модель —
-[docs/parsing-and-models.md](docs/parsing-and-models.md). Выбор и дообучение
-модели — [docs/llm-generation.md](docs/llm-generation.md).
+интернета. Обход источников — [docs/parsing.md](docs/parsing.md), модель —
+[docs/llm.md](docs/llm.md).
 
 ## Запуск
 

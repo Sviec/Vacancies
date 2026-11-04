@@ -1,9 +1,9 @@
-# Парсинг источников и подключение модели
+# Парсинг источников
 
-Стек уже умеет обходить публичные Telegram-каналы и HTML-страницы и звать
-модель для черновика резюме, подгонки под вакансию и формулировок рекомендаций.
-Демо этого не делает: `PARSERS_ENABLED=false` и `LLM_MODE=mock`. Этот файл —
-что включить руками. Код сам по себе ничего не переключает.
+Стек умеет обходить публичные Telegram-каналы и HTML-страницы. Демо этого не
+делает: `PARSERS_ENABLED=false`. Этот файл — что включить руками. Код сам по
+себе ничего не переключает. Подключение модели — в [llm.md](llm.md).
+Источник hh.ru через API в работе — план и справка в [hh-api.md](hh-api.md).
 
 Демо-источники сида (`config.demo` равен `true`, каналы `@demo_…` и адреса
 `example.com` / `example.org`) не обходятся никогда, даже после включения
@@ -185,67 +185,3 @@ VALUES (
 
 Дальше то же, что у Telegram: рестарт `scheduler`, при необходимости кнопка
 «Запустить».
-
-## 4. Подключение модели
-
-Числа оценки резюме и процент соответствия вакансии считает код. Модель
-нужна только для трёх вещей: черновик по свободному тексту
-(`POST /api/v1/resumes/generate`), подгонка резюме под вакансию (`tailor`) и
-переписывание рекомендаций после оценки. Если модель недоступна, генерация и
-tailor отвечают 502, а оценка сохраняется с шаблонными фразами.
-
-Демо без интернета оставляйте на `LLM_MODE=mock`. Ниже — как включить real
-на уже поднятом API. Выбор и дообучение модели разобраны в
-[llm-generation.md](llm-generation.md).
-
-Адаптер шлёт один запрос:
-
-`POST {LLM_BASE_URL}/chat/completions`
-
-заголовок `Authorization: Bearer …`, `temperature=0`,
-`response_format: {"type": "json_object"}`. Текст ответа должен быть строкой
-JSON. Невалидный JSON повторяется один раз, затем 502 `LLM_RESPONSE_INVALID`.
-Таймаут — `LLM_TIMEOUT_SECONDS` (30).
-
-Непустой `LLM_BASE_URL` важнее `LLM_PROVIDER`. У `openai` и `openrouter` URL
-можно не задавать: подставятся `https://api.openai.com/v1` и
-`https://openrouter.ai/api/v1`. У `anthropic` своего Messages API нет: без
-`LLM_BASE_URL` вызов падает, с URL уходит тот же chat-completions.
-
-### Готовый коммерческий API
-
-В `.env`, затем `docker compose restart api`:
-
-```
-LLM_MODE=real
-LLM_PROVIDER=openai
-LLM_API_KEY=sk-...
-LLM_MODEL=gpt-4o-mini
-```
-
-OpenRouter — `LLM_PROVIDER=openrouter` и ключ OpenRouter. Свой прокси или
-Anthropic-совместимый шлюз — ещё `LLM_BASE_URL=https://…/v1`.
-
-### Своя или открытая модель
-
-Поднимите сервер с OpenAI-совместимым API (llama.cpp, Ollama, vLLM) отдельно
-от `docker compose up`. В API вакансий веса не кладутся.
-
-С ноутбука, API в Docker на Windows:
-
-```
-LLM_MODE=real
-LLM_BASE_URL=http://host.docker.internal:8000/v1
-LLM_API_KEY=локальный-токен
-LLM_MODEL=Qwen/Qwen2.5-7B-Instruct
-```
-
-Порт — тот, на котором слушает инференс. Если на CPU ответ не укладывается в
-30 секунд, увеличьте `LLM_TIMEOUT_SECONDS`. Если сервер отвергает
-`response_format`, это надо ослабить в `RealLLMAdapter`: сейчас поле
-отправляется всегда.
-
-Проверка: в модалке «Сгенерировать через ИИ» ввести текст о себе. Ответ 201 и
-резюме с `origin=generated` значит, что модель прошла схему. В mock текст
-пользователя на черновик не влияет — если черновик каждый раз один и тот же,
-режим всё ещё mock или контейнер не перезапущен.

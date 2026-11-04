@@ -26,6 +26,7 @@ vacancies-service/frontend/coverage/
 .env.prod
 !.env.example
 !.env.prod.example
+.hh_token_last_request
 
 # Telethon
 *.session

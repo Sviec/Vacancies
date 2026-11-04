@@ -11,7 +11,7 @@ mock-режиме, без внешних ключей и без доступа �
 from functools import lru_cache
 from typing import Annotated, Literal
 
-from pydantic import SecretStr, field_validator
+from pydantic import Field, SecretStr, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
@@ -83,6 +83,19 @@ class Settings(BaseSettings):
     http_request_delay_seconds: float = 1.5
     respect_robots_txt: bool = True
 
+    # --- hh.ru (этап 13a) ---
+    # TODO: пустой HH_APP_TOKEN не валит старт; ошибка в методе HHClient.
+    # Сервис токен не перевыпускает.
+    hh_client_id: SecretStr | None = None
+    hh_client_secret: SecretStr | None = None
+    hh_app_token: SecretStr | None = None
+    hh_user_agent: str | None = "vacancies-service/0.1 (you@example.com)"
+    hh_base_url: str = "https://api.hh.ru"
+    hh_request_delay_seconds: float = Field(default=1.0, ge=0)
+    hh_timeout_seconds: float = Field(default=20.0, gt=0)
+    # Число повторов после первой попытки: всего попыток 1 + hh_max_retries.
+    hh_max_retries: int = Field(default=3, ge=0)
+
     # --- Логирование ---
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
     log_format: Literal["json", "console"] = "json"
@@ -107,19 +120,34 @@ class Settings(BaseSettings):
         "profile_service_url",
         "telegram_api_id",
         "telegram_api_hash",
+        "hh_client_id",
+        "hh_client_secret",
+        "hh_app_token",
+        "hh_user_agent",
         mode="before",
     )
     @classmethod
-    def _empty_string_is_none(cls, value: object) -> object:
+    def _empty_string_is_none(cls, value: object, info: ValidationInfo) -> object:
         """Считать пустое значение в `.env` отсутствующим.
 
         В `.env.example` необязательные ключи присутствуют пустыми (`LLM_API_KEY=`),
         чтобы список переменных был полным. Без этого преобразования они стали бы
         `SecretStr('')` и `''`, и проверки вида `if settings.llm_api_key is None`
         на этапе 9 пропустили бы незаполненный ключ дальше.
+        Пустой HH User-Agent тоже отсутствует; непустой обрезается.
         """
         if isinstance(value, str) and not value.strip():
             return None
+        if info.field_name == "hh_user_agent" and isinstance(value, str):
+            return value.strip()
+        return value
+
+    @field_validator("hh_base_url", mode="before")
+    @classmethod
+    def _blank_hh_base_url_is_default(cls, value: object) -> object:
+        """Пустой URL не становится None: клиенту нужна строка."""
+        if isinstance(value, str) and not value.strip():
+            return "https://api.hh.ru"
         return value
 
     @field_validator("cors_origins", mode="before")
