@@ -36,7 +36,15 @@ def get_parser_class(source_type: SourceType) -> type[BaseParser]:
 
 
 def build_parser(source: Source, settings: Settings) -> BaseParser:
-    """Собрать парсер источника. Тип вне реестра — `SourceNotRunnableError`."""
-    cls = get_parser_class(source.source_type)
+    """Собрать парсер. Тип вне реестра — `SourceNotRunnableError`.
+
+    Для API экземпляр берётся у провайдера, а не у единственного класса типа.
+    Транспорт и сессия в конструктор не передаются.
+    """
+    # Импорт внутри функции: api_providers сам импортирует реестр.
+    from app.parsers.api_providers import require_api_provider
+
+    registered = get_parser_class(source.source_type)
     config: dict[str, Any] = dict(source.config)
+    cls = require_api_provider(config) if source.source_type == SourceType.API else registered
     return cls(slug=source.slug, config=config, settings=settings)

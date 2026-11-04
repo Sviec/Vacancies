@@ -71,7 +71,7 @@ async def _load_schedules(settings: Settings) -> list[ScheduleSpec]:
     import app.parsers
     from app.parsers.config import schedules_for
 
-    _ = (app.parsers.HtmlParser, app.parsers.TelegramParser)
+    _ = (app.parsers.HtmlParser, app.parsers.TelegramParser, app.parsers.HHApiParser)
     init_engine(settings)
     try:
         session_factory = get_sessionmaker()

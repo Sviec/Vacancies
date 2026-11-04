@@ -460,8 +460,9 @@
 `.env.example`, `.gitignore`, `tests/test_config.py`, `tests/test_adapters_hh.py`,
 `tests/test_hh_token.py`.
 
-Клиент не импортируется из `main`, `deps` и парсеров. Обход и запись
-вакансий — 13c–13f.
+Клиент не импортируется из `main` и `deps`. Обход hh подключается
+пакетом парсеров. Запись в базу идёт через обычный прогон. Жизненный цикл,
+демо-источник и реальные данные — 13d–13f.
 
 **Допущения.**
 
@@ -495,3 +496,31 @@
 | 4 | В таблице языков только `eng` и `rus`; неизвестный язык пропускается |
 | 5 | `skills_hint` всегда задан: в нём каноны из `key_skills`, которые есть в словаре, плюс навыки из текста |
 | 6 | Без индекса регионов страна пустая, город берётся только из `address.city` |
+
+### 13c — парсер и инкрементальный обход
+
+**Статус:** `done`. Проверки: `parser-extensibility-checker` — блокеров нет;
+`mock-mode-auditor` — блокеров нет; `verifier` — блокеров нет (ruff, mypy,
+офлайн-тесты). Интеграционный `tests/integration/test_hh_parse_run.py` не
+подтверждён: Postgres на `127.0.0.1:5433` не отвечал.
+
+**Файлы.** `app/parsers/{api_providers,hh_api,__init__,registry,config}.py`,
+`app/services/{hh_catalog,parsing}.py`, `app/api/v1/sources.py`,
+`app/tasks/scheduler.py`, `tests/test_hh_api.py`, `tests/test_parsing_failure.py`,
+`tests/integration/test_hh_parse_run.py`, правки тестов реестра, расписания,
+ручного запуска и `test_hh_card.py`.
+
+Новый запрос к hh — строка `sources` с `provider=hh`. Чужой provider не
+обходится. При `PARSERS_ENABLED=false` клиента нет.
+
+**Допущения.**
+
+| # | Допущение |
+|---|---|
+| 1 | `stale_after_days` принимается и не читается — этап 13d |
+| 2 | `skills_mode` не читается: фильтр навыков уже в `map_hh_card` |
+| 3 | Окно короче 5 минут при `found > 2000` дочитывается только до 2000 элементов |
+| 4 | `400` одной карточки остаётся в `error_text` и не роняет прогон |
+| 5 | Битое дерево `/areas` не останавливает обход, индекс тогда пустой |
+| 6 | Неизменённые id не идут в ingest: им обновляется только `last_seen_at` |
+| 7 | Сравнение работодателя — по `id` и `name`, не по всему объекту |

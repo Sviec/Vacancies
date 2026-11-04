@@ -8,7 +8,7 @@ from uuid import UUID
 
 from app.config import Settings
 from app.db.models import Source
-from app.parsers.registry import get_parser_class
+from app.parsers.api_providers import ensure_source_runnable
 from app.utils.errors import SourceNotRunnableError
 
 # Хвост после последнего @ — имя атрибута, а не часть CSS.
@@ -49,7 +49,8 @@ def schedules_for(sources: Sequence[Source], settings: Settings) -> list[Schedul
     """Расписание обхода.
 
     Пусто, если парсеры выключены. Иначе только включённые, не демо, с типом
-    в реестре. `interval_hours` короче часа заменяется дефолтом из настроек.
+    в реестре. API без своего провайдера пропускается. `interval_hours` короче
+    часа заменяется дефолтом из настроек.
     """
     if not settings.parsers_enabled:
         return []
@@ -58,7 +59,7 @@ def schedules_for(sources: Sequence[Source], settings: Settings) -> list[Schedul
         if not source.is_enabled or source.config.get("demo") is True:
             continue
         try:
-            get_parser_class(source.source_type)
+            ensure_source_runnable(source)
         except SourceNotRunnableError:
             continue
         specs.append(

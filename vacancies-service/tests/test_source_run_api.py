@@ -119,7 +119,7 @@ async def test_unknown_source_is_404(
     assert enqueued == []
 
 
-async def test_api_source_is_not_runnable(
+async def test_api_source_without_provider_is_not_runnable(
     app: FastAPI, client: AsyncClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     source = _source(source_type=SourceType.API, slug="api_vendor", config={"url": "https://api"})
@@ -128,6 +128,42 @@ async def test_api_source_is_not_runnable(
     assert response.status_code == 409
     assert response.json()["error"]["code"] == "SOURCE_NOT_RUNNABLE"
     assert enqueued == []
+
+
+async def test_unknown_provider_is_not_runnable_before_redis(
+    app: FastAPI, client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source = _source(
+        source_type=SourceType.API,
+        slug="superjob",
+        config={"provider": "superjob", "query": {"text": "python"}},
+    )
+    enqueued = _bind(app, monkeypatch, source, parsers_enabled=True)
+    response = await client.post(f"/api/v1/sources/{source.id}/run")
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "SOURCE_NOT_RUNNABLE"
+    assert enqueued == []
+
+
+async def test_hh_provider_enqueues_without_http(
+    app: FastAPI, client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source = _source(
+        source_type=SourceType.API,
+        slug="hh_it",
+        config={"provider": "hh", "query": {"text": "python"}},
+    )
+    enqueued = _bind(app, monkeypatch, source, parsers_enabled=True)
+    _allow_redis(monkeypatch)
+
+    def _no_hh_client(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("hh client")
+
+    monkeypatch.setattr("app.adapters.hh.HHClient.__init__", _no_hh_client)
+    response = await client.post(f"/api/v1/sources/{source.id}/run")
+    assert response.status_code == 202
+    assert response.json() == {"source_id": str(source.id), "job_id": "job-1"}
+    assert enqueued == [source]
 
 
 async def test_already_running(

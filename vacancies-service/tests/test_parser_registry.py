@@ -3,8 +3,6 @@
 from collections.abc import Mapping
 from typing import Any
 
-import pytest
-
 from app.config import Settings
 from app.db.models import Source
 from app.enums import SourceType
@@ -17,7 +15,6 @@ from app.parsers import (
     unregister,
 )
 from app.parsers.base import BaseParser
-from app.utils.errors import SourceNotRunnableError
 
 
 def test_html_and_telegram_are_registered() -> None:
@@ -25,13 +22,15 @@ def test_html_and_telegram_are_registered() -> None:
     assert get_parser_class(SourceType.TELEGRAM) is TelegramParser
 
 
-def test_api_is_not_runnable() -> None:
-    with pytest.raises(SourceNotRunnableError) as caught:
-        get_parser_class(SourceType.API)
-    assert caught.value.code == "SOURCE_NOT_RUNNABLE"
+def test_api_parser_is_hh() -> None:
+    from app.parsers.hh_api import HHApiParser
+
+    assert get_parser_class(SourceType.API) is HHApiParser
 
 
 def test_register_api_then_unregister() -> None:
+    from app.parsers.hh_api import HHApiParser
+
     @register
     class _ApiParser(BaseParser):
         source_type = SourceType.API
@@ -48,8 +47,8 @@ def test_register_api_then_unregister() -> None:
         assert get_parser_class(SourceType.TELEGRAM) is TelegramParser
     finally:
         unregister(SourceType.API)
-    with pytest.raises(SourceNotRunnableError):
-        get_parser_class(SourceType.API)
+        register(HHApiParser)
+    assert get_parser_class(SourceType.API) is HHApiParser
     assert get_parser_class(SourceType.HTML) is HtmlParser
 
 

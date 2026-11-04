@@ -2,7 +2,7 @@
 
 import uuid
 
-import app.parsers  # регистрация HTML и Telegram
+import app.parsers  # регистрация HTML, Telegram и hh
 from app.config import Settings
 from app.db.models import Source
 from app.enums import SourceType
@@ -28,14 +28,25 @@ def test_schedules_empty_when_parsers_disabled() -> None:
     assert schedules_for([_source()], settings) == []
 
 
-def test_schedules_skip_demo_disabled_and_api() -> None:
+def test_schedules_skip_demo_disabled_and_foreign_provider() -> None:
     settings = Settings(_env_file=None, parsers_enabled=True, parser_default_interval_hours=3)
     live = _source(slug="live")
     demo = _source(slug="demo", config={"demo": True, "url": "https://example.com"})
     disabled = _source(slug="off", is_enabled=False)
-    api = _source(slug="api", source_type=SourceType.API, config={"url": "https://api"})
-    specs = schedules_for([live, demo, disabled, api], settings)
-    assert [spec.source_id for spec in specs] == [live.id]
+    missing = _source(slug="api", source_type=SourceType.API, config={"url": "https://api"})
+    hh = _source(
+        slug="hh_it",
+        source_type=SourceType.API,
+        config={"provider": "hh", "interval_hours": 2, "query": {"text": "python"}},
+    )
+    foreign = _source(
+        slug="superjob",
+        source_type=SourceType.API,
+        config={"provider": "superjob", "query": {"text": "python"}},
+    )
+    specs = schedules_for([live, demo, disabled, missing, hh, foreign], settings)
+    assert [spec.source_id for spec in specs] == [live.id, hh.id]
+    assert {spec.source_id: spec.interval_seconds for spec in specs}[hh.id] == 7200
 
 
 def test_interval_hours_and_default() -> None:

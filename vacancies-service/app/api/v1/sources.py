@@ -10,10 +10,11 @@ from uuid import UUID
 import redis
 from fastapi import APIRouter, Query
 
+import app.parsers
 from app.config import get_settings
 from app.db.models import Source
 from app.db.session import SessionDep
-from app.parsers import get_parser_class
+from app.parsers.api_providers import ensure_source_runnable
 from app.schemas.sources import (
     ParseRunListQuery,
     ParseRunListResponse,
@@ -35,6 +36,9 @@ from app.utils.errors import (
     SourceNotRunnableError,
 )
 from app.utils.logging import get_logger
+
+# Импорт пакета регистрирует HTML, Telegram и hh до проверки runnable.
+_ = (app.parsers.HtmlParser, app.parsers.TelegramParser, app.parsers.HHApiParser)
 
 logger = get_logger(__name__)
 
@@ -85,7 +89,7 @@ async def enqueue_source_run(source_id: UUID, session: SessionDep) -> SourceRunA
     if not source.is_enabled:
         raise SourceDisabledError(details=details)
     try:
-        get_parser_class(source.source_type)
+        ensure_source_runnable(source)
     except SourceNotRunnableError:
         raise SourceNotRunnableError(details=details) from None
     connection: redis.Redis | None = None

@@ -22,7 +22,7 @@ from app.parsers.hh_card import (
     load_hh_mapping,
     map_hh_card,
 )
-from app.parsers.registry import get_parser_class
+from app.parsers.registry import get_parser_class, register, unregister
 from app.schemas.normalized import NormalizedVacancy
 from app.services.normalizer import RawVacancy, normalize_vacancy
 from app.utils.errors import SourceNotRunnableError
@@ -285,8 +285,21 @@ def test_load_hh_mapping_converts_rur_to_rub() -> None:
 
 
 def test_importing_hh_card_does_not_register_api() -> None:
+    """Карточка сама API не регистрирует. Пакет `app.parsers` регистрирует HHApiParser."""
+    import importlib
+
+    import app.parsers
     import app.parsers.hh_card as hh_card
+    from app.parsers.hh_api import HHApiParser
 
     assert hh_card.map_hh_card.__module__ == "app.parsers.hh_card"
-    with pytest.raises(SourceNotRunnableError):
-        get_parser_class(SourceType.API)
+    assert "HHClient" not in vars(hh_card)
+    assert "HHApiParser" not in vars(hh_card)
+    unregister(SourceType.API)
+    try:
+        importlib.import_module("app.parsers.hh_card")
+        with pytest.raises(SourceNotRunnableError):
+            get_parser_class(SourceType.API)
+    finally:
+        register(HHApiParser)
+    assert app.parsers.get_parser_class(SourceType.API) is HHApiParser
