@@ -63,7 +63,7 @@ export function useVacancy(
           languages: [],
           last_seen_at: new Date(0).toISOString(),
           source_type: "api",
-          is_active: true,
+          is_active: placeholder.is_active,
           postings: [],
         }
       : undefined;

@@ -310,6 +310,8 @@ async def _ingest_one(
         canon = await _lock_canon_by_id(session, existing.vacancy_id)
         existing.last_seen_at = _later(existing.last_seen_at, seen_at)
         canon.last_seen_at = _later(canon.last_seen_at, seen_at)
+        # Свежий просмотр снова включает канон, даже если суточная задача его погасила.
+        canon.is_active = True
 
         if existing.content_hash == vacancy.content_hash:
             await session.flush()
@@ -343,6 +345,7 @@ async def _ingest_one(
         canon = await _lock_canon_by_id(session, duplicate.vacancy_id)
         duplicate.last_seen_at = _later(duplicate.last_seen_at, seen_at)
         canon.last_seen_at = _later(canon.last_seen_at, seen_at)
+        canon.is_active = True
         await session.flush()
         return IngestResult(canon.id, duplicate.id, IngestStatus.DUPLICATE_CONTENT)
 
@@ -371,6 +374,7 @@ async def _ingest_one(
         msg = "ON CONFLICT on a NULL dedup_key is impossible: NULLs never conflict"
         raise RuntimeError(msg)
     canon = await _lock_canon_by_key(session, dedup_key)
+    canon.is_active = True
     posting = _new_posting(canon.id, vacancy, seen_at)
     session.add(posting)
     await session.flush()

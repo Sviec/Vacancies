@@ -62,8 +62,14 @@ def build_conditions(
     user_id: UUID,
     tsquery: ColumnElement[Any] | None,
 ) -> list[ColumnElement[bool]]:
-    """Список условий WHERE; первое всегда `is_active`."""
-    conditions: list[ColumnElement[bool]] = [Vacancy.is_active.is_(True)]
+    """Список условий WHERE.
+
+    При `saved_only` условие `is_active` не добавляется: неактивные остаются
+    в «Сохранённых». Остальные фильтры применяются как обычно.
+    """
+    conditions: list[ColumnElement[bool]] = []
+    if not query.saved_only:
+        conditions.append(Vacancy.is_active.is_(True))
 
     if tsquery is not None:
         conditions.append(Vacancy.search_vector.op("@@")(tsquery))

@@ -113,7 +113,6 @@ class HHApiParser(BaseParser):
             msg = "HHApiParser.fetch_raw called before bind"
             raise RuntimeError(msg)
         self._reset_run()
-        # stale_after_days — # TODO: этап 13d
         # skills_mode — # TODO: dictionary_only уже внутри map_hh_card
         query = _require_query(self.config)
         limit = _whole_int(self.config.get("max_vacancies_per_run"), minimum=0, default=400)

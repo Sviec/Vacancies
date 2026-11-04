@@ -28,6 +28,7 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 _PARSE_KIND = "parse_schedule"
+_LIFECYCLE_KIND = "lifecycle_schedule"
 
 
 def main() -> None:
@@ -39,7 +40,7 @@ def main() -> None:
         connection = redis.Redis.from_url(settings.redis_url)
         connection.ping()
         scheduler = Scheduler(queue_name=settings.rq_queue_name, connection=connection)
-        _cancel_parse_schedules(scheduler)
+        _cancel_schedules(scheduler)
     except (RedisError, OSError):
         logger.exception("scheduler_redis_unavailable")
         idle.wait()
@@ -53,14 +54,16 @@ def main() -> None:
 
     specs = asyncio.run(_load_schedules(settings))
     _install_schedules(scheduler, specs, settings)
+    _install_lifecycle(scheduler, settings)
     scheduler.run()
 
 
-def _cancel_parse_schedules(scheduler: Scheduler) -> None:
+def _cancel_schedules(scheduler: Scheduler) -> None:
+    """Снять плановый обход и суточную задачу. Чужие kind не трогает."""
     jobs = list(scheduler.get_jobs())
     for job in jobs:
         meta = job.meta or {}
-        if meta.get("kind") != _PARSE_KIND:
+        if meta.get("kind") not in {_PARSE_KIND, _LIFECYCLE_KIND}:
             continue
         scheduler.cancel(job)
         job.delete()
@@ -98,6 +101,22 @@ def _install_schedules(scheduler: Scheduler, specs: list[ScheduleSpec], settings
             meta={"kind": _PARSE_KIND, "source_id": str(spec.source_id)},
         )
     logger.info("scheduler_planned", sources=len(specs))
+
+
+def _install_lifecycle(scheduler: Scheduler, settings: Settings) -> None:
+    """Один суточный запуск. Импорт задачи — здесь, не при загрузке модуля и не до флага."""
+    from app.tasks.lifecycle import run_lifecycle
+
+    now = datetime.now(UTC)
+    scheduler.schedule(
+        scheduled_time=now + timedelta(days=1),
+        func=run_lifecycle,
+        args=(),
+        interval=86400,
+        repeat=None,
+        timeout=settings.rq_default_timeout,
+        meta={"kind": _LIFECYCLE_KIND},
+    )
 
 
 if __name__ == "__main__":

@@ -33,6 +33,13 @@ export function VacancyCard({ vacancy, href, now, sourceTypes, showHidden, actio
   const busy = actions.pendingId === vacancy.id;
   const { shown, rest } = cardSkills(vacancy.skills, vacancy.match_details?.skills.matched);
   const sources = orderedSources(vacancy.source, vacancy.sources);
+  const archived = vacancy.is_active === false;
+  const showBadges =
+    vacancy.parse_quality === "partial" ||
+    saved ||
+    userActions.includes("applied") ||
+    (showHidden && hidden) ||
+    archived;
 
   return (
     <article className="lift relative rounded-card border border-line bg-surface p-5 shadow-card">
@@ -113,8 +120,9 @@ export function VacancyCard({ vacancy, href, now, sourceTypes, showHidden, actio
         </ul>
       )}
 
-      {(vacancy.parse_quality === "partial" || saved || userActions.includes("applied") || (showHidden && hidden)) && (
+      {showBadges && (
         <div className="mt-4 flex flex-wrap items-center gap-2">
+          {archived && <Badge tone="muted">в архиве</Badge>}
           {vacancy.parse_quality === "partial" && (
             <Badge tone="warn" title="Часть полей не удалось разобрать из источника">
               неполные данные

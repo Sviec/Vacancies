@@ -1159,6 +1159,8 @@ export interface components {
             /** Match Score */
             match_score?: number | null;
             match_details?: components["schemas"]["MatchDetails"] | null;
+            /** Is Active */
+            is_active: boolean;
         };
         /**
          * VacancyPostingBriefRead

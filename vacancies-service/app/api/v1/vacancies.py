@@ -53,6 +53,7 @@ async def list_vacancies(
                     "user_actions": page.actions.get(vacancy.id, []),
                     "match_score": match_result.score if match_result is not None else None,
                     "match_details": match_result.details if match_result is not None else None,
+                    "is_active": vacancy.is_active,
                 }
             )
         )

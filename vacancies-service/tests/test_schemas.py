@@ -26,6 +26,7 @@ from app.schemas import (
     ParseRunListQuery,
     ParseRunRead,
     RecommendationsQuery,
+    RecommendedVacancyItem,
     ResumeCreate,
     ResumeExperienceCreate,
     ResumeRead,
@@ -519,7 +520,9 @@ def test_sort_match_requires_resume_id() -> None:
 
 def test_vacancy_list_item_defaults() -> None:
     fields = VacancyListItem.model_fields
-    assert {"sources", "match_score", "match_details"} <= fields.keys()
+    assert {"sources", "match_score", "match_details", "is_active"} <= fields.keys()
+    assert "is_active" not in VacancyCardRead.model_fields
+    assert "is_active" not in RecommendedVacancyItem.model_fields
     for bad in (-1, 101):
         with pytest.raises(ValidationError):
             VacancyListItem.model_validate(
@@ -540,6 +543,7 @@ def test_vacancy_list_item_defaults() -> None:
                     "source": "tg_it_jobs",
                     "postings_count": 1,
                     "parse_quality": ParseQuality.FULL,
+                    "is_active": True,
                     "match_score": bad,
                 }
             )

@@ -31,12 +31,14 @@ def _sql(clause: ColumnElement[Any], *, literal: bool = True) -> str:
 
 
 def _extra(query: VacancyListQuery) -> list[str]:
-    """SQL условий сверх базовых (`is_active` и `NOT EXISTS hidden`)."""
+    """SQL условий сверх базового `is_active` (при `saved_only` его нет)."""
     base = VacancyListQuery(exclude_hidden=False)
     tsq = build_tsquery(query.q) if query.q else None
     conditions = build_conditions(query.model_copy(update={"exclude_hidden": False}), USER_ID, tsq)
     assert len(build_conditions(base, USER_ID, None)) == 1
-    return [_sql(c, literal=False) for c in conditions[1:]]
+    if conditions and "is_active" in _sql(conditions[0]):
+        conditions = conditions[1:]
+    return [_sql(c, literal=False) for c in conditions]
 
 
 def test_empty_query_has_only_is_active() -> None:
@@ -106,9 +108,23 @@ def test_city_alias_is_canonicalized() -> None:
 def test_saved_only_and_exclude_hidden_combined() -> None:
     conditions = build_conditions(VacancyListQuery(saved_only=True), USER_ID, None)
     sqls = [_sql(c, literal=False) for c in conditions]
-    assert len(conditions) == 3
-    assert sqls[1].startswith("NOT (EXISTS")
-    assert sqls[2].startswith("EXISTS")
+    assert len(conditions) == 2
+    assert all("vacancies.is_active" not in sql for sql in sqls)
+    assert sqls[0].startswith("NOT (EXISTS")
+    assert sqls[1].startswith("EXISTS")
+
+
+def test_saved_only_keeps_other_filters_without_is_active() -> None:
+    conditions = build_conditions(
+        VacancyListQuery(saved_only=True, city="Москва", exclude_hidden=False),
+        USER_ID,
+        None,
+    )
+    sqls = [_sql(c) for c in conditions]
+    assert len(conditions) == 2
+    assert "lower('Москва')" in sqls[0]
+    assert sqls[1].startswith("EXISTS")
+    assert all("is_active" not in sql for sql in sqls)
 
 
 def test_tsquery_uses_both_configs() -> None:

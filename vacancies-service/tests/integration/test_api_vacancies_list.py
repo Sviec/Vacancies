@@ -409,6 +409,26 @@ async def test_saved_only(api_client: AsyncClient, seeded: dict[str, str]) -> No
     assert await _set(api_client, seeded, saved_only="true") == {"v3", "v6"}
 
 
+async def test_inactive_saved_stays_in_saved_list(
+    api_client: AsyncClient, seeded: dict[str, str], db_session: AsyncSession
+) -> None:
+    response = await api_client.post(f"{URL}/{seeded['v1']}/action", json={"action": "saved"})
+    assert response.status_code == 200
+    await db_session.execute(
+        update(Vacancy).where(Vacancy.id == uuid.UUID(seeded["v1"])).values(is_active=False)
+    )
+    await db_session.flush()
+
+    feed = await _page(api_client)
+    assert feed["total"] == 7
+    assert seeded["v1"] not in {item["id"] for item in feed["items"]}
+    assert all(item["is_active"] is True for item in feed["items"])
+
+    saved = await _page(api_client, saved_only="true")
+    assert [item["id"] for item in saved["items"]] == [seeded["v1"]]
+    assert saved["items"][0]["is_active"] is False
+
+
 async def test_inactive_vacancy_not_in_feed(
     api_client: AsyncClient, seeded: dict[str, str], db_session: AsyncSession
 ) -> None:

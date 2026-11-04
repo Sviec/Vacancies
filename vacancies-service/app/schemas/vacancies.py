@@ -90,6 +90,8 @@ class VacancyListItem(VacancyCardRead):
     sources: list[str] = Field(default_factory=list)
     match_score: float | None = Field(default=None, ge=0, le=100)
     match_details: MatchDetails | None = None
+    # В «Сохранённых» неактивные остаются; бейдж «в архиве» читает это поле.
+    is_active: bool
 
 
 MAX_SOURCE_FILTER_VALUES = 20

@@ -96,10 +96,10 @@ async def touch_hh_seen(
     external_ids: Sequence[str],
     seen_at: datetime,
 ) -> int:
-    """Поднять `last_seen_at` публикации и канона до `seen_at`. Без commit.
+    """Поднять `last_seen_at` публикации и канона до `seen_at` и включить канон.
 
     `content_hash`, `raw_payload` и текст не меняются, нормализатор не вызывается.
-    Возвращает число найденных публикаций.
+    Возвращает число найденных публикаций. Без commit.
     """
     unique = list(dict.fromkeys(external_ids))
     if not unique:
@@ -117,5 +117,6 @@ async def touch_hh_seen(
     for posting, canon in rows:
         posting.last_seen_at = max(posting.last_seen_at, seen_at)
         canon.last_seen_at = max(canon.last_seen_at, seen_at)
+        canon.is_active = True
     await session.flush()
     return len(rows)
